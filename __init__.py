@@ -100,6 +100,7 @@ from matplotlib_inline import backend_inline
 def abs_fft(array):
     return np.abs(sp.fft(array))
 
+
 def imread(img_path):
     return cv.imread(img_path, cv.IMREAD_GRAYSCALE | cv.IMREAD_ANYDEPTH)
 
