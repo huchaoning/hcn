@@ -1,0 +1,1 @@
+pixel_size = 4.6

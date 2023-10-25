@@ -7,8 +7,10 @@ import cv2 as cv
 import matplotlib.pyplot as plt
 from matplotlib_inline import backend_inline
 
-from . import di, spade
+from . import di, spade, dmd, qcmos
 from .laser import laser
+
+
 
 # # SPADE 估计子
 # def midpoint_mean(array, midpoint):
