@@ -1,5 +1,4 @@
 import numpy as np
-import scipy as sp
 import pandas as pd
 
 import cv2 as cv
@@ -8,101 +7,11 @@ import matplotlib.pyplot as plt
 from matplotlib_inline import backend_inline
 
 from . import di, spade, dmd, qcmos
-from .laser import laser
+from .laser import *
 
-
-
-# # SPADE 估计子
-# def midpoint_mean(array, midpoint):
-#     temp = []
-#     y = midpoint[0]
-#     x = midpoint[1]
-#     for i in (-1, 0, 1):
-#         temp.append(array[x+i][y-1:y+2])
-#     return np.array(temp, dtype=int).sum() / 9
-
-
-# def spade_estimator(img_list, sigma=None, midpoint_1=None, midpoint_2=None):
-#     data = []
-#     for img in img_list:
-#         array = tif_to_np(img)
-#         k = np.sqrt(midpoint_mean(array, midpoint_1) / midpoint_mean(array, midpoint_2))
-#         data.append(2 * sigma * (k-1)/(k+1))
-#     return np.array(data)
-
-
-# # -----------------------------
-# # DI 估计子
-# def get_zero_point(point_list):
-#     temp = []
-#     criterion = (point_list.max() + point_list.min()) / 2
-#     for i in range(np.size(point_list)):
-#         if point_list[i] < criterion:
-#             temp.append(point_list[i])
-#     temp = np.array(temp)
-#     return temp.sum() / np.size(temp)
-
-
-# def get_point_list(img_list):
-#     point_list = []
-#     for img in img_list:
-#         array = tif_to_np(img)
-#         index = np.arange(np.sqrt(np.size(array)))
-#         new_array = array / array.sum()
-#         point_list.append((index @ new_array).sum())
-#     return np.array(point_list)
-
-
-# def di_estimator(img_list, mmpp=None):
-#     point_list = get_point_list(img_list)
-#     zero_point = get_zero_point(point_list)
-#     return (point_list - zero_point) * mmpp
-
-
-# # -----------------------------
-# # 批量生成tif路径
-# def gen_img_list(fixes=None, raw_path=None, frames=None, fix_rule=None):
-#     cmd = 'raw_path.format'+fix_rule
-#     img_list = []
-#     for fix in fixes:
-#         for frame in range(1, frames+1):
-#             img_list.append(eval(cmd))
-#     return np.array(img_list).reshape(np.size(fixes), frames)
-
-
-# # -----------------------------
-# # 读取全部数据, 保存在data数组中并返回
-# def read_all(fixes=None, raw_path=None, frames=None, fix_rule=None,
-#              SPADE=True, sigma=None, midpoint_1=None, midpoint_2=None, 
-#              mmpp=None):
-
-#     img_list = gen_img_list(fixes=fixes, raw_path=raw_path, frames=frames, fix_rule=fix_rule)
-#     data = []
-#     if SPADE:
-#         for index in range(np.size(fixes)):
-#             data.append(spade_estimator(img_list[index], sigma=sigma, midpoint_1=midpoint_1, midpoint_2=midpoint_2))
-#     elif not SPADE:
-#         for index in range(np.size(fixes)):
-#             data.append(classical_estimator(img_list[index], mmpp=mmpp))
-#     else:
-#         pass
-
-#     return np.array(data)
-
-
-
-# def delete_zeros(point_list):
-#     temp = []
-#     criterion = (point_list.max() + point_list.min()) / 2
-#     for i in range(np.size(point_list)):
-#         if point_list[i] > criterion:
-#             temp.append(point_list[i])
-#     temp = np.array(temp)
-#     return temp
-# # -----------------------------------------------
 
 def abs_fft(array):
-    return np.abs(sp.fft(array))
+    return np.abs(np.fft(array))
 
 
 def imread(img_path):
@@ -113,13 +22,7 @@ def read_csv(path):
     return np.array(pd.read_csv(path, header=None))
 
 
-# def tif_to_np(path):
-#     img = Image.open(path)
-#     Matrix = np.array(img.getdata()).reshape(img.size[1], img.size[0])
-#     return Matrix
-
-
-def save_as_csv(array, filename):
+def to_csv(array, filename):
     pd.DataFrame(array).to_csv(filename, header=None, index=None)
 
 
