@@ -73,9 +73,7 @@ class laser:
         k = self.wave_number
 
         rho = self.radial_beam_coordinate(x, y)
-        w = self.beam_size(z)
         r = self.wave_radius_of_curvature(z)
-        w0 = self.beam_waist(z)
         xi = self.gouy_phase(z)
 
         if isinstance(self.mode, hermite_gauss):
