@@ -5,13 +5,13 @@ from scipy.special import hermite
 class laser:
     def __init__(self, wavelength = None, rayleigh_range = None):
         self.wavelength = wavelength
-        self.Rayleigh_range = rayleigh_range
+        self.rayleigh_range = rayleigh_range
 
     def waist(self, z):
-        return z * np.sqrt(self.wavelength * self.Rayleigh_range / np.pi)
+        return z * (self.wavelength * self.rayleigh_range / np.pi)**0.5
     
     def size(self, z):
-        return self.waist(z) * np.sqrt(1 + np.square(z / self.Rayleigh_range))
+        return self.waist(z) * (1 + (z / self.rayleigh_range)**2)**0.5
 
 
 class HG:
