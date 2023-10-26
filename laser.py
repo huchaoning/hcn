@@ -10,7 +10,7 @@ class hermite_gauss:
 
     @classmethod
     def is_what(self):
-        return 'Hermite Gauss {}, {}'.format(self.n, self.m)
+        return 'hermite_gauss'
     
 
 class laguerre_gauss:
@@ -20,7 +20,7 @@ class laguerre_gauss:
 
     @classmethod
     def is_what(self):
-        return 'Laguerre Gauss {}, {}'.format(self.n, self.m)
+        return 'laguerre_gauss'
 
 
 class laser:
@@ -28,7 +28,6 @@ class laser:
         self.wavelength = wavelength
         self.wave_number = 2 * np.pi / self.wavelength
         self.rayleigh_range = rayleigh_range
-
         if isinstance(mode, (hermite_gauss, laguerre_gauss)):
             self.mode = mode
         else:
@@ -47,7 +46,7 @@ class laser:
         return np.arctan(z / self.rayleigh_range)
 
     def wave_radius_of_curvature(self, z):
-        return z * (1 + np.square(self.rayleigh_range / z))
+        return z * (1 + (self.rayleigh_range / z)**2)
 
 
     def amplitude_term(self, x, y, z):
