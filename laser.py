@@ -62,7 +62,7 @@ class laser:
         xi = self.gouy_phase(z)
 
         if isinstance(self.mode, hermite_gauss):
-            return (1/w)*((2**(1-n-m))/(np.pi*factorial(n)*factorial(m)))*hermite()
+            return (1/w)*((2**(1-n-m))/(np.pi*factorial(n)*factorial(m)))
         elif isinstance(self.mode, laguerre_gauss):
             return
     
