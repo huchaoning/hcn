@@ -52,16 +52,12 @@ class laser:
     def amplitude_term(self, x, y, z):
         n = self.mode.n
         m = self.mode.m
-        k = self.wave_number
 
         rho = self.radial_beam_coordinate(x, y)
         w = self.beam_size(z)
-        r = self.wave_radius_of_curvature(z)
-        w0 = self.beam_waist(z)
-        xi = self.gouy_phase(z)
 
         if isinstance(self.mode, hermite_gauss):
-            return (1/w)*((2**(1-n-m))/(pi*factorial(n)*factorial(m)))
+            return (1/w)*((2**(1-n-m))/(pi*factorial(n)*factorial(m)))*hermite(n)(sqrt(abs(x))/w)*hermite(m)(sqrt(abs(y))/w)*exp((-rho/w)**2)
         elif isinstance(self.mode, laguerre_gauss):
             return
     
