@@ -8,5 +8,4 @@ def estimator(img):
     k = (img[point_1[1]][point_1[0]] / img[point_2[1]][point_2[0]])**0.5
     return 2 * characteristic_width * (k-1)/(k+1)
 
-if __name__ == "__main__":
-    main()
+

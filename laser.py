@@ -1,5 +1,5 @@
 import numpy as np
-from math import factorial
+from math import *
 from scipy.special import hermite, laguerre
 
 
@@ -26,7 +26,7 @@ class laguerre_gauss:
 class laser:
     def __init__(self, wavelength = None, rayleigh_range = None, mode = None):
         self.wavelength = wavelength
-        self.wave_number = 2 * np.pi / self.wavelength
+        self.wave_number = 2 * pi / self.wavelength
         self.rayleigh_range = rayleigh_range
         if isinstance(mode, (hermite_gauss, laguerre_gauss)):
             self.mode = mode
@@ -34,16 +34,16 @@ class laser:
             self.mode = None
 
     def beam_waist(self, z):
-        return z * (self.wavelength * self.rayleigh_range / np.pi)**0.5
+        return z * sqrt(self.wavelength * self.rayleigh_range / pi)
     
     def beam_size(self, z):
-        return self.waist(z) * (1 + (z / self.rayleigh_range)**2)**0.5
+        return self.beam_waist(z) * sqrt(1 + (z / self.rayleigh_range)**2)
 
     def radial_beam_coordinate(self, x, y):
-        return (x**2 + y**2)**0.5
+        return sqrt(x**2 + y**2)
 
     def gouy_phase(self, z):
-        return np.arctan(z / self.rayleigh_range)
+        return atan(z / self.rayleigh_range)
 
     def wave_radius_of_curvature(self, z):
         return z * (1 + (self.rayleigh_range / z)**2)
@@ -61,7 +61,7 @@ class laser:
         xi = self.gouy_phase(z)
 
         if isinstance(self.mode, hermite_gauss):
-            return (1/w)*((2**(1-n-m))/(np.pi*factorial(n)*factorial(m)))
+            return (1/w)*((2**(1-n-m))/(pi*factorial(n)*factorial(m)))
         elif isinstance(self.mode, laguerre_gauss):
             return
     
@@ -76,11 +76,7 @@ class laser:
         xi = self.gouy_phase(z)
 
         if isinstance(self.mode, hermite_gauss):
-            return np.exp(1j(n+m+1)*xi)*np.exp(-1j(k*rho**2/(2*r)))*np.exp(-1j(k*z))
+            return exp(1j*(n+m+1)*xi)*exp(-1j*(k*rho**2/(2*r)))*exp(-1j*(k*z))
         elif isinstance(self.mode, laguerre_gauss):
-            return
+            return  None
 
-
-
-if __name__ == "__main__":
-    main()

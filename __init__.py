@@ -1,10 +1,16 @@
+from math import *
 import numpy as np
-import pandas as pd
+import matplotlib.pyplot as plt
 
 import cv2 as cv
+import pandas as pd
 
-import matplotlib.pyplot as plt
+from scipy.special import hermite, laguerre
+
 from matplotlib_inline import backend_inline
+backend_inline.set_matplotlib_formats('svg')
+
+import timeit
 
 from . import di, spade, dmd, qcmos
 from .laser import *
@@ -26,26 +32,56 @@ def to_csv(array, filename):
     pd.DataFrame(array).to_csv(filename, header=None, index=None)
 
 
-def show_all_fonts():
-    from matplotlib.font_manager import FontManager
-    all_fonts = set(f.name for f in FontManager().ttflist)
-    print('All font list get from matplotlib.font_manager:')
-    for f in sorted(all_fonts):
-        print('\t' + f)
 
+class matplotlib_font:
+    def __init__(self) -> None:
+        pass
 
-def plot(X, Y, fmts='-',
+    # @classmethod
+    # def set(self, family, weight=None):
+    #     plt.rc('font', family=family, weight=weight)
+
+    @classmethod
+    def default(self):
+        from matplotlib.font_manager import FontProperties, fontManager
+        # font = FontProperties('./font/SourceHanSansSCVF.ttf')
+        # plt.rcParams['font.sans-serif'] = font
+        # plt.rcParams['axes.unicode_minus'] = False 
+        # fontManager.addfont('./font/STHeiti Medium.ttc')
+        plt.rc('font', family='Heiti TC')
+
+    @classmethod
+    def show(self):
+        from matplotlib.font_manager import FontManager, get_font_names
+        # all_fonts = set(f.name for f in FontManager().ttflist)
+        all_fonts = get_font_names()
+        print('All font list get from matplotlib.font_manager:')
+        for f in sorted(all_fonts):
+            print('\t' + f)
+        del FontManager
+    
+
+def plot(x, y, fmts='-',
          title=None, label=None,
          xlabel=None, ylabel=None, xlim=None, ylim=None,
          legend=True, grid=True, font=None, figsize=(5.6, 4),
          show=True, save=None):
 
-    backend_inline.set_matplotlib_formats('svg')
 
-    if font is None:
-        plt.rcdefaults()
-    else:
-        plt.rc('font', family=font)
+    if isinstance(x, (list, tuple)) and len(x) == 2 :
+        if callable(y):
+            x = np.linspace(x[0], x[1], 300)
+        else:
+            x = np.linspace(x[0], x[1], len(y))
+
+    if callable(y):
+        y = y(x)
+
+    # if font is not None:
+    #     if font == 'default':
+    #         matplotlib_font.default()
+    #     else:
+    #         plt.rc('font', family=font)
 
     if figsize is not None:
         plt.rcParams['figure.figsize'] = figsize
@@ -66,9 +102,9 @@ def plot(X, Y, fmts='-',
         plt.ylim(ylim)
 
     if label is None:
-        plt.plot(X, Y, fmts)
+        plt.plot(x, y, fmts)
     else:
-        plt.plot(X, Y, fmts, label=label)
+        plt.plot(x, y, fmts, label=label)
 
     if legend and label is not None:
         plt.legend()
@@ -85,18 +121,19 @@ def plot(X, Y, fmts='-',
         plt.show()
     
 
-def hist(X, bins=300, histtype='step', density=True,
+def hist(x, bins=300, histtype='step', density=True,
          title=None, label=None,
          xlabel=None, ylabel=None, xlim=None, ylim=None,
          legend=True, grid=True, font=None, figsize=(5.6, 4),
          save=None):
 
-    backend_inline.set_matplotlib_formats('svg')
 
-    if font is None:
-        plt.rcdefaults()
-    else:
-        plt.rc('font', family=font)
+    if font is not None:
+        if font == 'default':
+            plt.rcdefaults()
+        else:
+            plt.rc('font', family=font)
+
 
     if figsize is not None:
         plt.rcParams['figure.figsize'] = figsize
@@ -117,9 +154,9 @@ def hist(X, bins=300, histtype='step', density=True,
         plt.ylim(ylim)
 
     if label is None:
-        plt.hist(X, bins=bins, histtype=histtype, density=density)
+        plt.hist(x, bins=bins, histtype=histtype, density=density)
     else:
-        plt.hist(X, bins=bins, histtype=histtype, density=density, label=label)
+        plt.hist(x, bins=bins, histtype=histtype, density=density, label=label)
 
     if legend and label is not None:
         plt.legend()
@@ -135,12 +172,21 @@ def hist(X, bins=300, histtype='step', density=True,
     plt.show()
 
 
-def imshow(X, cmap=None, title=None, colorbar=True, axis=False, font=None, save=None):
-    backend_inline.set_matplotlib_formats('svg')
-    if font is None:
-        plt.rcdefaults()
-    else:
-        plt.rc('font', family=font)
+def imshow(x, cmap=None, via_opencv=False,
+           title=None, colorbar=True, axis=False, font=None, 
+           save=None):
+
+    if via_opencv:
+        if title is None:
+            cv.imshow('Untitled', x)
+        else:
+            cv.imshow(title, x)
+
+    if font is not None:
+        if font == 'default':
+            plt.rcdefaults()
+        else:
+            plt.rc('font', family=font)
 
     if not axis:
         plt.xticks(())
@@ -150,9 +196,9 @@ def imshow(X, cmap=None, title=None, colorbar=True, axis=False, font=None, save=
         plt.title(title)
 
     if cmap is None:
-        plt.imshow(X)
+        plt.imshow(x)
     else:
-        plt.imshow(X, cmap=cmap)
+        plt.imshow(x, cmap=cmap)
 
     if colorbar:
         plt.colorbar()
@@ -162,6 +208,3 @@ def imshow(X, cmap=None, title=None, colorbar=True, axis=False, font=None, save=
 
     plt.show()
 
-
-if __name__ == "__main__":
-    main()
