@@ -122,3 +122,8 @@
 #     point_list = get_point_list(img_list)
 #     zero_point = get_zero_point(point_list)
 #     return (point_list - zero_point) * mmpp
+
+    # index = np.arange(np.shape(img)[0])
+    # normalized_img = img / img.sum()
+    # return ((index @ normalized_img).sum() - zero_point) * pixel_size
+
