@@ -32,7 +32,6 @@ def to_csv(array, filename):
     pd.DataFrame(array).to_csv(filename, header=None, index=None)
 
 
-
 class matplotlib_font:
     def __init__(self) -> None:
         pass
@@ -61,9 +60,8 @@ class matplotlib_font:
 def plot(x, y, fmts='-',
          title=None, label=None,
          xlabel=None, ylabel=None, xlim=None, ylim=None,
-         legend=True, grid=True, font=None, figsize=(5.6, 4),
+         legend=True, grid=True, font=None, figsize=(6, 4),
          show=True, save=None):
-
 
     if isinstance(x, (list, tuple)) and len(x) == 2 :
         if callable(y):
@@ -74,11 +72,10 @@ def plot(x, y, fmts='-',
     if callable(y):
         y = y(x)
 
-    if font is not None:
-        if font == 'default':
-            matplotlib_font.default()
-        else:
-            plt.rc('font', family=font)
+    if font is None:
+        matplotlib_font.default()
+    elif not font:
+        plt.rc('font', family=font)
 
     if figsize is not None:
         plt.rcParams['figure.figsize'] = figsize
@@ -124,13 +121,11 @@ def hist(x, bins=300, histtype='step', density=True,
          legend=True, grid=True, font=None, figsize=(5.6, 4),
          save=None):
 
-
     if font is not None:
         if font == 'default':
             plt.rcdefaults()
         else:
             plt.rc('font', family=font)
-
 
     if figsize is not None:
         plt.rcParams['figure.figsize'] = figsize
@@ -183,7 +178,7 @@ def imshow(x, cmap=None, via_opencv=False,
             cv.waitKey(0)
             cv.destroyAllWindows()
 
-    elif not via_opencv:
+    else:
         if font is not None:
             if font == 'default':
                 plt.rcdefaults()
