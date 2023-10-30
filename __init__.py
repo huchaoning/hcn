@@ -17,7 +17,7 @@ from .laser import *
 
 
 def abs_fft(array):
-    return np.abs(np.fft(array))
+    return np.abs(np.fft.fft(array))
 
 
 def imread(img_path):
