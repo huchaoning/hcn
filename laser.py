@@ -24,18 +24,6 @@ class laguerre_gauss:
 
 
 class laser:
-    # def __init__(self, wavelength = None, rayleigh_range = None, mode = None):
-    #     self.wavelength = wavelength
-    #     self.wave_number = 2 * pi / self.wavelength
-    #     self.rayleigh_range = rayleigh_range
-    #     if isinstance(mode, (hermite_gauss, laguerre_gauss)):
-    #         self.mode = mode
-    #     else:
-    #         self.mode = None
-
-    # def beam_waist(self, z):
-    #     return z * sqrt(self.wavelength * self.rayleigh_range / pi)
-
     def __init__(self, wavelength = None, beam_waist = None, mode = None):
         self.wavelength = wavelength
         self.wave_number = tau / self.wavelength
@@ -85,7 +73,6 @@ class laser:
         xi = self.gouy_phase(z)
 
         if isinstance(self.mode, hermite_gauss):
-            # return np.exp(1j*(n+m+1)*xi)*np.exp(-1j*(k*rho**2/(2*r)))*np.exp(-1j*(k*z))
             return np.exp(1j*((n+m+1)*xi-k*(rho**2/(2*r)+z)))
         elif isinstance(self.mode, laguerre_gauss):
             return  None
