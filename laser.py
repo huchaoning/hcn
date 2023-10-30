@@ -24,23 +24,33 @@ class laguerre_gauss:
 
 
 class laser:
-    def __init__(self, wavelength = None, rayleigh_range = None, mode = None):
+    # def __init__(self, wavelength = None, rayleigh_range = None, mode = None):
+    #     self.wavelength = wavelength
+    #     self.wave_number = 2 * pi / self.wavelength
+    #     self.rayleigh_range = rayleigh_range
+    #     if isinstance(mode, (hermite_gauss, laguerre_gauss)):
+    #         self.mode = mode
+    #     else:
+    #         self.mode = None
+
+    # def beam_waist(self, z):
+    #     return z * sqrt(self.wavelength * self.rayleigh_range / pi)
+
+    def __init__(self, wavelength = None, beam_waist = None, mode = None):
         self.wavelength = wavelength
-        self.wave_number = 2 * pi / self.wavelength
-        self.rayleigh_range = rayleigh_range
+        self.wave_number = tau / self.wavelength
+        self.beam_waist = beam_waist
+        self.rayleigh_range = (pi * self.beam_waist**2) / self.wavelength
         if isinstance(mode, (hermite_gauss, laguerre_gauss)):
             self.mode = mode
         else:
             self.mode = None
-
-    def beam_waist(self, z):
-        return z * sqrt(self.wavelength * self.rayleigh_range / pi)
     
     def beam_size(self, z):
-        return self.beam_waist(z) * sqrt(1 + (z / self.rayleigh_range)**2)
+        return self.beam_waist * sqrt(1 + (z / self.rayleigh_range)**2)
 
     def radial_beam_coordinate(self, x, y):
-        return sqrt(x**2 + y**2)
+        return np.sqrt(x**2 + y**2)
 
     def gouy_phase(self, z):
         return atan(z / self.rayleigh_range)
@@ -53,11 +63,14 @@ class laser:
         n = self.mode.n
         m = self.mode.m
 
+        w0 = self.beam_waist
+
         rho = self.radial_beam_coordinate(x, y)
         w = self.beam_size(z)
 
         if isinstance(self.mode, hermite_gauss):
-            return (1/w)*((2**(1-n-m))/(pi*factorial(n)*factorial(m)))*hermite(n)(sqrt(abs(x))/w)*hermite(m)(sqrt(abs(y))/w)*exp((-rho/w)**2)
+            # rc = self.beam_waist * sqrt(2**(1-n-m)/(pi*factorial(n)*factorial(m))) / w
+            return hermite(n, monic=True)(sqrt(2)*x/w)*hermite(m, monic=True)(sqrt(2)*y/w)*np.exp(-(rho/w)**2)*(w0/w)
         elif isinstance(self.mode, laguerre_gauss):
             return
     
@@ -72,7 +85,8 @@ class laser:
         xi = self.gouy_phase(z)
 
         if isinstance(self.mode, hermite_gauss):
-            return exp(1j*(n+m+1)*xi)*exp(-1j*(k*rho**2/(2*r)))*exp(-1j*(k*z))
+            # return np.exp(1j*(n+m+1)*xi)*np.exp(-1j*(k*rho**2/(2*r)))*np.exp(-1j*(k*z))
+            return np.exp(1j*((n+m+1)*xi-k*(rho**2/(2*r)+z)))
         elif isinstance(self.mode, laguerre_gauss):
             return  None
 

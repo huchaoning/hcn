@@ -43,7 +43,8 @@ class matplotlib_font:
     @classmethod
     def default(self):
         from matplotlib.font_manager import fontManager
-        fontManager.addfont(__file__ + '/../font/SourceHanSans.otf')
+        # fontManager.addfont(__file__ + '/../font/SourceHanSans.otf')
+        fontManager.addfont('./font/SourceHanSans.otf')
         plt.rcParams['font.family'] = ['Source Han Sans SC']
         del fontManager
 
