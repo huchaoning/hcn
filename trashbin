@@ -127,3 +127,50 @@
     # normalized_img = img / img.sum()
     # return ((index @ normalized_img).sum() - zero_point) * pixel_size
 
+
+# def imshow(x, cmap=None, via_opencv=False,
+#            title=None, colorbar=True, axis=False, font=None, 
+#            save=None):
+    
+#     if via_opencv:
+#         if title is None:
+#             cv.imshow('Untitled', x)
+#             cv.waitKey(0)
+#             cv.destroyAllWindows()
+#         else:
+#             cv.imshow(title, x)
+#             cv.waitKey(0)
+#             cv.destroyAllWindows()
+
+#     else:
+#         if font is not None:
+#             if font == 'default':
+#                 plt.rcdefaults()
+#             else:
+#                 plt.rc('font', family=font)
+
+#         if not axis:
+#             plt.xticks(())
+#             plt.yticks(())
+
+#         if title is not None:
+#             plt.title(title)
+
+#         if cmap is None:
+#             plt.imshow(x)
+#         else:
+#             plt.imshow(x, cmap=cmap)
+
+#         if colorbar:
+#             plt.colorbar()
+
+#         if save is not None:
+#             plt.savefig(save)
+
+#         plt.show()
+
+
+# def signal_to_noise_ratio(signal=None, noise=None):
+#     from math import log10
+#     return 10 * log10(sum(photon_number(signal)) / sum(photon_number(noise)))
+

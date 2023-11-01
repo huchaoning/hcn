@@ -1,4 +1,4 @@
-from math import sqrt, log10
+from math import sqrt
 
 
 point_1 = None
@@ -22,6 +22,3 @@ def estimator(img, mode = mode):
         elif mode == '0001':
             return 2 * characteristic_width * sqrt(img[point_1[1]][point_1[0]] / img[point_2[1]][point_2[0]])
 
-
-def signal_to_noise_ratio(signal=None, noise=None):
-    return 10 * log10(sum(photon_number(signal)) / sum(photon_number(noise)))
