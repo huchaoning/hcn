@@ -7,9 +7,6 @@ import pandas as pd
 
 from scipy.special import hermite, laguerre
 
-from matplotlib_inline import backend_inline
-backend_inline.set_matplotlib_formats('svg')
-
 import timeit
 
 from . import di, spade, dmd, qcmos
@@ -21,7 +18,7 @@ def abs_fft(array):
 
 
 def imread(img_path):
-    return cv.imread(img_path, cv.IMREAD_GRAYSCALE | cv.IMREAD_ANYDEPTH).astype(int)
+    return cv.imread(img_path, cv.IMREAD_GRAYSCALE | cv.IMREAD_ANYDEPTH).astype(np.float64)
 
 
 def read_csv(path):
@@ -32,55 +29,55 @@ def to_csv(array, filename):
     pd.DataFrame(array).to_csv(filename, header=None, index=None)
 
 
-class matplotlib_font:
-    def __init__(self) -> None:
-        pass
+class matplotlib_parameter:
 
     @classmethod
-    def set(self, family=None, weight=None):
-        plt.rc('font', family=family, weight=weight)
-
-    @classmethod
-    def default(self):
-        from matplotlib.font_manager import fontManager
-        from os import path
-        # fontManager.addfont(__file__ + '/../font/SourceHanSans.otf')
-        fontManager.addfont(path.join(path.dirname(__file__), 'font/SourceHanSans.otf'))
-        plt.rcParams['font.family'] = ['Source Han Sans SC']
-        del fontManager, path
-
-    @classmethod
-    def show(self):
+    def font_show(self):
         from matplotlib.font_manager import get_font_names
         all_fonts = get_font_names()
         print('All font list get from matplotlib.font_manager:')
         for font in sorted(all_fonts):
             print('\t' + font)
         del get_font_names
-    
 
-def plot(x, y, fmts='-',
+    @classmethod
+    def font(self, family=None, weight=None):
+        if family is None:
+            from matplotlib.font_manager import fontManager
+            from os import path
+            fontManager.addfont(path.join(path.dirname(__file__), 'font/SourceHanSans.otf'))
+            plt.rcParams['font.family'] = ['Source Han Sans SC']
+            del fontManager, path
+        else:
+            plt.rc('font', family=family, weight=weight)
+
+    @classmethod
+    def figsize(self, figsize_x = 6, figsize_y = 4):
+        plt.rcParams['figure.figsize'] = (figsize_x, figsize_y)
+
+    @classmethod
+    def default(self):
+        from matplotlib_inline import backend_inline
+        backend_inline.set_matplotlib_formats('svg')
+        del backend_inline
+        matplotlib_parameter.font()
+        matplotlib_parameter.figsize()
+
+
+def plot(x, y, fmts='-', num=300,
          title=None, label=None,
          xlabel=None, ylabel=None, xlim=None, ylim=None,
-         legend=True, grid=True, font=None, figsize=(6, 4),
+         legend=True, grid=True,
          show=True, save=None):
 
     if isinstance(x, (list, tuple)) and len(x) == 2 :
         if callable(y):
-            x = np.linspace(x[0], x[1], 300)
+            x = np.linspace(x[0], x[1], num)
         else:
             x = np.linspace(x[0], x[1], len(y))
 
     if callable(y):
         y = y(x)
-
-    if font is None:
-        matplotlib_font.default()
-    elif not font:
-        plt.rc('font', family=font)
-
-    if figsize is not None:
-        plt.rcParams['figure.figsize'] = figsize
 
     if title is not None:
         plt.title(title)
@@ -120,17 +117,8 @@ def plot(x, y, fmts='-',
 def hist(x, bins=300, histtype='step', density=True,
          title=None, label=None,
          xlabel=None, ylabel=None, xlim=None, ylim=None,
-         legend=True, grid=True, font=None, figsize=(5.6, 4),
+         legend=True, grid=True,
          save=None):
-
-    if font is not None:
-        if font == 'default':
-            plt.rcdefaults()
-        else:
-            plt.rc('font', family=font)
-
-    if figsize is not None:
-        plt.rcParams['figure.figsize'] = figsize
 
     if title is not None:
         plt.title(title)
@@ -166,44 +154,30 @@ def hist(x, bins=300, histtype='step', density=True,
     plt.show()
 
 
-def imshow(x, cmap=None, via_opencv=False,
+def imshow(x, cmap=None,
            title=None, colorbar=True, axis=False, font=None, 
            save=None):
-    
-    if via_opencv:
-        if title is None:
-            cv.imshow('Untitled', x)
-            cv.waitKey(0)
-            cv.destroyAllWindows()
-        else:
-            cv.imshow(title, x)
-            cv.waitKey(0)
-            cv.destroyAllWindows()
 
+    if not axis:
+        plt.xticks(())
+        plt.yticks(())
+
+    if title is not None:
+        plt.title(title)
+
+    if cmap is None:
+        plt.imshow(x)
     else:
-        if font is not None:
-            if font == 'default':
-                plt.rcdefaults()
-            else:
-                plt.rc('font', family=font)
+        plt.imshow(x, cmap=cmap)
 
-        if not axis:
-            plt.xticks(())
-            plt.yticks(())
+    if colorbar:
+        plt.colorbar()
 
-        if title is not None:
-            plt.title(title)
+    if save is not None:
+        plt.savefig(save)
 
-        if cmap is None:
-            plt.imshow(x)
-        else:
-            plt.imshow(x, cmap=cmap)
+    plt.show()
 
-        if colorbar:
-            plt.colorbar()
 
-        if save is not None:
-            plt.savefig(save)
-
-        plt.show()
+matplotlib_parameter.default()
 
