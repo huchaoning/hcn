@@ -21,7 +21,7 @@ def abs_fft(array):
 
 
 def imread(img_path):
-    return cv.imread(img_path, cv.IMREAD_GRAYSCALE | cv.IMREAD_ANYDEPTH)
+    return cv.imread(img_path, cv.IMREAD_GRAYSCALE | cv.IMREAD_ANYDEPTH).astype(int)
 
 
 def read_csv(path):
