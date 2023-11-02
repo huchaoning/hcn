@@ -77,7 +77,14 @@ def plot(x, y, fmts='-', num=300,
             x = np.linspace(x[0], x[1], len(y))
 
     if callable(y):
-        y = y(x)
+        try: 
+            y = y(x)
+        except TypeError:
+            y_ = []
+            for x_ in x:
+                y_.append(y(x_))
+            y = np.array(y_)
+            del x_, y_
 
     if title is not None:
         plt.title(title)
