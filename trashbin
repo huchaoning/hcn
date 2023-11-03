@@ -174,3 +174,11 @@
 #     from math import log10
 #     return 10 * log10(sum(photon_number(signal)) / sum(photon_number(noise)))
 
+
+# def copy_ipynb():
+#     from os import path, rename
+#     from shutil import copy
+#     if not path.exists('./sample.ipynb') and not path.exists('./main.ipynb'):
+#         copy(src=path.join(path.dirname(__file__), 'sample.ipynb'), dst='./')
+#         rename(src='./sample.ipynb', dst='./main.ipynb')
+#     del path, copy
