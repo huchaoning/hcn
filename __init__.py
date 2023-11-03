@@ -13,13 +13,6 @@ from . import di, spade, dmd, qcmos
 from .laser import *
 
 
-def copy_ipynb():
-    from os import path
-    from shutil import copy
-    copy(src=path.join(path.dirname(__file__), 'sample.ipynb'), dst='./')
-    del path, copy
-
-
 def abs_fft(array):
     return np.abs(np.fft.fft(array))
 
