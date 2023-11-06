@@ -13,6 +13,13 @@ from . import di, spade, dmd, qcmos
 from .laser import *
 
 
+def where_is_mypy():
+    from os.path import dirname
+    dir =  dirname(__file__)
+    del dirname
+    return dir
+
+
 def abs_fft(array):
     return np.abs(np.fft.fft(array))
 
