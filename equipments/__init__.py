@@ -1,2 +1,2 @@
-from . import slm, dmd, qcmos, quantum_workstation
+from . import slm, dmd, qcmos, workstation
 
