@@ -47,7 +47,7 @@ class laser:
         return z * (1 + (self.rayleigh_range / z)**2)
 
 
-    def amplitude_term(self, x, y, z):
+    def amplitude(self, x, y, z):
         n = self.mode.n
         m = self.mode.m
 
@@ -63,7 +63,7 @@ class laser:
             return
     
 
-    def phase_term(self, x, y, z):
+    def phase(self, x, y, z):
         n = self.mode.n
         m = self.mode.m
         k = self.wave_number
