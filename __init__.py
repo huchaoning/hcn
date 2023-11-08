@@ -9,7 +9,7 @@ from scipy.special import hermite, laguerre
 
 import timeit
 
-import equipments
+from .equipments import *
 
 from .laser import *
 
@@ -68,8 +68,8 @@ class matplotlib_parameter:
         from matplotlib_inline import backend_inline
         backend_inline.set_matplotlib_formats('svg')
         del backend_inline
-        matplotlib_parameter.font()
-        matplotlib_parameter.figsize()
+        matplotlib_parameter.set_font()
+        matplotlib_parameter.set_figsize()
 
 
 def plot(x, y, fmts='-', num=300,

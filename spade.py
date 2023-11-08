@@ -1,11 +1,10 @@
 from math import sqrt
 
-
 point_1 = None
 point_2 = None
 characteristic_width = 1
-mode = '+-'
 
+mode = '+-'
 
 def photon_number(img):
     return img[point_1[1]][point_1[0]], img[point_2[1]][point_2[0]]
