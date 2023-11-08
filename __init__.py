@@ -9,7 +9,8 @@ from scipy.special import hermite, laguerre
 
 import timeit
 
-from . import di, spade, dmd, qcmos, quantum_workstation
+import equipments
+
 from .laser import *
 
 
