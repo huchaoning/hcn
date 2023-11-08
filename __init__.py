@@ -39,7 +39,7 @@ def to_csv(array, filename):
 class matplotlib_parameter:
 
     @classmethod
-    def font_show(self):
+    def show_font(self):
         from matplotlib.font_manager import get_font_names
         all_fonts = get_font_names()
         print('All font list get from matplotlib.font_manager:')
@@ -48,7 +48,7 @@ class matplotlib_parameter:
         del get_font_names
 
     @classmethod
-    def font(self, family=None, weight=None):
+    def set_font(self, family=None, weight=None):
         if family is None:
             from matplotlib.font_manager import fontManager
             from os import path
@@ -59,11 +59,11 @@ class matplotlib_parameter:
             plt.rc('font', family=family, weight=weight)
 
     @classmethod
-    def figsize(self, figsize_x = 6, figsize_y = 4):
+    def set_figsize(self, figsize_x = 6, figsize_y = 4):
         plt.rcParams['figure.figsize'] = (figsize_x, figsize_y)
 
     @classmethod
-    def default(self):
+    def set_default(self):
         from matplotlib_inline import backend_inline
         backend_inline.set_matplotlib_formats('svg')
         del backend_inline
@@ -74,8 +74,10 @@ class matplotlib_parameter:
 def plot(x, y, fmts='-', num=300,
          title=None, label=None,
          xlabel=None, ylabel=None, xlim=None, ylim=None,
-         legend=True, grid=True,
+         legend=True, grid=True, figsize=None, font=None,
          show=True, save=None):
+
+    default = True
 
     if isinstance(x, (list, tuple)) and len(x) == 2 :
         if callable(y):
@@ -92,6 +94,14 @@ def plot(x, y, fmts='-', num=300,
                 y_.append(y(x_))
             y = np.array(y_)
             del x_, y_
+
+    if figsize is not None:
+        matplotlib_parameter.set_figsize(figsize[0], figsize[1])
+        default = False
+
+    if font is not None:
+        matplotlib_parameter.set_font(family=font)
+        default = False
 
     if title is not None:
         plt.title(title)
@@ -126,13 +136,27 @@ def plot(x, y, fmts='-', num=300,
 
     if show:
         plt.show()
+
+    if not default:
+        matplotlib_parameter.set_default()
+        default = True
     
 
 def hist(x, bins=300, histtype='step', density=True,
          title=None, label=None,
          xlabel=None, ylabel=None, xlim=None, ylim=None,
-         legend=True, grid=True,
-         save=None):
+         legend=True, grid=True, figsize=None, font=None,
+         show=True, save=None):
+
+    default = True
+
+    if figsize is not None:
+        matplotlib_parameter.set_figsize(figsize[0], figsize[1])
+        default = False
+
+    if font is not None:
+        matplotlib_parameter.set_font(family=font)
+        default = False
 
     if title is not None:
         plt.title(title)
@@ -165,12 +189,28 @@ def hist(x, bins=300, histtype='step', density=True,
     if save is not None:
         plt.savefig(save)
 
-    plt.show()
+    if show:
+        plt.show()
 
+    if not default:
+        matplotlib_parameter.set_default()
+        default = True
+    
 
 def imshow(x, cmap=None,
-           title=None, colorbar=True, axis=False, font=None, 
-           save=None):
+           title=None, colorbar=True, axis=False, 
+           figsize=None, font=None,
+           show=True, save=None):
+
+    default = True
+
+    if figsize is not None:
+        matplotlib_parameter.set_figsize(figsize[0], figsize[1])
+        default = False
+
+    if font is not None:
+        matplotlib_parameter.set_font(family=font)
+        default = False
 
     if not axis:
         plt.xticks(())
@@ -190,8 +230,73 @@ def imshow(x, cmap=None,
     if save is not None:
         plt.savefig(save)
 
-    plt.show()
+    if show:
+        plt.show()
 
+    if not default:
+        matplotlib_parameter.set_default()
+        default = True
+    
 
-matplotlib_parameter.default()
+def scatter(x, y, s=None, c=None, alpha=None, 
+            title=None, label=None, colorbar=None,
+            xlabel=None, ylabel=None, xlim=None, ylim=None,
+            legend=True, grid=True, figsize=None, font=None,
+            show=True, save=None):
+
+    default = True
+
+    if figsize is not None:
+        matplotlib_parameter.set_figsize(figsize[0], figsize[1])
+        default = False
+
+    if font is not None:
+        matplotlib_parameter.set_font(family=font)
+        default = False
+
+    if title is not None:
+        plt.title(title)
+
+    if xlabel is not None:
+        plt.xlabel(xlabel)
+
+    if ylabel is not None:
+        plt.ylabel(ylabel)
+
+    if xlim is not None:
+        plt.xlim(xlim)
+
+    if ylim is not None:
+        plt.ylim(ylim)
+
+    if label is None:
+        plt.scatter(x, y, s=s, c=c, alpha=alpha)
+    else:
+        plt.scatter(x, y, s=s, c=c, alpha=alpha, label=label)
+
+    if legend and label is not None:
+        plt.legend()
+
+    if grid:
+        plt.grid(True)
+    else:
+        plt.grid(False)
+
+    if colorbar:
+        plt.colorbar()
+    elif (colorbar is not False) and (c is not None):
+        plt.colorbar()
+
+    if save is not None:
+        plt.savefig(save)
+
+    if show:
+        plt.show()
+
+    if not default:
+        matplotlib_parameter.set_default()
+        default = True
+    
+
+matplotlib_parameter.set_default()
 
