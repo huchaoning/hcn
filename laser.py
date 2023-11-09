@@ -60,7 +60,7 @@ class laser:
             # rc = self.beam_waist * sqrt(2**(1-n-m)/(pi*factorial(n)*factorial(m))) / w
             return hermite(n, monic=True)(sqrt(2)*x/w)*hermite(m, monic=True)(sqrt(2)*y/w)*np.exp(-(rho/w)**2)*(w0/w)
         elif isinstance(self.mode, laguerre_gauss):
-            return
+            pass
     
 
     def phase(self, x, y, z):
@@ -75,5 +75,11 @@ class laser:
         if isinstance(self.mode, hermite_gauss):
             return np.exp(1j*((n+m+1)*xi-k*(rho**2/(2*r)+z)))
         elif isinstance(self.mode, laguerre_gauss):
-            return  None
+            pass
+
+    def complex_amplitude(self, x, y, z):
+        return self.amplitude(x, y, z) * self.phase(x, y, z)
+
+    def intensity(self, x, y, z):
+        return np.square(np.abs(self.complex_amplitude(x, y, z)))
 
