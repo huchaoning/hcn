@@ -32,8 +32,9 @@ def read_csv(path):
     return np.array(pd.read_csv(path, header=None))
 
 
-def to_csv(array, filename):
-    pd.DataFrame(array).to_csv(filename, header=None, index=None)
+def to_csv(array=None, filename='Untitled.csv'):
+    if array is not None:
+        pd.DataFrame(array).to_csv(filename, header=None, index=None)
 
 
 class matplotlib_parameter:

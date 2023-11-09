@@ -51,31 +51,41 @@ class laser:
         n = self.mode.n
         m = self.mode.m
 
-        w0 = self.beam_waist
-
         rho = self.radial_beam_coordinate(x, y)
+
+        w0 = self.beam_waist
         w = self.beam_size(z)
 
         if isinstance(self.mode, hermite_gauss):
             # rc = self.beam_waist * sqrt(2**(1-n-m)/(pi*factorial(n)*factorial(m))) / w
-            return hermite(n, monic=True)(sqrt(2)*x/w)*hermite(m, monic=True)(sqrt(2)*y/w)*np.exp(-(rho/w)**2)*(w0/w)
+            return (w0/w)*hermite(n, monic=True)(sqrt(2)*x/w)*hermite(m, monic=True)(sqrt(2)*y/w)*np.exp(-(rho/w)**2)
         elif isinstance(self.mode, laguerre_gauss):
             pass
-    
 
-    def phase(self, x, y, z):
+
+    def phase_shift(self, x, y, z):
         n = self.mode.n
         m = self.mode.m
-        k = self.wave_number
-
+    
         rho = self.radial_beam_coordinate(x, y)
-        r = self.wave_radius_of_curvature(z)
         xi = self.gouy_phase(z)
 
+        k = self.wave_number
+        r = self.wave_radius_of_curvature(z)
+
         if isinstance(self.mode, hermite_gauss):
-            return np.exp(1j*((n+m+1)*xi-k*(rho**2/(2*r)+z)))
+            return k*(rho**2/(2*r)+z) - xi*(n+m+1)
         elif isinstance(self.mode, laguerre_gauss):
             pass
+
+    def phase_map(self, x, y, z):
+        n = self.mode.n
+        m = self.mode.m
+        w = self.beam_size(z)
+        return np.sign(hermite(n, monic=True)(sqrt(2)*x/w)*hermite(m, monic=True)(sqrt(2)*y/w))
+
+    def phase(self, x, y, z):
+        return np.exp(1j*self.phase_shift(x, y, z))
 
     def complex_amplitude(self, x, y, z):
         return self.amplitude(x, y, z) * self.phase(x, y, z)
