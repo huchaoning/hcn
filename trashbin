@@ -182,3 +182,10 @@
 #         copy(src=path.join(path.dirname(__file__), 'sample.ipynb'), dst='./')
 #         rename(src='./sample.ipynb', dst='./main.ipynb')
 #     del path, copy
+
+
+# def phase_map(self, x, y, z):
+#     n = self.mode.n
+#     m = self.mode.m
+#     w = self.beam_size(z)
+#     return np.sign(hermite(n)(sqrt(2)*x/w)*hermite(m)(sqrt(2)*y/w))
