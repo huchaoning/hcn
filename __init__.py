@@ -5,20 +5,19 @@ import matplotlib.pyplot as plt
 import cv2 as cv
 import pandas as pd
 
-from scipy.special import hermite, laguerre
-
-import timeit
+import os, shutil, timeit
 
 from .equipments import *
-
 from .laser import *
+from . import spade, di, cgh
 
 
 def where_is_mypy():
-    from os.path import dirname
-    dir =  dirname(__file__)
-    del dirname
-    return dir
+    return os.path.dirname(__file__)
+
+
+def square_abs(array):
+    return np.square(np.abs(array))
 
 
 def abs_fft(array):
@@ -49,13 +48,16 @@ class matplotlib_parameter:
         del get_font_names
 
     @classmethod
-    def set_font(self, family=None, weight=None):
+    def set_font(self, family=None, weight=None, serif=False):
         if family is None:
             from matplotlib.font_manager import fontManager
-            from os import path
-            fontManager.addfont(path.join(path.dirname(__file__), 'font/SourceHanSans.otf'))
-            plt.rcParams['font.family'] = ['Source Han Sans SC']
-            del fontManager, path
+            fontManager.addfont(os.path.join(os.path.dirname(__file__), 'font/SourceHanSerif.otf'))
+            fontManager.addfont(os.path.join(os.path.dirname(__file__), 'font/SourceHanSans.otf'))
+            if serif:
+                plt.rcParams['font.family'] = ['Source Han Serif SC']
+            else:
+                plt.rcParams['font.family'] = ['Source Han Sans SC']
+            del fontManager
         else:
             plt.rc('font', family=family, weight=weight)
 
