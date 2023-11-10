@@ -2,7 +2,7 @@ import numpy as np
 from .equipments import slm
 from .laser import laser
 
-def fx(method=1, original=False):
+def fx(method=2, original=False):
     from os import path
     fx = np.load(path.join(path.dirname(__file__), f'fx{method}.npy'))
     del path
@@ -15,7 +15,7 @@ def fx(method=1, original=False):
         return fx
 
 
-def gen(beam=None, method=1, nx=500, ny=0):
+def gen(beam=None, method=2, nx=500, ny=0):
     if isinstance(beam, laser):
 
         h, v = slm.resolution

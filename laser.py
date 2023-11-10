@@ -28,7 +28,7 @@ class laser:
         self.wavelength = wavelength
         self.wave_number = tau / self.wavelength
         self.beam_waist = beam_waist
-        self.rayleigh_range = (pi * self.beam_waist**2) / self.wavelength
+        self.rayleigh_range = (pi * (2*self.beam_waist)**2) / self.wavelength
         if isinstance(mode, (hermite_gauss, laguerre_gauss)):
             self.mode = mode
         else:
