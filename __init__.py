@@ -2,10 +2,11 @@ from math import *
 import numpy as np
 import matplotlib.pyplot as plt
 
-import cv2 as cv
+from PIL import Image as image
 import pandas as pd
 
 import os, shutil, timeit
+from glob import glob
 
 from .equipments import *
 from .laser import *
@@ -23,9 +24,25 @@ def square_abs(array):
 def abs_fft(array):
     return np.abs(np.fft.fft(array))
 
+try:
+    import cv2 as cv
+    def imread(img_path):
+        return cv.imread(img_path, cv.IMREAD_GRAYSCALE | cv.IMREAD_ANYDEPTH).astype(np.float64)
+except ModuleNotFoundError:
+    def imread(img_path):
+        return np.array(image.open(img_path))
 
-def imread(img_path):
-    return cv.imread(img_path, cv.IMREAD_GRAYSCALE | cv.IMREAD_ANYDEPTH).astype(np.float64)
+
+def max_min_normalization(array):
+    return (array - array.min()) / (array.max() - array.min())
+
+
+def normalization(array):
+    return array / array.max()
+
+
+def fast_meshgrid(h, v, scale = 1):
+    return np.meshgrid(np.arange(-h/2, h/2) * scale, -np.arange(-v/2, v/2) * scale)
 
 
 def read_csv(path):
@@ -201,46 +218,50 @@ def hist(x, bins=300, histtype='step', density=True,
         default = True
     
 
-def imshow(x, cmap=None,
+def imshow(x, cmap=None, pillow=False,
            title=None, colorbar=True, axis=False, 
            figsize=None, font=None,
            show=True, save=None):
 
-    default = True
-
-    if figsize is not None:
-        matplotlib_parameter.set_figsize(figsize[0], figsize[1])
-        default = False
-
-    if font is not None:
-        matplotlib_parameter.set_font(family=font)
-        default = False
-
-    if not axis:
-        plt.xticks(())
-        plt.yticks(())
-
-    if title is not None:
-        plt.title(title)
-
-    if cmap is None:
-        plt.imshow(x)
+    if pillow:
+        image.fromarray(x).show()
     else:
-        plt.imshow(x, cmap=cmap)
 
-    if colorbar:
-        plt.colorbar()
-
-    if save is not None:
-        plt.savefig(save)
-
-    if show:
-        plt.show()
-
-    if not default:
-        matplotlib_parameter.set_default()
         default = True
-    
+
+        if figsize is not None:
+            matplotlib_parameter.set_figsize(figsize[0], figsize[1])
+            default = False
+
+        if font is not None:
+            matplotlib_parameter.set_font(family=font)
+            default = False
+
+        if not axis:
+            plt.xticks(())
+            plt.yticks(())
+
+        if title is not None:
+            plt.title(title)
+
+        if cmap is None:
+            plt.imshow(x)
+        else:
+            plt.imshow(x, cmap=cmap)
+
+        if colorbar:
+            plt.colorbar()
+
+        if save is not None:
+            plt.savefig(save)
+
+        if show:
+            plt.show()
+
+        if not default:
+            matplotlib_parameter.set_default()
+            default = True
+
 
 def scatter(x, y, s=None, c=None, alpha=None, 
             title=None, label=None, colorbar=None,
