@@ -1,6 +1,5 @@
 import numpy as np
-from .equipments import slm
-from .laser import laser
+
 
 def fx(method=2, original=False):
     from os import path
@@ -16,30 +15,22 @@ def fx(method=2, original=False):
         return fx
 
 
-def gen(beam=None, method=2, nx=500, ny=0):
-    if isinstance(beam, laser):
+def gen(complex_amplitude=None, method=2, nx=500, ny=0): 
+    v, h = np.shape(complex_amplitude)
+    x, y = np.meshgrid(np.arange(-h/2, h/2), -np.arange(-v/2, v/2))
+    f = fx(method=method)
 
-        h, v = slm.resolution
-        p = slm.pixel_size
+    a = np.abs(complex_amplitude) / np.abs(complex_amplitude).max()
+    phi = np.angle(complex_amplitude) - (np.pi/2)
 
-        x, y = np.meshgrid(np.arange(-h/2, h/2)*p, -np.arange(-v/2, v/2)*p)
+    if method == 1:
+        img = phi + f(a) * np.sin(phi)
+    elif method == 2:
+        img = f(a) * np.sin(phi)
 
-        f = fx(method=method)
+    from .__init__ import max_min_normalization as nl
+    img = nl(img * np.sin(2*np.pi*(x*nx/h+y*ny/v))) * 255
+    del nl
 
-        a = beam.normalized_amplitude(x, y, 0)
-        phi = beam.phase_shift(x, y, 0)
-
-        if method == 1:
-            img = phi + f(a) * np.sin(phi)
-        elif method == 2:
-            img = f(a) * np.sin(phi)
-
-        gx = nx / (h * p)
-        gy = ny / (v * p)
-
-        img = img * np.sin(2*np.pi*(x*gx+y*gy))
-        img = img - img.min()
-        img = img / img.max() * 255
-
-        return img.astype(np.uint8)
+    return img.astype(np.uint8)
 
