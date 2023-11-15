@@ -45,6 +45,8 @@ def read_csv(path):
 def to_csv(array=None, save=None):
     if array is not None:
         pd.DataFrame(array).to_csv(save, header=None, index=None)
+    else:
+        raise TypeError('array is None')
 
 
 def imread(img_path, pillow=False):
@@ -55,11 +57,16 @@ def imread(img_path, pillow=False):
 
 
 def imwrite(array=None, save=None, pillow=False):
-    if array is not None and array.dtype is np.uint8:
-        if pillow:
-            PIL.Image.fromarray(array).save(save)
+    if array is not None:
+        if array.dtype == np.uint8:
+            if pillow:
+                PIL.Image.fromarray(array).save(save)
+            else:
+                cv.imwrite(filename=save, img=array)
         else:
-            cv.imwrite(filename=save, img=array)
+            raise TypeError('array.dtype must be np.uint8')
+    else:
+        raise TypeError('array is None')
 
 
 class matplotlib_parameter:

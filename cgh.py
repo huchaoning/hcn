@@ -26,5 +26,5 @@ def gen(complex_amplitude=None, method=2, nx=500, ny=0):
         img = f(a) * np.sin(phi + (2*np.pi*(x*nx/h+y*ny/v)))
 
     from .__init__ import max_min_normalization as nl
-    return nl(img) * 255
+    return (nl(img) * 255).astype(np.uint8)
 

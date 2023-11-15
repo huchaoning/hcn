@@ -39,7 +39,7 @@ class laser:
         elif mode is None:
             self.mode = None
         else:
-            raise TypeError
+            raise TypeError('laser.mode must be hermite_gauss or laguerre_gauss')
 
     def beam_size(self, z):
         return self.beam_waist * sqrt(1 + (z / self.rayleigh_range)**2)
