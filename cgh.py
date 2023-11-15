@@ -4,15 +4,11 @@ import numpy as np
 def fx(method=2, original=False):
     from os import path
     fx = np.load(path.join(path.dirname(__file__), f'fx{method}.npy'))
-    del path
-
     if original:
         return fx
     else:
         from scipy.interpolate import interp1d
-        fx = interp1d(np.linspace(0, 1, 801), fx)
-        del interp1d
-        return fx
+        return interp1d(np.linspace(0, 1, 801), fx)
 
 
 def gen(complex_amplitude=None, method=2, nx=500, ny=0): 
@@ -30,8 +26,5 @@ def gen(complex_amplitude=None, method=2, nx=500, ny=0):
         img = f(a) * np.sin(phi + (2*np.pi*(x*nx/h+y*ny/v)))
 
     from .__init__ import max_min_normalization as nl
-    img = nl(img) * 255
-    del nl
-
-    return img
+    return nl(img) * 255
 

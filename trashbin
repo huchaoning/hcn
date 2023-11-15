@@ -189,3 +189,39 @@
 #     m = self.mode.m
 #     w = self.beam_size(z)
 #     return np.sign(hermite(n)(sqrt(2)*x/w)*hermite(m)(sqrt(2)*y/w))
+
+
+
+# def amplitude(self, x, y, z):
+#     rho = np.square(x) + np.square(y)
+
+#     # w0 = self.beam_waist
+#     w = self.beam_size(z)
+
+#     if isinstance(self.mode, hermite_gauss):
+#         n = self.mode.n
+#         m = self.mode.m
+#         hx = hermite(n)(sqrt(2)*x/w)
+#         hy = hermite(m)(sqrt(2)*y/w)
+#         return sqrt(2**(1-n-m)/(pi*factorial(n)*factorial(m)))*hx*hy*np.exp(-rho/(w**2)) / w
+#     elif isinstance(self.mode, laguerre_gauss):
+#         pass # LG 模式的振幅, 待补充
+
+
+
+# def intensity(self, x, y, z):
+#     return np.square(np.abs(self.complex_amplitude(x, y, z))) 
+
+# def phase_shift(self, x, y, z):
+#     return np.angle(self.complex_amplitude(x, y, z))
+
+# def normalized_amplitude(self, x, y, z):
+#     amplitude = np.abs(self.amplitude(x, y, z))
+#     return amplitude / amplitude.max()
+
+# def normalized_complex_amplitude(self, x, y, z):
+#     return self.normalized_amplitude(x, y, z)*np.exp(1j*self.phase_shift(x, y, z))
+
+# def normalized_intensity(self, x, y, z):
+#     return np.square(np.abs(self.normalized_complex_amplitude(x, y, z)))
+

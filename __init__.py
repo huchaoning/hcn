@@ -2,7 +2,8 @@ from math import *
 import numpy as np
 import matplotlib.pyplot as plt
 
-from PIL import Image as image
+import PIL
+import cv2 as cv
 import pandas as pd
 
 import os, shutil, timeit
@@ -24,21 +25,13 @@ def square_abs(array):
 def abs_fft(array):
     return np.abs(np.fft.fft(array))
 
-try:
-    import cv2 as cv
-    def imread(img_path):
-        return cv.imread(img_path, cv.IMREAD_GRAYSCALE | cv.IMREAD_ANYDEPTH).astype(np.float64)
-except ModuleNotFoundError:
-    def imread(img_path):
-        return np.array(image.open(img_path))
-
 
 def max_min_normalization(array):
     return (array - array.min()) / (array.max() - array.min())
 
 
 def normalization(array):
-    return array / array.max()
+    return array / array.sum()
 
 
 def fast_meshgrid(h, v, scale = 1):
@@ -49,9 +42,24 @@ def read_csv(path):
     return np.array(pd.read_csv(path, header=None))
 
 
-def to_csv(array=None, filename='Untitled.csv'):
+def to_csv(array=None, save=None):
     if array is not None:
-        pd.DataFrame(array).to_csv(filename, header=None, index=None)
+        pd.DataFrame(array).to_csv(save, header=None, index=None)
+
+
+def imread(img_path, pillow=False):
+    if pillow:
+        return np.array(PIL.Iamge.open(img_path)).astype(float)
+    else:
+        return cv.imread(img_path, cv.IMREAD_GRAYSCALE | cv.IMREAD_ANYDEPTH).astype(float)
+
+
+def imwrite(array=None, save=None, pillow=False):
+    if array is not None and array.dtype is np.uint8:
+        if pillow:
+            PIL.Image.fromarray(array).save(save)
+        else:
+            cv.imwrite(filename=save, img=array)
 
 
 class matplotlib_parameter:
@@ -224,7 +232,7 @@ def imshow(x, cmap=None, pillow=False,
            show=True, save=None):
 
     if pillow:
-        image.fromarray(x).show()
+        PIL.Image.fromarray(x).show()
     else:
 
         default = True
