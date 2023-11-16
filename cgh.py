@@ -29,9 +29,9 @@ def gen(complex_amplitude=None, method=2, nx=500, ny=0):
     phi = np.angle(complex_amplitude)
 
     if method == 1:
-        img = phi + f(a) * np.sin(phi + (2*np.pi*(x*nx/h+y*ny/v)))
+        img = phi + f(a) * np.sin(phi + (2*np.pi*(x*nx/(h*p)+y*ny/(v*p))))
     elif method == 2:
-        img = f(a) * np.sin(phi + (2*np.pi*(x*nx/h+y*ny/v)))
+        img = f(a) * np.sin(phi + (2*np.pi*(x*nx/(h*p)+y*ny/(v*p))))
 
     from .__init__ import max_min_normalization as nl
     return (nl(img) * 255).astype(np.uint8)
