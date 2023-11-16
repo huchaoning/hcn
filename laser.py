@@ -33,7 +33,7 @@ class laser:
         self.wavelength = wavelength
         self.wave_number = tau / self.wavelength
         self.beam_waist = beam_waist
-        self.rayleigh_range = (pi * (2*self.beam_waist)**2) / self.wavelength
+        self.rayleigh_range = (pi * (2 * self.beam_waist)**2) / self.wavelength
         if isinstance(mode, (hermite_gauss, laguerre_gauss)):
             self.mode = mode
         elif mode is None:
@@ -42,7 +42,7 @@ class laser:
             raise TypeError('laser.mode must be hermite_gauss or laguerre_gauss')
 
     def beam_size(self, z):
-        return self.beam_waist * sqrt(1 + (z / self.rayleigh_range)**2)
+        return 2 * self.beam_waist * sqrt(1 + (z / self.rayleigh_range)**2)
 
     def gouy_phase(self, z):
         return atan(z / self.rayleigh_range)
