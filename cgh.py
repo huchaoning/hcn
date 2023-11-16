@@ -2,7 +2,7 @@ import numpy as np
 from .equipments import slm
 
 
-(v, h), p = slm.resolution, slm.pixel_size
+(h, v), p = slm.resolution, slm.pixel_size
 x, y = np.meshgrid(np.arange(-h/2, h/2), -np.arange(-v/2, v/2))
 x, y = x*p, y*p
 
