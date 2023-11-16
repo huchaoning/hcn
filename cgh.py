@@ -1,4 +1,10 @@
 import numpy as np
+from .equipments import slm
+
+
+(v, h), p = slm.resolution, slm.pixel_size
+x, y = np.meshgrid(np.arange(-h/2, h/2), -np.arange(-v/2, v/2))
+x, y = x*p, y*p
 
 
 def fx(method=2, original=False):
@@ -11,9 +17,11 @@ def fx(method=2, original=False):
         return interp1d(np.linspace(0, 1, 801), fx)
 
 
+def superposition(mode_1, mode_2, split=50):
+    return mode_1*np.exp(2j*np.pi*y*split/(v*p))+mode_2*np.exp(-2j*np.pi*y*split/(v*p))
+
+
 def gen(complex_amplitude=None, method=2, nx=500, ny=0): 
-    v, h = np.shape(complex_amplitude)
-    x, y = np.meshgrid(np.arange(-h/2, h/2), -np.arange(-v/2, v/2))
 
     f = fx(method=method)
 
