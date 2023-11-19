@@ -51,7 +51,7 @@ def to_csv(array=None, save=None):
 
 def imread(img_path, pillow=False):
     if pillow:
-        return np.array(PIL.Iamge.open(img_path)).astype(float)
+        return np.array(PIL.Image.open(img_path)).astype(float)
     else:
         return cv.imread(img_path, cv.IMREAD_GRAYSCALE | cv.IMREAD_ANYDEPTH).astype(float)
 
