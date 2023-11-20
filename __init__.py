@@ -14,6 +14,11 @@ from .laser import *
 from . import spade, di, cgh
 
 
+from matplotlib_inline import backend_inline
+backend_inline.set_matplotlib_formats('svg')
+del backend_inline
+
+
 from .temp_code import run, run_all
 
 
@@ -72,42 +77,34 @@ def imwrite(array=None, save=None, pillow=False):
         raise TypeError('array is None')
 
 
-class matplotlib_parameter:
+def show_all_fonts():
+    from matplotlib.font_manager import get_font_names
+    all_fonts = get_font_names()
+    print('All font list get from matplotlib.font_manager:')
+    for font in sorted(all_fonts):
+        print('\t' + font)
+    del get_font_names
 
-    @classmethod
-    def show_font(self):
-        from matplotlib.font_manager import get_font_names
-        all_fonts = get_font_names()
-        print('All font list get from matplotlib.font_manager:')
-        for font in sorted(all_fonts):
-            print('\t' + font)
-        del get_font_names
 
-    @classmethod
-    def set_font(self, family=None, weight=None, serif=False):
-        if family is None:
-            from matplotlib.font_manager import fontManager
-            fontManager.addfont(os.path.join(os.path.dirname(__file__), 'font/SourceHanSerif.otf'))
-            fontManager.addfont(os.path.join(os.path.dirname(__file__), 'font/SourceHanSans.otf'))
-            if serif:
-                plt.rcParams['font.family'] = ['Source Han Serif SC']
-            else:
-                plt.rcParams['font.family'] = ['Source Han Sans SC']
-            del fontManager
+def set_font(family=None, weight=None, serif=False):
+    if family is None:
+        from matplotlib.font_manager import fontManager
+        fontManager.addfont(os.path.join(os.path.dirname(__file__), 'font/SourceHanSerif.otf'))
+        fontManager.addfont(os.path.join(os.path.dirname(__file__), 'font/SourceHanSans.otf'))
+        if serif:
+            plt.rcParams['font.family'] = ['Source Han Serif SC']
         else:
-            plt.rc('font', family=family, weight=weight)
+            plt.rcParams['font.family'] = ['Source Han Sans SC']
+        del fontManager
+    else:
+        plt.rc('font', family=family, weight=weight)
 
-    @classmethod
-    def set_figsize(self, figsize_x = 6, figsize_y = 4):
-        plt.rcParams['figure.figsize'] = (figsize_x, figsize_y)
 
-    @classmethod
-    def set_default(self):
-        from matplotlib_inline import backend_inline
-        backend_inline.set_matplotlib_formats('svg')
-        del backend_inline
-        matplotlib_parameter.set_font()
-        matplotlib_parameter.set_figsize()
+def set_figsize(figsize=None):
+    if figsize is None:
+        plt.rcParams['figure.figsize'] = (6, 4)
+    else:
+        plt.rcParams['figure.figsize'] = figsize
 
 
 def plot(x, y, fmts='-', num=300,
@@ -116,7 +113,7 @@ def plot(x, y, fmts='-', num=300,
          legend=True, grid=True, figsize=None, font=None,
          show=True, save=None):
 
-    default = True
+    set_font(family=font)
 
     if isinstance(x, (list, tuple)) and len(x) == 2 :
         if callable(y):
@@ -133,14 +130,6 @@ def plot(x, y, fmts='-', num=300,
                 y_.append(y(x_))
             y = np.array(y_)
             del x_, y_
-
-    if figsize is not None:
-        matplotlib_parameter.set_figsize(figsize[0], figsize[1])
-        default = False
-
-    if font is not None:
-        matplotlib_parameter.set_font(family=font)
-        default = False
 
     if title is not None:
         plt.title(title)
@@ -176,9 +165,6 @@ def plot(x, y, fmts='-', num=300,
     if show:
         plt.show()
 
-    # if not default:
-    #     matplotlib_parameter.set_default()
-    #     default = True
     
 
 def hist(x, bins=300, histtype='step', density=True,
@@ -187,15 +173,7 @@ def hist(x, bins=300, histtype='step', density=True,
          legend=True, grid=True, figsize=None, font=None,
          show=True, save=None):
 
-    default = True
-
-    if figsize is not None:
-        matplotlib_parameter.set_figsize(figsize[0], figsize[1])
-        default = False
-
-    if font is not None:
-        matplotlib_parameter.set_font(family=font)
-        default = False
+    set_font(family=font)
 
     if title is not None:
         plt.title(title)
@@ -231,9 +209,6 @@ def hist(x, bins=300, histtype='step', density=True,
     if show:
         plt.show()
 
-    # if not default:
-    #     matplotlib_parameter.set_default()
-    #     default = True
     
 
 def imshow(x, cmap=None, pillow=False,
@@ -241,20 +216,11 @@ def imshow(x, cmap=None, pillow=False,
            figsize=None, font=None,
            show=True, save=None):
 
+    set_font(family=font)
+
     if pillow:
         PIL.Image.fromarray(x).show()
     else:
-
-        default = True
-
-        if figsize is not None:
-            matplotlib_parameter.set_figsize(figsize[0], figsize[1])
-            default = False
-
-        if font is not None:
-            matplotlib_parameter.set_font(family=font)
-            default = False
-
         if not axis:
             plt.xticks(())
             plt.yticks(())
@@ -276,9 +242,6 @@ def imshow(x, cmap=None, pillow=False,
         if show:
             plt.show()
 
-        # if not default:
-        #     matplotlib_parameter.set_default()
-        #     default = True
 
 
 def scatter(x, y, s=None, c=None, alpha=None, 
@@ -287,15 +250,7 @@ def scatter(x, y, s=None, c=None, alpha=None,
             legend=True, grid=True, figsize=None, font=None,
             show=True, save=None):
 
-    default = True
-
-    if figsize is not None:
-        matplotlib_parameter.set_figsize(figsize[0], figsize[1])
-        default = False
-
-    if font is not None:
-        matplotlib_parameter.set_font(family=font)
-        default = False
+    set_font(family=font)
 
     if title is not None:
         plt.title(title)
@@ -335,11 +290,4 @@ def scatter(x, y, s=None, c=None, alpha=None,
 
     if show:
         plt.show()
-
-    # if not default:
-    #     matplotlib_parameter.set_default()
-    #     default = True
-    
-
-matplotlib_parameter.set_default()
 
