@@ -2,8 +2,10 @@ import numpy as np
 from glob import glob
 from math import sqrt
 
+
 def run(_, method):
     from .__init__ import imread
+    from . import spade
     s, n1, n2= [], [], []
     estimator = eval(f'{method}.estimator')
     photon_number = eval(f'{method}.photon_number')
