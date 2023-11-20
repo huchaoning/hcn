@@ -176,9 +176,9 @@ def plot(x, y, fmts='-', num=300,
     if show:
         plt.show()
 
-    if not default:
-        matplotlib_parameter.set_default()
-        default = True
+    # if not default:
+    #     matplotlib_parameter.set_default()
+    #     default = True
     
 
 def hist(x, bins=300, histtype='step', density=True,
@@ -231,9 +231,9 @@ def hist(x, bins=300, histtype='step', density=True,
     if show:
         plt.show()
 
-    if not default:
-        matplotlib_parameter.set_default()
-        default = True
+    # if not default:
+    #     matplotlib_parameter.set_default()
+    #     default = True
     
 
 def imshow(x, cmap=None, pillow=False,
@@ -276,9 +276,9 @@ def imshow(x, cmap=None, pillow=False,
         if show:
             plt.show()
 
-        if not default:
-            matplotlib_parameter.set_default()
-            default = True
+        # if not default:
+        #     matplotlib_parameter.set_default()
+        #     default = True
 
 
 def scatter(x, y, s=None, c=None, alpha=None, 
@@ -336,9 +336,9 @@ def scatter(x, y, s=None, c=None, alpha=None,
     if show:
         plt.show()
 
-    if not default:
-        matplotlib_parameter.set_default()
-        default = True
+    # if not default:
+    #     matplotlib_parameter.set_default()
+    #     default = True
     
 
 matplotlib_parameter.set_default()
