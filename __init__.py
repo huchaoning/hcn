@@ -14,6 +14,9 @@ from .laser import *
 from . import spade, di, cgh
 
 
+from .temp_code import run, run_all
+
+
 def where_is_mypy():
     return os.path.dirname(__file__)
 
