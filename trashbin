@@ -225,3 +225,190 @@
 # def normalized_intensity(self, x, y, z):
 #     return np.square(np.abs(self.normalized_complex_amplitude(x, y, z)))
 
+
+
+# def plot(x, y, fmts='-', num=300,
+#          title=None, label=None,
+#          xlabel=None, ylabel=None, xlim=None, ylim=None,
+#          legend=True, grid=True, figsize=None, font=None,
+#          show=True, save=None):
+
+#     set_font(family=font)
+
+#     if isinstance(x, (list, tuple)) and len(x) == 2 :
+#         if callable(y):
+#             x = np.linspace(x[0], x[1], num)
+#         else:
+#             x = np.linspace(x[0], x[1], len(y))
+
+#     if callable(y):
+#         try: 
+#             y = y(x)
+#         except TypeError:
+#             y_ = []
+#             for x_ in x:
+#                 y_.append(y(x_))
+#             y = np.array(y_)
+#             del x_, y_
+
+#     if title is not None:
+#         plt.title(title)
+
+#     if xlabel is not None:
+#         plt.xlabel(xlabel)
+
+#     if ylabel is not None:
+#         plt.ylabel(ylabel)
+
+#     if xlim is not None:
+#         plt.xlim(xlim)
+
+#     if ylim is not None:
+#         plt.ylim(ylim)
+
+#     if label is None:
+#         plt.plot(x, y, fmts)
+#     else:
+#         plt.plot(x, y, fmts, label=label)
+
+#     if legend and label is not None:
+#         plt.legend()
+
+#     if grid:
+#         plt.grid(True)
+#     else:
+#         plt.grid(False)
+
+#     if save is not None:
+#         plt.savefig(save)
+
+#     if show:
+#         plt.show()
+
+    
+
+# def hist(x, bins=300, histtype='step', density=True,
+#          title=None, label=None,
+#          xlabel=None, ylabel=None, xlim=None, ylim=None,
+#          legend=True, grid=True, figsize=None, font=None,
+#          show=True, save=None):
+
+#     set_font(family=font)
+
+#     if title is not None:
+#         plt.title(title)
+
+#     if xlabel is not None:
+#         plt.xlabel(xlabel)
+
+#     if ylabel is not None:
+#         plt.ylabel(ylabel)
+
+#     if xlim is not None:
+#         plt.xlim(xlim)
+
+#     if ylim is not None:
+#         plt.ylim(ylim)
+
+#     if label is None:
+#         plt.hist(x, bins=bins, histtype=histtype, density=density)
+#     else:
+#         plt.hist(x, bins=bins, histtype=histtype, density=density, label=label)
+
+#     if legend and label is not None:
+#         plt.legend()
+
+#     if grid:
+#         plt.grid(True)
+#     else:
+#         plt.grid(False)
+
+#     if save is not None:
+#         plt.savefig(save)
+
+#     if show:
+#         plt.show()
+
+    
+
+# def imshow(x, cmap=None, pillow=False,
+#            title=None, colorbar=True, axis=False, 
+#            figsize=None, font=None,
+#            show=True, save=None):
+
+#     set_font(family=font)
+
+#     if pillow:
+#         from PIL import Image
+#         Image.fromarray(x).show()
+#     else:
+#         if not axis:
+#             plt.xticks(())
+#             plt.yticks(())
+
+#         if title is not None:
+#             plt.title(title)
+
+#         if cmap is None:
+#             plt.imshow(x)
+#         else:
+#             plt.imshow(x, cmap=cmap)
+
+#         if colorbar:
+#             plt.colorbar()
+
+#         if save is not None:
+#             plt.savefig(save)
+
+#         if show:
+#             plt.show()
+
+
+
+# def scatter(x, y, s=None, c=None, alpha=None, 
+#             title=None, label=None, colorbar=None,
+#             xlabel=None, ylabel=None, xlim=None, ylim=None,
+#             legend=True, grid=True, figsize=None, font=None,
+#             show=True, save=None):
+
+#     set_font(family=font)
+
+#     if title is not None:
+#         plt.title(title)
+
+#     if xlabel is not None:
+#         plt.xlabel(xlabel)
+
+#     if ylabel is not None:
+#         plt.ylabel(ylabel)
+
+#     if xlim is not None:
+#         plt.xlim(xlim)
+
+#     if ylim is not None:
+#         plt.ylim(ylim)
+
+#     if label is None:
+#         plt.scatter(x, y, s=s, c=c, alpha=alpha)
+#     else:
+#         plt.scatter(x, y, s=s, c=c, alpha=alpha, label=label)
+
+#     if legend and label is not None:
+#         plt.legend()
+
+#     if grid:
+#         plt.grid(True)
+#     else:
+#         plt.grid(False)
+
+#     if colorbar:
+#         plt.colorbar()
+#     elif (colorbar is not False) and (c is not None):
+#         plt.colorbar()
+
+#     if save is not None:
+#         plt.savefig(save)
+
+#     if show:
+#         plt.show()
+

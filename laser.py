@@ -2,6 +2,10 @@ import numpy as np
 from math import *
 from scipy.special import hermite, laguerre
 
+from .macro import max_min_normalization as nl
+from .macro import fast_meshgrid, square_abs
+from .grapher import imshow
+
 
 class hermite_gauss:
     def __init__(self, n, m):
@@ -10,22 +14,21 @@ class hermite_gauss:
 
 
     def pattern(self, scale=30):
-        from .__init__ import imshow, fast_meshgrid, square_abs, max_min_normalization
         n, m = self.n, self.m
         x, y = fast_meshgrid(300, 300, 1 / scale)
         rho = np.square(x) + np.square(y)
         img = hermite(n)(x) * hermite(m)(y) * np.exp(-rho/2)
-        imshow(max_min_normalization(square_abs(img)), title=r'$\rm HG_{'+f'{n},{m}'+'}$')
+        imshow(nl(square_abs(img)), title=r'$\rm HG_{'+f'{n},{m}'+'}$')
 
 
 class laguerre_gauss:
     def __init__(self, n, m):
         self.n = n
         self.m = m
+        raise TypeError('laguerre_gauss is not supported yet')
 
-    
     def pattern(self, scale=30):
-        pass # LG 模式的振幅, 待补充
+        raise TypeError('laguerre_gauss is not supported yet')
 
 
 class laser:
@@ -55,7 +58,6 @@ class laser:
 
 
     def amplitude(self, x, y, z):
-
         rho = np.square(x) + np.square(y)
         w = self.beam_size(z)
 
@@ -66,11 +68,10 @@ class laser:
             return amplitude / np.abs(amplitude).sum()
 
         elif isinstance(self.mode, laguerre_gauss):
-            pass # LG 模式的振幅, 待补充
+            raise TypeError('laguerre_gauss is not supported yet')
 
 
     def phase(self, x, y, z):
-
         rho = np.square(x) + np.square(y)
         xi = self.gouy_phase(z)
         k = self.wave_number
@@ -88,6 +89,5 @@ class laser:
         return self.amplitude(x, y, z) * self.phase(x, y, z)
 
     def intensity(self, x, y, z):
-        from .__init__ import square_abs, max_min_normalization
-        return max_min_normalization(square_abs(self.complex_amplitude(x, y, z)))
+        return nl(square_abs(self.complex_amplitude(x, y, z)))
 
