@@ -2,8 +2,8 @@ import numpy as np
 from glob import glob
 from math import sqrt
 
-from .macro import imread
-from . import spade, di
+from .grapher import imread
+from .experiments import spade, di
 
 def run(_, method):
 

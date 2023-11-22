@@ -67,10 +67,11 @@ def plot(x, y, fmts='-', dots=300,
     plt.grid(grid)
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
-    plt.xlim(xlim)
-    plt.ylim(ylim)
 
     plt.plot(x, y, fmts, label=label)
+
+    plt.xlim(xlim)
+    plt.ylim(ylim)
 
     if legend and label is not None:
         plt.legend()
@@ -90,10 +91,11 @@ def hist(x, bins=300, histtype='step', density=True,
     plt.grid(grid)
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
-    plt.xlim(xlim)
-    plt.ylim(ylim)
 
     plt.hist(x, bins=bins, histtype=histtype, density=density, label=label)
+
+    plt.xlim(xlim)
+    plt.ylim(ylim)
 
     if legend and label is not None:
         plt.legend()
@@ -113,10 +115,11 @@ def scatter(x, y, s=None, c=None, alpha=None, colorbar=None,
     plt.grid(grid)
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
-    plt.xlim(xlim)
-    plt.ylim(ylim)
 
     plt.scatter(x, y, s=s, c=c, alpha=alpha, label=label)
+
+    plt.xlim(xlim)
+    plt.ylim(ylim)
 
     if colorbar:
         plt.colorbar()
@@ -143,14 +146,15 @@ def imshow(x, cmap=None, pillow=False, colorbar=True, axis=False,
         plt.grid(grid)
         plt.xlabel(xlabel)
         plt.ylabel(ylabel)
-        plt.xlim(xlim)
-        plt.ylim(ylim)
 
         if not axis:
             plt.xticks([])
             plt.yticks([])
 
         plt.imshow(x, cmap=cmap)
+
+        plt.xlim(xlim)
+        plt.ylim(ylim)
 
         if colorbar:
             plt.colorbar()
