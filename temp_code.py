@@ -2,7 +2,7 @@ import numpy as np
 from glob import glob
 from math import sqrt
 
-from .grapher import imread
+from .plotter import imread
 from .experiments import spade, di
 
 def run(_, method):
