@@ -39,7 +39,7 @@ def set_figsize(figsize=None, lock=False):
 
 
 def plot(x, y, fmts='-', dots=300, 
-         figsize=None, title=None, label=None, legend=True, 
+         title=None, label=None, legend=True, 
          xlabel=None, ylabel=None, xlim=None, ylim=None,
          grid=True, show=True, save=None):
 
@@ -61,8 +61,7 @@ def plot(x, y, fmts='-', dots=300,
                 y_.append(y(x_))
             y = np.array(y_)
             del x_, y_
-    
-    plt.figure(figsize=figsize)
+
     plt.title(title)
     plt.grid(grid)
     plt.xlabel(xlabel)
@@ -82,11 +81,10 @@ def plot(x, y, fmts='-', dots=300,
 
 
 def hist(x, bins=300, histtype='step', density=True,
-         figsize=None, title=None, label=None, legend=True, 
+         title=None, label=None, legend=True, 
          xlabel=None, ylabel=None, xlim=None, ylim=None,
          grid=True, show=True, save=None):
 
-    plt.figure(figsize=figsize)
     plt.title(title)
     plt.grid(grid)
     plt.xlabel(xlabel)
@@ -106,11 +104,10 @@ def hist(x, bins=300, histtype='step', density=True,
 
 
 def scatter(x, y, s=None, c=None, alpha=None, colorbar=None,
-            figsize=None, title=None, label=None, legend=True, 
+            title=None, label=None, legend=True, 
             xlabel=None, ylabel=None, xlim=None, ylim=None,
             grid=True, show=True, save=None):
 
-    plt.figure(figsize=figsize)
     plt.title(title)
     plt.grid(grid)
     plt.xlabel(xlabel)
@@ -134,14 +131,13 @@ def scatter(x, y, s=None, c=None, alpha=None, colorbar=None,
 
 
 def imshow(x, cmap=None, pillow=False, colorbar=True, axis=False, 
-         figsize=None, title=None,
-         xlabel=None, ylabel=None, xlim=None, ylim=None,
-         grid=True, show=True, save=None):
+           title=None,
+           xlabel=None, ylabel=None, xlim=None, ylim=None,
+           grid=True, show=True, save=None):
 
     if pillow:
         PIL.Image.fromarray(x).show()
     else:
-        plt.figure(figsize=figsize)
         plt.title(title)
         plt.grid(grid)
         plt.xlabel(xlabel)
