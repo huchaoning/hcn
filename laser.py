@@ -4,7 +4,7 @@ from scipy.special import hermite, laguerre
 
 from .macro import max_min_normalization as nl
 from .macro import fast_meshgrid, square_abs
-from .grapher import imshow
+from .plotter import imshow
 
 
 class hermite_gauss:

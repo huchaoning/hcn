@@ -62,16 +62,21 @@ def plot(x, y, fmts='-', dots=300,
             y = np.array(y_)
             del x_, y_
 
-    plt.title(title)
-    plt.grid(grid)
-    plt.xlabel(xlabel)
-    plt.ylabel(ylabel)
+    if title is not None:
+        plt.title(title)
+    if grid is not None:    
+        plt.grid(grid)
+    if xlabel is not None:
+        plt.xlabel(xlabel)
+    if ylabel is not None:
+        plt.ylabel(ylabel)
 
     plt.plot(x, y, fmts, label=label)
 
-    plt.xlim(xlim)
-    plt.ylim(ylim)
-
+    if xlim is not None:
+        plt.xlim(xlim)
+    if ylim is not None:
+        plt.ylim(ylim)
     if legend and label is not None:
         plt.legend()
     if save is not None:
@@ -85,16 +90,21 @@ def hist(x, bins=300, histtype='step', density=True,
          xlabel=None, ylabel=None, xlim=None, ylim=None,
          grid=True, show=True, save=None):
 
-    plt.title(title)
-    plt.grid(grid)
-    plt.xlabel(xlabel)
-    plt.ylabel(ylabel)
+    if title is not None:
+        plt.title(title)
+    if grid is not None:    
+        plt.grid(grid)
+    if xlabel is not None:
+        plt.xlabel(xlabel)
+    if ylabel is not None:
+        plt.ylabel(ylabel)
 
     plt.hist(x, bins=bins, histtype=histtype, density=density, label=label)
 
-    plt.xlim(xlim)
-    plt.ylim(ylim)
-
+    if xlim is not None:
+        plt.xlim(xlim)
+    if ylim is not None:
+        plt.ylim(ylim)
     if legend and label is not None:
         plt.legend()
     if save is not None:
@@ -103,27 +113,30 @@ def hist(x, bins=300, histtype='step', density=True,
         plt.show()
 
 
-def scatter(x, y, s=None, c=None, alpha=None, colorbar=None,
+def scatter(x, y, s=None, c=None, alpha=None, colorbar=False,
             title=None, label=None, legend=True, 
             xlabel=None, ylabel=None, xlim=None, ylim=None,
             grid=True, show=True, save=None):
 
-    plt.title(title)
-    plt.grid(grid)
-    plt.xlabel(xlabel)
-    plt.ylabel(ylabel)
+    if title is not None:
+        plt.title(title)
+    if grid is not None:    
+        plt.grid(grid)
+    if xlabel is not None:
+        plt.xlabel(xlabel)
+    if ylabel is not None:
+        plt.ylabel(ylabel)
 
     plt.scatter(x, y, s=s, c=c, alpha=alpha, label=label)
 
-    plt.xlim(xlim)
-    plt.ylim(ylim)
-
-    if colorbar:
-        plt.colorbar()
-    elif (colorbar is not False) and (c is not None):
-        plt.colorbar()
+    if xlim is not None:
+        plt.xlim(xlim)
+    if ylim is not None:
+        plt.ylim(ylim)
     if legend and label is not None:
         plt.legend()
+    if colorbar and (c is not None):
+        plt.colorbar()
     if save is not None:
         plt.savefig(save)
     if show:
@@ -138,20 +151,24 @@ def imshow(x, cmap=None, pillow=False, colorbar=True, axis=False,
     if pillow:
         PIL.Image.fromarray(x).show()
     else:
-        plt.title(title)
-        plt.grid(grid)
-        plt.xlabel(xlabel)
-        plt.ylabel(ylabel)
-
+        if title is not None:
+            plt.title(title)
+        if grid is not None:    
+            plt.grid(grid)
+        if xlabel is not None:
+            plt.xlabel(xlabel)
+        if ylabel is not None:
+            plt.ylabel(ylabel)
         if not axis:
             plt.xticks([])
             plt.yticks([])
 
         plt.imshow(x, cmap=cmap)
 
-        plt.xlim(xlim)
-        plt.ylim(ylim)
-
+        if xlim is not None:
+            plt.xlim(xlim)
+        if ylim is not None:
+            plt.ylim(ylim)
         if colorbar:
             plt.colorbar()
         if save is not None:
