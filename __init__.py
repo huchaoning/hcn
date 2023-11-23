@@ -12,6 +12,6 @@ from .equipments import *
 
 from .macro import *
 from .laser import *
-from .grapher import *
+from .plotter import *
 
 from .temp_code import *
