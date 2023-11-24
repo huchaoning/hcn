@@ -12,7 +12,6 @@ class hermite_gauss:
         self.n = n
         self.m = m
 
-
     def pattern(self, scale=30):
         n, m = self.n, self.m
         x, y = fast_meshgrid(300, 300, 1 / scale)

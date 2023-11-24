@@ -1,4 +1,3 @@
-from math import *
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -7,12 +6,14 @@ import cv2 as cv
 
 from matplotlib_inline import backend_inline
 backend_inline.set_matplotlib_formats('svg')
+del backend_inline
 
 import os
 from matplotlib.font_manager import fontManager
 fontManager.addfont(os.path.join(os.path.dirname(__file__), 'font/SourceHanSans.otf'))
-plt.rcParams['font.family'] = ['Source Han Sans SC']
+del os, fontManager
 
+plt.rcParams['font.family'] = ['Source Han Sans SC']
 plt.rcParams['figure.figsize'] = (6, 4)
 
 
@@ -24,14 +25,14 @@ def show_all_fonts():
         print('\t' + font)
 
 
-def set_font(family=None, weight=None, lock=False):
+def set_font(family=None, weight=None):
     if family is None:
         plt.rcParams['font.family'] = ['Source Han Sans SC']
     else:
         plt.rc('font', family=family, weight=weight)
 
 
-def set_figsize(figsize=None, lock=False):
+def set_figsize(figsize=None):
     if figsize is None:
         plt.rcParams['figure.figsize'] = (6, 4)
     else:
@@ -39,7 +40,7 @@ def set_figsize(figsize=None, lock=False):
 
 
 def plot(x, y, fmts='-', dots=300, 
-         title=None, label=None, legend=True, 
+         axis=True, title=None, label=None, legend=True, 
          xlabel=None, ylabel=None, xlim=None, ylim=None,
          grid=True, show=True, save=None):
 
@@ -50,7 +51,9 @@ def plot(x, y, fmts='-', dots=300,
             else:
                 x = np.linspace(x[0], x[1], len(y))
         else:
-            raise TypeError('when x is a tuple or list, it is treated as the domain of y')
+            raise TypeError('when x is a tuple or list, ' +
+                            'it is treated as the domain of y, ' +
+                            'len(x) must be 2')
 
     if callable(y):
         try: 
@@ -62,6 +65,9 @@ def plot(x, y, fmts='-', dots=300,
             y = np.array(y_)
             del x_, y_
 
+    if not axis:
+        plt.xticks([])
+        plt.yticks([])
     if title is not None:
         plt.title(title)
     if grid is not None:    
@@ -71,7 +77,11 @@ def plot(x, y, fmts='-', dots=300,
     if ylabel is not None:
         plt.ylabel(ylabel)
 
-    plt.plot(x, y, fmts, label=label)
+    if np.shape(x) == np.shape(y):
+        plt.plot(x, y, fmts, label=label)
+    else:
+        raise ValueError( 'x and y must have same shape, ' +
+                         f'but have shapes {np.shape(x)} and {np.shape(y)}')
 
     if xlim is not None:
         plt.xlim(xlim)
@@ -86,10 +96,13 @@ def plot(x, y, fmts='-', dots=300,
 
 
 def hist(x, bins=300, histtype='step', density=True,
-         title=None, label=None, legend=True, 
+         axis=True, title=None, label=None, legend=True, 
          xlabel=None, ylabel=None, xlim=None, ylim=None,
          grid=True, show=True, save=None):
 
+    if not axis:
+        plt.xticks([])
+        plt.yticks([])
     if title is not None:
         plt.title(title)
     if grid is not None:    
@@ -114,10 +127,13 @@ def hist(x, bins=300, histtype='step', density=True,
 
 
 def scatter(x, y, s=None, c=None, alpha=None, colorbar=False,
-            title=None, label=None, legend=True, 
+            axis=True, title=None, label=None, legend=True, 
             xlabel=None, ylabel=None, xlim=None, ylim=None,
             grid=True, show=True, save=None):
 
+    if not axis:
+        plt.xticks([])
+        plt.yticks([])
     if title is not None:
         plt.title(title)
     if grid is not None:    
@@ -127,7 +143,11 @@ def scatter(x, y, s=None, c=None, alpha=None, colorbar=False,
     if ylabel is not None:
         plt.ylabel(ylabel)
 
-    plt.scatter(x, y, s=s, c=c, alpha=alpha, label=label)
+    if np.shape(x) == np.shape(y):
+        plt.scatter(x, y, s=s, c=c, alpha=alpha, label=label)
+    else:
+        raise ValueError( 'x and y must have same shape, ' +
+                         f'but have shapes {np.shape(x)} and {np.shape(y)}')
 
     if xlim is not None:
         plt.xlim(xlim)
@@ -143,14 +163,17 @@ def scatter(x, y, s=None, c=None, alpha=None, colorbar=False,
         plt.show()
 
 
-def imshow(x, cmap=None, pillow=False, colorbar=True, axis=False, 
-           title=None,
+def imshow(x, cmap=None, pillow=False, colorbar=True, 
+           axis=False, title=None,
            xlabel=None, ylabel=None, xlim=None, ylim=None,
            grid=True, show=True, save=None):
 
     if pillow:
         PIL.Image.fromarray(x).show()
     else:
+        if not axis:
+            plt.xticks([])
+            plt.yticks([])
         if title is not None:
             plt.title(title)
         if grid is not None:    
@@ -159,9 +182,6 @@ def imshow(x, cmap=None, pillow=False, colorbar=True, axis=False,
             plt.xlabel(xlabel)
         if ylabel is not None:
             plt.ylabel(ylabel)
-        if not axis:
-            plt.xticks([])
-            plt.yticks([])
 
         plt.imshow(x, cmap=cmap)
 

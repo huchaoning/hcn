@@ -1,6 +1,5 @@
 import numpy as np
 
-
 def where_is_mypy():
     import os
     return os.path.dirname(__file__)
@@ -26,7 +25,7 @@ def fast_meshgrid(h, v, scale = 1):
     return np.meshgrid(np.arange(-h/2, h/2) * scale, -np.arange(-v/2, v/2) * scale)
 
 
-def read_csv(path):
+def read_csv(path=None):
     import pandas as pd
     return np.array(pd.read_csv(path, header=None))
 
