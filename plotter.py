@@ -11,7 +11,7 @@ del backend_inline
 import os
 from matplotlib.font_manager import fontManager
 fontManager.addfont(os.path.join(os.path.dirname(__file__), 'font/SourceHanSans.otf'))
-del os, fontManager
+del fontManager
 
 plt.rcParams['font.family'] = ['Source Han Sans SC']
 plt.rcParams['figure.figsize'] = (6, 4)
