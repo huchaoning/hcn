@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+import os
 import PIL
 import cv2 as cv
 
@@ -8,7 +9,6 @@ from matplotlib_inline import backend_inline
 backend_inline.set_matplotlib_formats('svg')
 del backend_inline
 
-import os
 from matplotlib.font_manager import fontManager
 fontManager.addfont(os.path.join(os.path.dirname(__file__), 'font/SourceHanSans.otf'))
 del fontManager
