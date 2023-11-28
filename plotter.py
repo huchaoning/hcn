@@ -15,6 +15,7 @@ del fontManager
 
 plt.rcParams['font.family'] = ['Source Han Sans SC']
 plt.rcParams['figure.figsize'] = (6, 4)
+plt.rcParams['savefig.format'] = 'svg'
 
 
 def show_all_fonts():
