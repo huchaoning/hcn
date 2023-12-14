@@ -1,8 +1,12 @@
 import numpy as np
+import os
 
 def where_is_mypy():
-    import os
     return os.path.dirname(__file__)
+
+
+def open_mypy_via_code():
+    os.system('code ' + where_is_mypy())
 
 
 def square_abs(array):
