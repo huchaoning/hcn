@@ -43,7 +43,7 @@ def set_figsize(figsize=None):
 def plot(x, y, fmts='-', dots=300, 
          axis=True, title=None, label=None, legend=True, 
          xlabel=None, ylabel=None, xlim=None, ylim=None,
-         grid=True, show=True, save=None):
+         grid=True, show=True, save=None, override=False):
 
     if isinstance(x, (list, tuple)):
         if len(x) == 2:
@@ -90,8 +90,16 @@ def plot(x, y, fmts='-', dots=300,
         plt.ylim(ylim)
     if legend and label is not None:
         plt.legend()
+
     if save is not None:
-        plt.savefig(save)
+        if os.path.exists(save):
+            if override:
+                plt.savefig(save)
+            else:
+                raise ValueError('file already exists')
+        else:
+            plt.savefig(save)
+
     if show:
         plt.show()
 
@@ -99,7 +107,7 @@ def plot(x, y, fmts='-', dots=300,
 def hist(x, bins=300, histtype='step', density=True,
          axis=True, title=None, label=None, legend=True, 
          xlabel=None, ylabel=None, xlim=None, ylim=None,
-         grid=True, show=True, save=None):
+         grid=True, show=True, save=None, override=False):
 
     if not axis:
         plt.xticks([])
@@ -121,8 +129,16 @@ def hist(x, bins=300, histtype='step', density=True,
         plt.ylim(ylim)
     if legend and label is not None:
         plt.legend()
+
     if save is not None:
-        plt.savefig(save)
+        if os.path.exists(save):
+            if override:
+                plt.savefig(save)
+            else:
+                raise ValueError('file already exists')
+        else:
+            plt.savefig(save)
+
     if show:
         plt.show()
 
@@ -130,7 +146,7 @@ def hist(x, bins=300, histtype='step', density=True,
 def scatter(x, y, s=None, c=None, alpha=None, colorbar=False,
             axis=True, title=None, label=None, legend=True, 
             xlabel=None, ylabel=None, xlim=None, ylim=None,
-            grid=True, show=True, save=None):
+            grid=True, show=True, save=None, override=False):
 
     if not axis:
         plt.xticks([])
@@ -158,8 +174,16 @@ def scatter(x, y, s=None, c=None, alpha=None, colorbar=False,
         plt.legend()
     if colorbar and (c is not None):
         plt.colorbar()
+
     if save is not None:
-        plt.savefig(save)
+        if os.path.exists(save):
+            if override:
+                plt.savefig(save)
+            else:
+                raise ValueError('file already exists')
+        else:
+            plt.savefig(save)
+
     if show:
         plt.show()
 
@@ -167,7 +191,7 @@ def scatter(x, y, s=None, c=None, alpha=None, colorbar=False,
 def imshow(x, cmap=None, pillow=False, colorbar=True, 
            axis=False, title=None,
            xlabel=None, ylabel=None, xlim=None, ylim=None,
-           grid=True, show=True, save=None):
+           grid=True, show=True, save=None, override=False):
 
     if pillow:
         PIL.Image.fromarray(x).show()
@@ -192,8 +216,16 @@ def imshow(x, cmap=None, pillow=False, colorbar=True,
             plt.ylim(ylim)
         if colorbar:
             plt.colorbar()
+
         if save is not None:
-            plt.savefig(save)
+            if os.path.exists(save):
+                if override:
+                    plt.savefig(save)
+                else:
+                    raise ValueError('file already exists')
+            else:
+                plt.savefig(save)
+
         if show:
             plt.show()
 
