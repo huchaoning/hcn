@@ -5,6 +5,8 @@ import os
 import PIL
 import cv2 as cv
 
+from .macro import sha1
+
 from matplotlib_inline import backend_inline
 backend_inline.set_matplotlib_formats('svg')
 del backend_inline
@@ -38,6 +40,51 @@ def set_figsize(figsize=None):
         plt.rcParams['figure.figsize'] = (6, 4)
     else:
         plt.rcParams['figure.figsize'] = figsize
+
+
+def imread(img_path, pillow=False):
+    if os.path.exists(img_path):
+        if pillow:
+            return np.array(PIL.Image.open(img_path)).astype(float)
+        else:
+            return cv.imread(img_path, cv.IMREAD_GRAYSCALE | cv.IMREAD_ANYDEPTH).astype(float)
+    else:
+        raise ValueError(f'{img_path} is not exists')
+
+
+def imwrite(array=None, save=None, pillow=False):
+    if array is not None:
+        if array.dtype == np.uint8:
+            if pillow:
+                PIL.Image.fromarray(array).save(save)
+            else:
+                cv.imwrite(filename=save, img=array)
+        else:
+            raise TypeError('array.dtype must be np.uint8')
+    else:
+        raise TypeError('array is None')
+
+
+def save_util(save=None, override=False):
+    if type(save) is bool or type(save) is str:
+        if save:
+            while True:
+                temp_name = f'{np.random.randint(0, 1e8)}.svg'
+                if not os.path.exists(temp_name):
+                    break
+            plt.savefig(temp_name)
+            save = sha1(temp_name)
+            os.rename(src=temp_name, dst=f'{save}.svg')
+        elif type(save) is str:
+            if os.path.exists(save) or os.path.exists(f'{save}.svg'):
+                if override:
+                    plt.savefig(save)
+                else:
+                    raise FileExistsError('file already exists')
+            else:
+                plt.savefig(save)
+    else:
+        raise TypeError('type(save) must be bool or str')
 
 
 def plot(x, y, fmts='-', dots=300, 
@@ -90,16 +137,8 @@ def plot(x, y, fmts='-', dots=300,
         plt.ylim(ylim)
     if legend and label is not None:
         plt.legend()
-
     if save is not None:
-        if os.path.exists(save):
-            if override:
-                plt.savefig(save)
-            else:
-                raise ValueError('file already exists')
-        else:
-            plt.savefig(save)
-
+        save_util(save=save, override=override)
     if show:
         plt.show()
 
@@ -129,16 +168,8 @@ def hist(x, bins=300, histtype='step', density=True,
         plt.ylim(ylim)
     if legend and label is not None:
         plt.legend()
-
     if save is not None:
-        if os.path.exists(save):
-            if override:
-                plt.savefig(save)
-            else:
-                raise ValueError('file already exists')
-        else:
-            plt.savefig(save)
-
+        save_util(save=save, override=override)
     if show:
         plt.show()
 
@@ -174,19 +205,10 @@ def scatter(x, y, s=None, c=None, alpha=None, colorbar=False,
         plt.legend()
     if colorbar and (c is not None):
         plt.colorbar()
-
     if save is not None:
-        if os.path.exists(save):
-            if override:
-                plt.savefig(save)
-            else:
-                raise ValueError('file already exists')
-        else:
-            plt.savefig(save)
-
+        save_util(save=save, override=override)
     if show:
         plt.show()
-
 
 def imshow(x, cmap=None, pillow=False, colorbar=True, 
            axis=False, title=None,
@@ -216,39 +238,8 @@ def imshow(x, cmap=None, pillow=False, colorbar=True,
             plt.ylim(ylim)
         if colorbar:
             plt.colorbar()
-
         if save is not None:
-            if os.path.exists(save):
-                if override:
-                    plt.savefig(save)
-                else:
-                    raise ValueError('file already exists')
-            else:
-                plt.savefig(save)
-
+            save_util(save=save, override=override)
         if show:
             plt.show()
-
-
-def imread(img_path, pillow=False):
-    if os.path.exists(img_path):
-        if pillow:
-            return np.array(PIL.Image.open(img_path)).astype(float)
-        else:
-            return cv.imread(img_path, cv.IMREAD_GRAYSCALE | cv.IMREAD_ANYDEPTH).astype(float)
-    else:
-        raise ValueError(f'{img_path} is not exists')
-
-
-def imwrite(array=None, save=None, pillow=False):
-    if array is not None:
-        if array.dtype == np.uint8:
-            if pillow:
-                PIL.Image.fromarray(array).save(save)
-            else:
-                cv.imwrite(filename=save, img=array)
-        else:
-            raise TypeError('array.dtype must be np.uint8')
-    else:
-        raise TypeError('array is None')
 
