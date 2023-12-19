@@ -44,3 +44,39 @@ def to_csv(array=None, save=None):
     else:
         raise TypeError('array is None')
 
+
+def sha1(file, chunk_size=65535):
+    import hashlib
+    with open(file, 'rb') as file:
+        hash = hashlib.sha1()
+        while True:
+            chunk = file.read(chunk_size)
+            if not chunk:
+                break
+            hash.update(chunk)
+    return hash.hexdigest()
+
+
+def sha256(file, chunk_size=65535):
+    import hashlib
+    with open(file, 'rb') as file:
+        hash = hashlib.sha256()
+        while True:
+            chunk = file.read(chunk_size)
+            if not chunk:
+                break
+            hash.update(chunk)
+    return hash.hexdigest()
+
+
+def md5(file, chunk_size=65535):
+    import hashlib
+    with open(file, 'rb') as file:
+        hash = hashlib.md5()
+        while True:
+            chunk = file.read(chunk_size)
+            if not chunk:
+                break
+            hash.update(chunk)
+    return hash.hexdigest()
+
