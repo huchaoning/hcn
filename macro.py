@@ -1,12 +1,17 @@
 import numpy as np
+import pandas as pd
 import os
 
 def where_is_mypy():
     return os.path.dirname(__file__)
 
 
-def open_mypy_via_code():
-    os.system('code ' + where_is_mypy())
+def open_mypy():
+    import platform
+    if platform.system() == 'Windows':
+        os.system('start ' + where_is_mypy())
+    else:
+        os.system('code ' + where_is_mypy())
 
 
 def square_abs(array):
@@ -30,12 +35,10 @@ def fast_meshgrid(h, v, scale = 1):
 
 
 def read_csv(path=None):
-    import pandas as pd
     return np.array(pd.read_csv(path, header=None))
 
 
 def to_csv(array=None, save=None):
-    import pandas as pd
     if array is not None:
         pd.DataFrame(array).to_csv(save, header=None, index=None)
     else:
