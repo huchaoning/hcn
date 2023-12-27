@@ -52,6 +52,21 @@ def imread(img_path, pillow=False):
         raise ValueError(f'{img_path} is not exists')
 
 
+def imreadmutli(img_path, pillow=True):
+    if os.path.exists(img_path):
+        if pillow:
+                img = PIL.Image.open(img_path)
+                mptiff = []
+                for i in range(img.n_frames):
+                    img.seek(i)
+                    mptiff.append(np.array(img))
+                return np.array(mptiff).astype(float)
+        else:
+            raise ValueError('cv2 is not available yet')
+    else:
+        raise ValueError(f'{img_path} is not exists')
+
+
 def imwrite(array=None, save=None, pillow=False):
     if array is not None:
         if array.dtype == np.uint8:
