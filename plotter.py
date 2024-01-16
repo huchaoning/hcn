@@ -82,7 +82,7 @@ def imwrite(array=None, save=None, pillow=False):
 
 def save_util(save=None, override=False):
     if type(save) is bool or type(save) is str:
-        if save:
+        if save == True:
             while True:
                 temp_name = f'{np.random.randint(0, 1e8)}.svg'
                 if not os.path.exists(temp_name):
