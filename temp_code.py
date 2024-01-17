@@ -1,37 +1,21 @@
-import numpy as np
-from glob import glob
-from math import sqrt
+import os
 
-from .plotter import imread
-from .experiments import spade, di
-
-def run(_, method):
-
-    s, n1, n2= [], [], []
-    estimator = eval(f'{method}.estimator')
-    photon_number = eval(f'{method}.photon_number')
-    for img in glob(f'./{method}/s{_}_*.tif'):
-        temp = imread(img)
-        s.append(estimator(temp))
-        if method == 'spade':
-            n1.append(photon_number(temp)[0])
-            n2.append(photon_number(temp)[1])
-        elif method == 'di':
-            n1.append(photon_number(temp))
-            n2 = 0
-        else:
-            raise TypeError
-    return np.array(s), np.array(n1), np.array(n2)
-
-
-def run_all(_, method):
-    if method != 'di' and method != 'spade':
-        raise TypeError
-    mean, var, nvar = [], [], []
-    for i in _:
-        s, n1, n2 = run(i, method)
-        mean.append(s.mean())
-        var.append(s.var())
-        nvar.append(sqrt((n1+n2).mean() * s.var()))
-    return np.array(mean), np.array(var), np.array(nvar)
-
+def rename_util(method, path='./'):
+    name_dict = {'m(7)':-7,
+                 'm(6)':-6,
+                 'm(5)':-5,
+                 'm(4)':-4,
+                 'm(3)':-3,
+                 'm(2)':-2,
+                 'm(1)':-1,
+                 'p(0)': 0,
+                 'p(1)': 1,
+                 'p(2)': 2,
+                 'p(3)': 3,
+                 'p(4)': 4,
+                 'p(5)': 5,
+                 'p(6)': 6,
+                 'p(7)': 7}
+    for name in name_dict:
+        os.rename(src = os.path.join(path, method + '_' + name + '.tif'), 
+                  dst = os.path.join(path, method + str(name_dict[name])) + '.tif')
