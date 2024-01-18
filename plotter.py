@@ -102,7 +102,7 @@ def save_util(save=None, override=False):
         raise TypeError('type(save) must be bool or str')
 
 
-def plot(x, y, fmts='-', dots=300, 
+def plot(x, y, fmts='-', dots=300, alpha=1, 
          axis=True, title=None, label=None, legend=True, 
          xlabel=None, ylabel=None, xlim=None, ylim=None,
          grid=True, show=True, save=None, override=False):
@@ -141,7 +141,7 @@ def plot(x, y, fmts='-', dots=300,
         plt.ylabel(ylabel)
 
     if np.shape(x) == np.shape(y):
-        plt.plot(x, y, fmts, label=label)
+        plt.plot(x, y, fmts, label=label, alpha=alpha)
     else:
         raise ValueError( 'x and y must have same shape, ' +
                          f'but have shapes {np.shape(x)} and {np.shape(y)}')
