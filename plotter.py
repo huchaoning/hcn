@@ -102,7 +102,8 @@ def save_util(save=None, override=False):
         raise TypeError('type(save) must be bool or str')
 
 
-def plot(x, y, fmts='-', dots=300, alpha=1, 
+def plot(x, y, fmts='-', dots=300, 
+         alpha=None, xerr=None, yerr=None, capsize=3, ecolor=None,
          axis=True, title=None, label=None, legend=True, 
          xlabel=None, ylabel=None, xlim=None, ylim=None,
          grid=True, show=True, save=None, override=False):
@@ -142,6 +143,9 @@ def plot(x, y, fmts='-', dots=300, alpha=1,
 
     if np.shape(x) == np.shape(y):
         plt.plot(x, y, fmts, label=label, alpha=alpha)
+        if xerr is not None or yerr is not None:
+            plt.errorbar(x, y, xerr=xerr, yerr=yerr, alpha=alpha, ecolor=ecolor,
+                         marker='none', linestyle='none', capsize=capsize)
     else:
         raise ValueError( 'x and y must have same shape, ' +
                          f'but have shapes {np.shape(x)} and {np.shape(y)}')
@@ -189,7 +193,8 @@ def hist(x, bins=300, histtype='step', density=True,
         plt.show()
 
 
-def scatter(x, y, s=None, c=None, alpha=None, colorbar=False,
+def scatter(x, y, s=None, c=None, marker=None, colorbar=False,
+            alpha=None, xerr=None, yerr=None, capsize=3,
             axis=True, title=None, label=None, legend=True, 
             xlabel=None, ylabel=None, xlim=None, ylim=None,
             grid=True, show=True, save=None, override=False):
@@ -207,7 +212,10 @@ def scatter(x, y, s=None, c=None, alpha=None, colorbar=False,
         plt.ylabel(ylabel)
 
     if np.shape(x) == np.shape(y):
-        plt.scatter(x, y, s=s, c=c, alpha=alpha, label=label)
+        plt.scatter(x, y, s=s, c=c, alpha=alpha, label=label, marker=marker)
+        if xerr is not None or yerr is not None:
+            plt.errorbar(x, y, xerr=xerr, yerr=yerr, alpha=alpha, ecolor=c,
+                         marker='none', linestyle='none', capsize=capsize)
     else:
         raise ValueError( 'x and y must have same shape, ' +
                          f'but have shapes {np.shape(x)} and {np.shape(y)}')
