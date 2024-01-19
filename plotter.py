@@ -35,11 +35,12 @@ def set_font(family=None, weight=None):
         plt.rc('font', family=family, weight=weight)
 
 
-def set_figsize(figsize=None):
-    if figsize is None:
+def figsize_fixed(x_figsize=None, y_figsize=None):
+    if x_figsize is None or y_figsize is None:
         plt.rcParams['figure.figsize'] = (6, 4)
+        print('warning: x_figsize or y_figsize is None, setting figsize to default.')
     else:
-        plt.rcParams['figure.figsize'] = figsize
+        plt.rcParams['figure.figsize'] = (x_figsize, y_figsize)
 
 
 def imread(img_path, pillow=False):
@@ -102,8 +103,8 @@ def save_util(save=None, override=False):
         raise TypeError('type(save) must be bool or str')
 
 
-def plot(x, y, fmt='-', dots=300, 
-         alpha=None, xerr=None, yerr=None, capsize=3, ecolor=None,
+def plot(x, y, fmt='-', dots=300, figsize=None,
+         alpha=None, xerr=None, yerr=None, capsize=3, 
          axis=True, title=None, label=None, legend=True, 
          xlabel=None, ylabel=None, xlim=None, ylim=None,
          grid=True, show=True, save=None, override=False):
@@ -129,6 +130,9 @@ def plot(x, y, fmt='-', dots=300,
             y = np.array(y_)
             del x_, y_
 
+    if figsize is not None:
+        old_figsize = plt.rcParams['figure.figsize']
+        plt.rcParams['figure.figsize'] = figsize
     if not axis:
         plt.xticks([])
         plt.yticks([])
@@ -163,13 +167,19 @@ def plot(x, y, fmt='-', dots=300,
         save_util(save=save, override=override)
     if show:
         plt.show()
+        if figsize is not None:
+            plt.rcParams['figure.figsize'] = old_figsize
+            del old_figsize
 
 
-def hist(x, bins=300, histtype='step', density=True,
+def hist(x, bins=300, histtype='step', density=True, figsize=None,
          axis=True, title=None, label=None, legend=True, 
          xlabel=None, ylabel=None, xlim=None, ylim=None,
          grid=True, show=True, save=None, override=False):
 
+    if figsize is not None:
+        old_figsize = plt.rcParams['figure.figsize']
+        plt.rcParams['figure.figsize'] = figsize
     if not axis:
         plt.xticks([])
         plt.yticks([])
@@ -194,14 +204,20 @@ def hist(x, bins=300, histtype='step', density=True,
         save_util(save=save, override=override)
     if show:
         plt.show()
+        if figsize is not None:
+            plt.rcParams['figure.figsize'] = old_figsize
+            del old_figsize
 
 
-def scatter(x, y, s=None, c=None, marker=None, colorbar=False,
+def scatter(x, y, s=None, c=None, marker=None, colorbar=False, figsize=None,
             alpha=None, xerr=None, yerr=None, capsize=3,
             axis=True, title=None, label=None, legend=True, 
             xlabel=None, ylabel=None, xlim=None, ylim=None,
             grid=True, show=True, save=None, override=False):
 
+    if figsize is not None:
+        old_figsize = plt.rcParams['figure.figsize']
+        plt.rcParams['figure.figsize'] = figsize
     if not axis:
         plt.xticks([])
         plt.yticks([])
@@ -235,15 +251,23 @@ def scatter(x, y, s=None, c=None, marker=None, colorbar=False,
         save_util(save=save, override=override)
     if show:
         plt.show()
+        if figsize is not None:
+            plt.rcParams['figure.figsize'] = old_figsize
+            del old_figsize
 
-def imshow(x, cmap=None, pillow=False, colorbar=True, 
-           axis=False, title=None,
+
+def imshow(x, cmap=None, pillow=False, figsize=None, 
+           axis=False, title=None, colorbar=True,
            xlabel=None, ylabel=None, xlim=None, ylim=None,
            grid=True, show=True, save=None, override=False):
+
 
     if pillow:
         PIL.Image.fromarray(x).show()
     else:
+        if figsize is not None:
+            old_figsize = plt.rcParams['figure.figsize']
+            plt.rcParams['figure.figsize'] = figsize
         if not axis:
             plt.xticks([])
             plt.yticks([])
@@ -268,4 +292,6 @@ def imshow(x, cmap=None, pillow=False, colorbar=True,
             save_util(save=save, override=override)
         if show:
             plt.show()
-
+            if figsize is not None:
+                plt.rcParams['figure.figsize'] = old_figsize
+                del old_figsize
