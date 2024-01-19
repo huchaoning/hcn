@@ -102,7 +102,7 @@ def save_util(save=None, override=False):
         raise TypeError('type(save) must be bool or str')
 
 
-def plot(x, y, fmts='-', dots=300, 
+def plot(x, y, fmt='-', dots=300, 
          alpha=None, xerr=None, yerr=None, capsize=3, ecolor=None,
          axis=True, title=None, label=None, legend=True, 
          xlabel=None, ylabel=None, xlim=None, ylim=None,
@@ -142,7 +142,7 @@ def plot(x, y, fmts='-', dots=300,
         plt.ylabel(ylabel)
 
     if np.shape(x) == np.shape(y):
-        plt.plot(x, y, fmts, label=label, alpha=alpha)
+        plt.plot(x, y, fmt, label=label, alpha=alpha)
         if xerr is not None or yerr is not None:
             plt.errorbar(x, y, xerr=xerr, yerr=yerr, alpha=alpha, ecolor=ecolor,
                          marker='none', linestyle='none', capsize=capsize)
