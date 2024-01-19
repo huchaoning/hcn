@@ -142,10 +142,13 @@ def plot(x, y, fmt='-', dots=300,
         plt.ylabel(ylabel)
 
     if np.shape(x) == np.shape(y):
-        plt.plot(x, y, fmt, label=label, alpha=alpha)
-        if xerr is not None or yerr is not None:
-            plt.errorbar(x, y, xerr=xerr, yerr=yerr, alpha=alpha, ecolor=ecolor,
-                         marker='none', linestyle='none', capsize=capsize)
+        if xerr is None and yerr is None:
+            plt.plot(x, y, fmt, label=label, alpha=alpha)
+        else:
+            c = None if fmt=='-' or fmt=='' else fmt
+            plt.errorbar(x, y, c=c, xerr=xerr, yerr=yerr, 
+                         label=label, alpha=alpha, capsize=capsize,
+                         marker='o', linestyle='--')
     else:
         raise ValueError( 'x and y must have same shape, ' +
                          f'but have shapes {np.shape(x)} and {np.shape(y)}')
