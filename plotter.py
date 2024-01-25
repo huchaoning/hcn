@@ -164,7 +164,10 @@ def plot(x, y, fmt='-', dots=300, figsize=None,
     if legend and label is not None:
         plt.legend()
     if save is not None:
-        save_util(save=save, override=override)
+        if (save == True) and (title is not None):
+            save_util(save=title, override=override)
+        else:
+            save_util(save=save, override=override)
     if show:
         plt.show()
         if figsize is not None:
@@ -201,7 +204,10 @@ def hist(x, bins=300, histtype='step', density=True, figsize=None,
     if legend and label is not None:
         plt.legend()
     if save is not None:
-        save_util(save=save, override=override)
+        if (save == True) and (title is not None):
+            save_util(save=title, override=override)
+        else:
+            save_util(save=save, override=override)
     if show:
         plt.show()
         if figsize is not None:
@@ -248,7 +254,10 @@ def scatter(x, y, s=None, c=None, marker=None, colorbar=False, figsize=None,
     if colorbar and (c is not None):
         plt.colorbar()
     if save is not None:
-        save_util(save=save, override=override)
+        if (save == True) and (title is not None):
+            save_util(save=title, override=override)
+        else:
+            save_util(save=save, override=override)
     if show:
         plt.show()
         if figsize is not None:
@@ -289,7 +298,10 @@ def imshow(x, cmap=None, pillow=False, figsize=None,
         if colorbar:
             plt.colorbar()
         if save is not None:
-            save_util(save=save, override=override)
+            if (save == True) and (title is not None):
+                save_util(save=title, override=override)
+            else:
+                save_util(save=save, override=override)
         if show:
             plt.show()
             if figsize is not None:
