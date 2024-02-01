@@ -1,7 +1,9 @@
 import numpy as np
+import scipy as sp
 import pandas as pd
 import os
 from math import *
+
 
 def where_is_mypy():
     return os.path.dirname(__file__)
@@ -48,6 +50,10 @@ def to_csv(array=None, save=None):
 
 def gaussian_distribution(mean=0, std=1):
     return lambda x: np.exp(-((x-mean)**2)/(2*std**2))/np.sqrt(tau*std**2)
+
+
+def poisson(param):
+    return lambda k: np.exp(-param)*param**k/sp.special.factorial(k)
 
 
 def sha1(file, chunk_size=65535):
