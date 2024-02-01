@@ -46,8 +46,8 @@ def to_csv(array=None, save=None):
         raise TypeError('array is None')
     
 
-def gaussian_distribution(x, mean=0, std=1):
-    return np.exp(-((x-mean)**2)/(2*std**2))/np.sqrt(tau*std**2)
+def gaussian_distribution(mean=0, std=1):
+    return lambda x: np.exp(-((x-mean)**2)/(2*std**2))/np.sqrt(tau*std**2)
 
 
 def sha1(file, chunk_size=65535):
