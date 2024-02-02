@@ -3,7 +3,6 @@ import matplotlib.pyplot as plt
 
 import os
 import PIL
-import cv2 as cv
 
 from .macro import sha1
 
@@ -43,38 +42,26 @@ def figsize_fixed(x_figsize=None, y_figsize=None):
         plt.rcParams['figure.figsize'] = (x_figsize, y_figsize)
 
 
-def imread(img_path, pillow=False):
+def imread(img_path):
     if os.path.exists(img_path):
-        if pillow:
-            return np.array(PIL.Image.open(img_path)).astype(float)
+        img = PIL.Image.open(img_path)
+        array = []
+        for i in range(img.n_frames):
+            img.seek(i)
+            array.append(np.array(img))
+        array = np.array(array)
+        if np.shape(array)[0] == 1:
+            return array[0].astype(float)
         else:
-            return cv.imread(img_path, cv.IMREAD_GRAYSCALE | cv.IMREAD_ANYDEPTH).astype(float)
+            return array.astype(float)
     else:
         raise ValueError(f'{img_path} is not exists')
 
 
-def imreadmutli(img_path, pillow=True):
-    if os.path.exists(img_path):
-        if pillow:
-            img = PIL.Image.open(img_path)
-            mptiff = []
-            for i in range(img.n_frames):
-                img.seek(i)
-                mptiff.append(np.array(img))
-            return np.array(mptiff).astype(float)
-        else:
-            raise ValueError('cv2 is not available yet')
-    else:
-        raise ValueError(f'{img_path} is not exists')
-
-
-def imwrite(array=None, save=None, pillow=False):
+def imwrite(array=None, save=None):
     if array is not None:
         if array.dtype == np.uint8:
-            if pillow:
-                PIL.Image.fromarray(array).save(save)
-            else:
-                cv.imwrite(filename=save, img=array)
+            PIL.Image.fromarray(array).save(save)
         else:
             raise TypeError('array.dtype must be np.uint8')
     else:

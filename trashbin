@@ -417,3 +417,64 @@
 #     ip = request.urlopen('https://gitee.com/vxyi/quantum-ws-ip-address/raw/master/ip')
 #     print(ip.read().decode('utf-8'))
 
+
+# import os
+
+# def name_dict(method, path='./'):
+#     name_dict = {'m(7)':-7,
+#                  'm(6)':-6,
+#                  'm(5)':-5,
+#                  'm(4)':-4,
+#                  'm(3)':-3,
+#                  'm(2)':-2,
+#                  'm(1)':-1,
+#                  'p(0)': 0,
+#                  'p(1)': 1,
+#                  'p(2)': 2,
+#                  'p(3)': 3,
+#                  'p(4)': 4,
+#                  'p(5)': 5,
+#                  'p(6)': 6,
+#                  'p(7)': 7}
+#     for name in name_dict:
+#         os.rename(src = os.path.join(path, method + '_' + name + '.tif'), 
+#                   dst = os.path.join(path, method + str(name_dict[name])) + '.tif')
+
+
+
+# def imread(img_path, pillow=False):
+#     if os.path.exists(img_path):
+#         if pillow:
+#             return np.array(PIL.Image.open(img_path)).astype(float)
+#         else:
+#             return cv.imread(img_path, cv.IMREAD_GRAYSCALE | cv.IMREAD_ANYDEPTH).astype(float)
+#     else:
+#         raise ValueError(f'{img_path} is not exists')
+
+
+# def imreadmutli(img_path, pillow=True):
+#     if os.path.exists(img_path):
+#         if pillow:
+#             img = PIL.Image.open(img_path)
+#             mptiff = []
+#             for i in range(img.n_frames):
+#                 img.seek(i)
+#                 mptiff.append(np.array(img))
+#             return np.array(mptiff).astype(float)
+#         else:
+#             raise ValueError('cv2 is not available yet')
+#     else:
+#         raise ValueError(f'{img_path} is not exists')
+
+
+# def imwrite(array=None, save=None, pillow=False):
+#     if array is not None:
+#         if array.dtype == np.uint8:
+#             if pillow:
+#                 PIL.Image.fromarray(array).save(save)
+#             else:
+#                 cv.imwrite(filename=save, img=array)
+#         else:
+#             raise TypeError('array.dtype must be np.uint8')
+#     else:
+#         raise TypeError('array is None')
