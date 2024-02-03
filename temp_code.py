@@ -1,10 +1,8 @@
-def name_dict(i, method=None):
+def name_dict(i):
     if type(i) is int:
-        if method is not None:
-            method = method + '_'
         if i < 0:
-            return(method + f'm({abs(i)})')
+            return(f'm({abs(i)})')
         else:
-            return(method + f'p({abs(i)})')
+            return(f'p({abs(i)})')
     else:
         raise TypeError
