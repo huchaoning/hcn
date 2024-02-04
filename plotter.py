@@ -18,6 +18,16 @@ plt.rcParams['font.family'] = ['Source Han Sans SC']
 plt.rcParams['figure.figsize'] = (6, 4)
 plt.rcParams['savefig.format'] = 'svg'
 
+__all__ = ['show_all_fonts', 
+           'set_font',
+           'figsize_fixed',
+           'imread',
+           'imwrite',
+           'plot',
+           'hist',
+           'scatter',
+           'imshow']
+
 
 def show_all_fonts():
     from matplotlib.font_manager import get_font_names
@@ -35,11 +45,17 @@ def set_font(family=None, weight=None):
 
 
 def figsize_fixed(x_figsize=None, y_figsize=None):
-    if x_figsize is None or y_figsize is None:
+    if isinstance(x_figsize, (tuple, list)) and (y_figsize is None):
+        plt.rcParams['figure.figsize'] = x_figsize
+    elif isinstance(y_figsize, (tuple, list)) and (x_figsize is None):
+        plt.rcParams['figure.figsize'] = y_figsize
+    elif x_figsize is None and y_figsize is None:
         plt.rcParams['figure.figsize'] = (6, 4)
-        print('warning: x_figsize or y_figsize is None, setting figsize to default.')
-    else:
+        print('warning: x_figsize and y_figsize is None, setting figsize to default.')
+    elif isinstance(x_figsize, (int, float)) and isinstance(x_figsize, (int, float)):
         plt.rcParams['figure.figsize'] = (x_figsize, y_figsize)
+    else:
+        raise ValueError('invalid figsize parameters')
 
 
 def imread(img_path):
@@ -88,6 +104,48 @@ def save_util(save=None, override=False):
                 plt.savefig(save)
     else:
         raise TypeError('type(save) must be bool or str')
+    
+
+# pre_params = ['figsize', 'axis', 'grid', 'title', 'xlabel', 'ylabel']
+
+# post_params = ['xlim', 'ylim', 'legend', 'label', 'save', 'override', 'show']
+
+
+# def pre_process(**kwargs):
+#     if kwargs['figsize'] is not None:
+#         old_figsize = plt.rcParams['figure.figsize']
+#         plt.rcParams['figure.figsize'] = kwargs['figsize']
+#     if not kwargs['axis']:
+#         plt.xticks([])
+#         plt.yticks([])
+#     if kwargs['title'] is not None:
+#         plt.title(kwargs['title'])
+#     if kwargs['grid'] is not None:    
+#         plt.grid(kwargs['grid'])
+#     if kwargs['xlabel'] is not None:
+#         plt.xlabel(kwargs['xlabel'])
+#     if kwargs['ylabel'] is not None:
+#         plt.ylabel(kwargs['ylabel'])
+#     return old_figsize
+
+
+
+# def post_process(old_figsize, **kwargs):
+#     if kwargs['xlim'] is not None:
+#         plt.xlim(kwargs['xlim'])
+#     if kwargs['ylim'] is not None:
+#         plt.ylim(['ylim'])
+#     if kwargs['legend'] and kwargs['label'] is not None:
+#         plt.legend()
+#     if kwargs['save'] is not None:
+#         if (kwargs['save'] == True) and (kwargs['title'] is not None):
+#             save_util(save=kwargs['title'], override=kwargs['override'])
+#         else:
+#             save_util(save=kwargs['save'], override=kwargs['override'])
+#     if kwargs['show']:
+#         plt.show()
+#     if kwargs['figsize'] is not None:
+#         plt.rcParams['figure.figsize'] = old_figsize
 
 
 def plot(x, y, fmt='-', dots=300, figsize=None,
