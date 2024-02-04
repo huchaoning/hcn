@@ -96,26 +96,22 @@ def plot(x, y, fmt='-', dots=300, figsize=None,
          xlabel=None, ylabel=None, xlim=None, ylim=None,
          grid=True, show=True, save=None, override=False):
 
-    if isinstance(x, (list, tuple)):
+    if isinstance(x, tuple):
         if len(x) == 2:
             if callable(y):
                 x = np.linspace(x[0], x[1], dots)
             else:
                 x = np.linspace(x[0], x[1], len(y))
         else:
-            raise TypeError('when x is a tuple or list, ' +
+            raise TypeError('when x is a tuple, ' +
                             'it is treated as the domain of y, ' +
-                            'len(x) must be 2')
+                            'so the len(x) must be 2')
 
     if callable(y):
         try: 
             y = y(x)
         except TypeError:
-            y_ = []
-            for x_ in x:
-                y_.append(y(x_))
-            y = np.array(y_)
-            del x_, y_
+            y = [y(x_) for x_ in x]
 
     if figsize is not None:
         old_figsize = plt.rcParams['figure.figsize']
