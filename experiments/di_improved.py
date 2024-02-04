@@ -1,0 +1,67 @@
+import numpy as np
+from ..plotter import imread
+
+zero_point = 0
+pixel_size = 1
+
+__all__ = ['photon_number', 'estimator']
+
+def photon_number(img):
+    return img.sum()
+
+def estimator_single(img, axis = 'y'):
+    if axis == 'x':
+        img = np.sum(img, axis=0)
+        img = img / img.sum()
+        index = np.arange(len(img))
+        return (zero_point - index @ img) * pixel_size
+    elif axis == 'y':
+        img = np.sum(img, axis=1)
+        img = img / img.sum()
+        index = np.arange(len(img))
+        return (zero_point - index @ img) * pixel_size
+
+def estimator_single_1d(img):
+    if len(np.shape(img)) != 1:
+        raise ValueError('img must be 1d')
+    else:
+        img = img / img.sum()
+        index = np.arange(len(img))
+        return (zero_point - index @ img) * pixel_size
+
+
+def estimator(data, axis='y', batch=True):
+    if type(data) is str:
+        data = imread(data)
+    elif type(data) is not np.ndarray:
+        raise ValueError('data is invalid, data must be image path or a numpy array')
+    elif data.ndim > 3:
+        raise ValueError('data is invalid, data must be a single tif or multi-tifs')
+
+    if batch and (data.ndim == 2):
+        _1d = True
+    elif (not batch) and (data.ndim == 1):
+        _1d = True
+    else:
+        _1d = False
+
+    if batch:
+        if _1d and len(data.shape) != 2:
+            samples, y = data.shape
+            index = np.arange(y)
+        elif not _1d:
+            samples, y, x = data.shape
+            if axis == 'x':
+                data = data.sum(axis=1)
+                index = np.arange(x)
+            if axis == 'y':
+                data = data.sum(axis=2)
+                index = np.arange(y)
+        data = data / data.sum(axis=1).reshape(samples, 1)
+        return (zero_point - data @ index) * pixel_size
+    
+    elif _1d:
+        return estimator_single_1d(data)
+    
+    elif not _1d:
+        return estimator_single(data)
