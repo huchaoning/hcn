@@ -157,9 +157,9 @@ def plot(x, y, fmt='-', dots=300, figsize=None,
             save_util(save=save, override=override)
     if show:
         plt.show()
-        if figsize is not None:
-            plt.rcParams['figure.figsize'] = old_figsize
-            del old_figsize
+    if figsize is not None:
+        plt.rcParams['figure.figsize'] = old_figsize
+        del old_figsize
 
 
 def hist(x, bins=300, histtype='step', density=True, figsize=None,
@@ -197,9 +197,9 @@ def hist(x, bins=300, histtype='step', density=True, figsize=None,
             save_util(save=save, override=override)
     if show:
         plt.show()
-        if figsize is not None:
-            plt.rcParams['figure.figsize'] = old_figsize
-            del old_figsize
+    if figsize is not None:
+        plt.rcParams['figure.figsize'] = old_figsize
+        del old_figsize
 
 
 def scatter(x, y, s=None, c=None, marker=None, colorbar=False, figsize=None,
@@ -247,9 +247,9 @@ def scatter(x, y, s=None, c=None, marker=None, colorbar=False, figsize=None,
             save_util(save=save, override=override)
     if show:
         plt.show()
-        if figsize is not None:
-            plt.rcParams['figure.figsize'] = old_figsize
-            del old_figsize
+    if figsize is not None:
+        plt.rcParams['figure.figsize'] = old_figsize
+        del old_figsize
 
 
 def imshow(x, cmap=None, pillow=False, figsize=None, 
@@ -291,6 +291,6 @@ def imshow(x, cmap=None, pillow=False, figsize=None,
                 save_util(save=save, override=override)
         if show:
             plt.show()
-            if figsize is not None:
-                plt.rcParams['figure.figsize'] = old_figsize
-                del old_figsize
+        if figsize is not None:
+            plt.rcParams['figure.figsize'] = old_figsize
+            del old_figsize
