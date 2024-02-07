@@ -65,13 +65,13 @@ def imread(img_path):
         for i in range(img.n_frames):
             img.seek(i)
             array.append(np.array(img))
-        array = np.array(array)
+        array = np.array(array, dtype=float)
         if np.shape(array)[0] == 1:
-            return array[0].astype(float)
+            return array[0]
         else:
-            return array.astype(float)
+            return array
     else:
-        raise ValueError(f'{img_path} is not exists')
+        raise FileNotFoundError(f'{img_path} is not exists')
 
 
 def imwrite(array=None, save=None):
