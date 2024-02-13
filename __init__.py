@@ -4,7 +4,6 @@ import scipy as sp
 import matplotlib.pyplot as plt
 
 import PIL
-import cv2 as cv
 
 import os, shutil, timeit
 from glob import glob
