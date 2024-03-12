@@ -1,6 +1,6 @@
 import numpy as np
 
-zero_point = 111
+zero_point = 110.3
 pixel_size = 4.6
 ax_1d = 81
 
@@ -22,11 +22,12 @@ def estimator(img, axis = 'y'):
     if batch and (not use_1d_only):
         raise('if batch is True, use_1d_only must be True')
     if batch:
+        img = img[:, :, ax_1d]
         img_shape = img.shape
         img_sum = img.sum(axis=1)
         index = np.arange(img_shape[1])
         normalized_img = img / img_sum.reshape(img_shape[0], 1)
-        return (zero_point - normalized_img @ index)
+        return (zero_point - normalized_img @ index) * pixel_size
     if use_1d_only:
         img = img[:, ax_1d]
         if len(np.shape(img)) != 1:
