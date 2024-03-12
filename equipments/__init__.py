@@ -1,2 +1,2 @@
-from . import slm, dmd, qcmos
+from . import slm, dmd, qcmos, lamp
 
