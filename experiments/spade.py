@@ -2,13 +2,17 @@ import numpy as np
 from math import sqrt
 import os 
 from ..plotter import imread
+from .__init__ import sigma
 
 point_1 = (91, 110)
 point_2 = (91, 404)
-characteristic_width = 103
+characteristic_width = sigma
 
 mode = '+-'
 batch = True
+
+# s_list, n_list = [], []
+# std_list, var_list = [], []
 
 def photon_number(img):
     if type(img) == str and os.path.exists(img):

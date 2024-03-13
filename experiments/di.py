@@ -9,6 +9,9 @@ ax_1d = 81
 use_1d_only = True
 batch = True
 
+# s_list, n_list = [], []
+# std_list, var_list = [], []
+
 def photon_number(img):
     if type(img) == str and os.path.exists(img):
         img = imread(img)
