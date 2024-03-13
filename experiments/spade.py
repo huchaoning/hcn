@@ -1,5 +1,7 @@
-from math import sqrt
 import numpy as np
+from math import sqrt
+import os 
+from ..plotter import imread
 
 point_1 = (91, 110)
 point_2 = (91, 404)
@@ -9,6 +11,8 @@ mode = '+-'
 batch = True
 
 def photon_number(img):
+    if type(img) == str and os.path.exists(img):
+        img = imread(img)
     if batch and (mode != '+-'):
         raise('if batch is True, mode must be +-')
     if batch:
@@ -17,6 +21,8 @@ def photon_number(img):
         return img[point_1[1], point_1[0]] + img[point_2[1], point_2[0]]
 
 def estimator(img, mode = mode):
+    if type(img) == str and os.path.exists(img):
+        img = imread(img)
     if batch and (mode != '+-'):
         raise('if batch is True, mode must be +-')
     if batch:

@@ -1,4 +1,6 @@
 import numpy as np
+import os 
+from ..plotter import imread
 
 zero_point = 110.3
 pixel_size = 4.6
@@ -8,6 +10,8 @@ use_1d_only = True
 batch = True
 
 def photon_number(img):
+    if type(img) == str and os.path.exists(img):
+        img = imread(img)
     if batch and (not use_1d_only):
         raise('if batch is True, use_1d_only must be True')
     if batch:
@@ -19,6 +23,8 @@ def photon_number(img):
 
 
 def estimator(img, axis = 'y'):
+    if type(img) == str and os.path.exists(img):
+        img = imread(img)
     if batch and (not use_1d_only):
         raise('if batch is True, use_1d_only must be True')
     if batch:
