@@ -55,6 +55,11 @@ def estimator(img, axis = 'y'):
             return (zero_point - index @ img) * pixel_size
 
 
+def run_all(img):
+    if type(img) == str and os.path.exists(img):
+        img = imread(img)
+    return estimator(img), photon_number(img)
+
 
 # import numpy as np
 # from ..plotter import imread

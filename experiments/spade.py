@@ -39,3 +39,8 @@ def estimator(img, mode = mode):
         elif mode == '0001':
             return 2 * characteristic_width * sqrt(img[point_1[1], point_1[0]] / img[point_2[1], point_2[0]])
 
+
+def run_all(img):
+    if type(img) == str and os.path.exists(img):
+        img = imread(img)
+    return estimator(img), photon_number(img)
