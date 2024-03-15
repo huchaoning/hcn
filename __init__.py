@@ -15,5 +15,7 @@ from .macro import *
 from .laser import *
 from .plotter import *
 
+from . import simulations
+
 from .temp_code import *
 
