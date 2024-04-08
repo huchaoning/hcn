@@ -18,77 +18,66 @@ plt.rcParams['font.family'] = ['Source Han Sans SC']
 plt.rcParams['figure.figsize'] = (6, 4)
 plt.rcParams['savefig.format'] = 'svg'
 
-__all__ = ['show_all_fonts', 
-           'set_font',
-           'figsize_fixed',
-           'imread',
-           'imwrite',
-           'plot',
-           'hist',
-           'scatter',
-           'imshow']
+__all__ = [
+    'show_all_fonts', 
+    'set_font',
+    'figsize_fixed',
+    'imread',
+    'imwrite',
+    'plot',
+    'hist',
+    'scatter',
+    'imshow'
+]
+
+
+shared_params = {
+    'figsize': None, 
+    'axis': True, 
+    'grid': True, 
+    'xlabel': None, 
+    'ylabel': None, 
+    'title': None,
+    'xlim': None, 
+    'ylim': None, 
+    'legend': True, 
+    'label': None, 
+    'save': None, 
+    'override': False, 
+    'show': True
+}
 
 
 def plotter_decorator(**kwargs):
-    default_params = {
-          'figsize': None, 
-             'axis': True, 
-             'grid': True, 
-           'xlabel': None, 
-           'ylabel': None, 
-            'title': None,
-             'xlim': None, 
-             'ylim': None, 
-           'legend': True, 
-            'label': None, 
-             'save': None, 
-         'override': False, 
-             'show': True,
-    }
-    params = {**default_params, **kwargs}
+    params = {**shared_params, **kwargs}
     def decorator(plotter_function):
         from functools import wraps
         @wraps(plotter_function)
-        def wrapper(
-                *args, 
-                figsize=params['figsize'], 
-                axis=params['axis'], 
-                grid=params['grid'], 
-                xlabel=params['xlabel'], 
-                ylabel=params['ylabel'], 
-                title=params['title'],
-                xlim=params['xlim'], 
-                ylim=params['ylim'], 
-                legend=params['legend'], 
-                label=params['label'], 
-                save=params['save'], 
-                override=params['override'], 
-                show=params['show'],
-                **kwargs
-        ):    
-            if figsize is not None:
+        def wrapper(*args, **kwargs):    
+            if params['figsize'] is not None:
                 old_figsize = plt.rcParams['figure.figsize']
-                plt.rcParams['figure.figsize'] = figsize
-            if not axis:
+                plt.rcParams['figure.figsize'] = params['figsize']
+            if not params['axis']:
                 plt.xticks([])
                 plt.yticks([])
-            if grid is not None:    
-                plt.grid(grid)
-            if xlabel is not None:
-                plt.xlabel(xlabel)
-            if ylabel is not None:
-                plt.ylabel(ylabel)
-            if title is not None:
-                plt.title(title)
+            if params['grid'] is not None:    
+                plt.grid(params['grid'])
+            if params['xlabel'] is not None:
+                plt.xlabel(params['xlabel'])
+            if params['ylabel'] is not None:
+                plt.ylabel(params['ylabel'])
+            if params['title'] is not None:
+                plt.title(params['title'])
 
             plotter_function(*args, **kwargs)
             
-            if xlim is not None:
-                plt.xlim(xlim)
-            if ylim is not None:
-                plt.ylim(ylim)
-            if legend and label is not None:
+            if params['xlim'] is not None:
+                plt.xlim(params['xlim'])
+            if params['ylim'] is not None:
+                plt.ylim(params['ylim'])
+            if params['legend'] and params['label'] is not None:
                 plt.legend()
+            save = params['save']
             if save is not None:
                 if type(save) is bool or type(save) is str:
                     if save == True:
@@ -101,7 +90,7 @@ def plotter_decorator(**kwargs):
                         os.rename(src=temp_name, dst=f'{save}.svg')
                     elif type(save) is str:
                         if os.path.exists(save) or os.path.exists(f'{save}.svg'):
-                            if override:
+                            if params['override']:
                                 plt.savefig(save)
                             else:
                                 raise FileExistsError('file already exists')
@@ -109,9 +98,9 @@ def plotter_decorator(**kwargs):
                             plt.savefig(save)
                 else:
                     raise TypeError('type(save) must be bool or str')
-            if show:
+            if params['show']:
                 plt.show()
-            if figsize is not None:
+            if params['figsize'] is not None:
                 plt.rcParams['figure.figsize'] = old_figsize
         return wrapper
     return decorator
@@ -173,7 +162,34 @@ def imwrite(array=None, save=None):
 
 
 @plotter_decorator()
-def plot(x, y, fmt='-', label=None, dots=300, alpha=None, xerr=None, yerr=None, capsize=3):
+def plot(
+    x: np.ndarray or tuple = [], 
+    y: np.ndarray or function = [], 
+    fmt: str = '-', 
+    dots: int = 300, 
+    alpha: float = None, 
+    xerr: np.ndarray = None, 
+    yerr: np.ndarray = None, 
+    capsize: float = 3,
+
+    figsize: tuple = shared_params['figsize'], 
+    axis: bool = shared_params['axis'], 
+    grid: bool = shared_params['grid'], 
+    xlabel: str = shared_params['xlabel'], 
+    ylabel: str = shared_params['ylabel'], 
+    title: str = shared_params['title'],
+    xlim: tuple = shared_params['xlim'], 
+    ylim: tuple = shared_params['ylim'], 
+    legend: bool = shared_params['legend'], 
+    label: str = shared_params['label'], 
+    save: bool or str = shared_params['save'], 
+    override: bool = shared_params['override'], 
+    show: bool = shared_params['show']
+):
+    if x == [] or x == ():
+        x = (0, 1)
+        if y != []:
+            print('warning: x is a empty, x is treated as (0, 1)')
     if isinstance(x, tuple):
         if len(x) == 2:
             if callable(y):
@@ -205,7 +221,31 @@ def plot(x, y, fmt='-', label=None, dots=300, alpha=None, xerr=None, yerr=None, 
 
 
 @plotter_decorator()
-def scatter(x, y, s=None, c=None, marker=None, alpha=None, xerr=None, yerr=None, capsize=3, label=None):
+def scatter(
+    x: np.ndarray = [], 
+    y: np.ndarray = [], 
+    s: np.ndarray = None, 
+    c: str = None, 
+    marker: str = None, 
+    alpha: float = None, 
+    xerr: np.ndarray = None, 
+    yerr: np.ndarray = None, 
+    capsize: float = 3,
+
+    figsize: tuple = shared_params['figsize'], 
+    axis: bool = shared_params['axis'], 
+    grid: bool = shared_params['grid'], 
+    xlabel: str = shared_params['xlabel'], 
+    ylabel: str = shared_params['ylabel'], 
+    title: str = shared_params['title'],
+    xlim: tuple = shared_params['xlim'], 
+    ylim: tuple = shared_params['ylim'], 
+    legend: bool = shared_params['legend'], 
+    label: str = shared_params['label'], 
+    save: bool or str = shared_params['save'], 
+    override: bool = shared_params['override'], 
+    show: bool = shared_params['show']
+):
     if np.shape(x) == np.shape(y):
         plt.scatter(x, y, s=s, c=c, alpha=alpha, label=label, marker=marker)
         if xerr is not None or yerr is not None:
@@ -217,12 +257,50 @@ def scatter(x, y, s=None, c=None, marker=None, alpha=None, xerr=None, yerr=None,
 
 
 @plotter_decorator()
-def hist(x, bins=300, histtype='step', density=True, label=None):
+def hist(
+    x: np.ndarray = [], 
+    bins: int = 300, 
+    histtype: str = 'step', 
+    density: bool = True,
+
+    figsize: tuple = shared_params['figsize'], 
+    axis: bool = shared_params['axis'], 
+    grid: bool = shared_params['grid'], 
+    xlabel: str = shared_params['xlabel'], 
+    ylabel: str = shared_params['ylabel'], 
+    title: str = shared_params['title'],
+    xlim: tuple = shared_params['xlim'], 
+    ylim: tuple = shared_params['ylim'], 
+    legend: bool = shared_params['legend'], 
+    label: str = shared_params['label'], 
+    save: bool or str = shared_params['save'], 
+    override: bool = shared_params['override'], 
+    show: bool = shared_params['show']
+):
     plt.hist(x, bins=bins, histtype=histtype, density=density, label=label)
 
 
 @plotter_decorator(axis=False)
-def imshow(x, cmap=None, pillow=False, colorbar=True):
+def imshow(
+    x: np.ndarray = [], 
+    cmap: str = None, 
+    pillow: bool = False, 
+    colorbar:bool = True,
+           
+    figsize: tuple = shared_params['figsize'], 
+    axis: bool = shared_params['axis'], 
+    grid: bool = shared_params['grid'], 
+    xlabel: str = shared_params['xlabel'], 
+    ylabel: str = shared_params['ylabel'], 
+    title: str = shared_params['title'],
+    xlim: tuple = shared_params['xlim'], 
+    ylim: tuple = shared_params['ylim'], 
+    legend: bool = shared_params['legend'], 
+    label: str = shared_params['label'], 
+    save: bool or str = shared_params['save'], 
+    override: bool = shared_params['override'], 
+    show: bool = shared_params['show']
+):
     if pillow:
         PIL.Image.fromarray(x).show()
     else:
