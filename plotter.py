@@ -186,9 +186,9 @@ def plot(
     override: bool = shared_params['override'], 
     show: bool = shared_params['show']
 ):
-    if x == [] or x == ():
+    if len(x) == 0:
         x = (0, 1)
-        if y != []:
+        if len(y) != 0:
             print('warning: x is a empty, x is treated as (0, 1)')
     if isinstance(x, tuple):
         if len(x) == 2:
