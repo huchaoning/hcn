@@ -29,6 +29,94 @@ __all__ = ['show_all_fonts',
            'imshow']
 
 
+def plotter_decorator(**kwargs):
+    default_params = {
+          'figsize': None, 
+             'axis': True, 
+             'grid': True, 
+           'xlabel': None, 
+           'ylabel': None, 
+            'title': None,
+             'xlim': None, 
+             'ylim': None, 
+           'legend': True, 
+            'label': None, 
+             'save': None, 
+         'override': False, 
+             'show': True,
+    }
+    params = {**default_params, **kwargs}
+    def decorator(plotter_function):
+        from functools import wraps
+        @wraps(plotter_function)
+        def wrapper(
+                *args, 
+                figsize=params['figsize'], 
+                axis=params['axis'], 
+                grid=params['grid'], 
+                xlabel=params['xlabel'], 
+                ylabel=params['ylabel'], 
+                title=params['title'],
+                xlim=params['xlim'], 
+                ylim=params['ylim'], 
+                legend=params['legend'], 
+                label=params['label'], 
+                save=params['save'], 
+                override=params['override'], 
+                show=params['show'],
+                **kwargs
+        ):    
+            if figsize is not None:
+                old_figsize = plt.rcParams['figure.figsize']
+                plt.rcParams['figure.figsize'] = figsize
+            if not axis:
+                plt.xticks([])
+                plt.yticks([])
+            if grid is not None:    
+                plt.grid(grid)
+            if xlabel is not None:
+                plt.xlabel(xlabel)
+            if ylabel is not None:
+                plt.ylabel(ylabel)
+            if title is not None:
+                plt.title(title)
+
+            plotter_function(*args, **kwargs)
+            
+            if xlim is not None:
+                plt.xlim(xlim)
+            if ylim is not None:
+                plt.ylim(ylim)
+            if legend and label is not None:
+                plt.legend()
+            if save is not None:
+                if type(save) is bool or type(save) is str:
+                    if save == True:
+                        while True:
+                            temp_name = f'{np.random.randint(0, 1e8)}.svg'
+                            if not os.path.exists(temp_name):
+                                break
+                        plt.savefig(temp_name)
+                        save = sha1(temp_name)
+                        os.rename(src=temp_name, dst=f'{save}.svg')
+                    elif type(save) is str:
+                        if os.path.exists(save) or os.path.exists(f'{save}.svg'):
+                            if override:
+                                plt.savefig(save)
+                            else:
+                                raise FileExistsError('file already exists')
+                        else:
+                            plt.savefig(save)
+                else:
+                    raise TypeError('type(save) must be bool or str')
+            if show:
+                plt.show()
+            if figsize is not None:
+                plt.rcParams['figure.figsize'] = old_figsize
+        return wrapper
+    return decorator
+
+
 def show_all_fonts():
     from matplotlib.font_manager import get_font_names
     all_fonts = get_font_names()
@@ -84,76 +172,8 @@ def imwrite(array=None, save=None):
         raise TypeError('array is None')
 
 
-def save_util(save=None, override=False):
-    if type(save) is bool or type(save) is str:
-        if save == True:
-            while True:
-                temp_name = f'{np.random.randint(0, 1e8)}.svg'
-                if not os.path.exists(temp_name):
-                    break
-            plt.savefig(temp_name)
-            save = sha1(temp_name)
-            os.rename(src=temp_name, dst=f'{save}.svg')
-        elif type(save) is str:
-            if os.path.exists(save) or os.path.exists(f'{save}.svg'):
-                if override:
-                    plt.savefig(save)
-                else:
-                    raise FileExistsError('file already exists')
-            else:
-                plt.savefig(save)
-    else:
-        raise TypeError('type(save) must be bool or str')
-    
-
-# pre_params = ['figsize', 'axis', 'grid', 'title', 'xlabel', 'ylabel']
-
-# post_params = ['xlim', 'ylim', 'legend', 'label', 'save', 'override', 'show']
-
-
-# def pre_process(**kwargs):
-#     if kwargs['figsize'] is not None:
-#         old_figsize = plt.rcParams['figure.figsize']
-#         plt.rcParams['figure.figsize'] = kwargs['figsize']
-#     if not kwargs['axis']:
-#         plt.xticks([])
-#         plt.yticks([])
-#     if kwargs['title'] is not None:
-#         plt.title(kwargs['title'])
-#     if kwargs['grid'] is not None:    
-#         plt.grid(kwargs['grid'])
-#     if kwargs['xlabel'] is not None:
-#         plt.xlabel(kwargs['xlabel'])
-#     if kwargs['ylabel'] is not None:
-#         plt.ylabel(kwargs['ylabel'])
-#     return old_figsize
-
-
-
-# def post_process(old_figsize, **kwargs):
-#     if kwargs['xlim'] is not None:
-#         plt.xlim(kwargs['xlim'])
-#     if kwargs['ylim'] is not None:
-#         plt.ylim(['ylim'])
-#     if kwargs['legend'] and kwargs['label'] is not None:
-#         plt.legend()
-#     if kwargs['save'] is not None:
-#         if (kwargs['save'] == True) and (kwargs['title'] is not None):
-#             save_util(save=kwargs['title'], override=kwargs['override'])
-#         else:
-#             save_util(save=kwargs['save'], override=kwargs['override'])
-#     if kwargs['show']:
-#         plt.show()
-#     if kwargs['figsize'] is not None:
-#         plt.rcParams['figure.figsize'] = old_figsize
-
-
-def plot(x, y, fmt='-', dots=300, figsize=None,
-         alpha=None, xerr=None, yerr=None, capsize=3, 
-         axis=True, title=None, label=None, legend=True, 
-         xlabel=None, ylabel=None, xlim=None, ylim=None,
-         grid=True, show=True, save=None, override=False):
-
+@plotter_decorator()
+def plot(x, y, fmt='-', label=None, dots=300, alpha=None, xerr=None, yerr=None, capsize=3):
     if isinstance(x, tuple):
         if len(x) == 2:
             if callable(y):
@@ -163,28 +183,13 @@ def plot(x, y, fmt='-', dots=300, figsize=None,
         else:
             raise TypeError('when x is a tuple, ' +
                             'it is treated as the domain of y, ' +
-                            'so the len(x) must be 2')
+                            'so len(x) must be 2')
 
     if callable(y):
         try: 
             y = y(x)
         except TypeError:
             y = [y(x_) for x_ in x]
-
-    if figsize is not None:
-        old_figsize = plt.rcParams['figure.figsize']
-        plt.rcParams['figure.figsize'] = figsize
-    if not axis:
-        plt.xticks([])
-        plt.yticks([])
-    if title is not None:
-        plt.title(title)
-    if grid is not None:    
-        plt.grid(grid)
-    if xlabel is not None:
-        plt.xlabel(xlabel)
-    if ylabel is not None:
-        plt.ylabel(ylabel)
 
     if np.shape(x) == np.shape(y):
         if xerr is None and yerr is None:
@@ -198,85 +203,9 @@ def plot(x, y, fmt='-', dots=300, figsize=None,
         raise ValueError( 'x and y must have same shape, ' +
                          f'but have shapes {np.shape(x)} and {np.shape(y)}')
 
-    if xlim is not None:
-        plt.xlim(xlim)
-    if ylim is not None:
-        plt.ylim(ylim)
-    if legend and label is not None:
-        plt.legend()
-    if save is not None:
-        if (save == True) and (title is not None):
-            save_util(save=title, override=override)
-        else:
-            save_util(save=save, override=override)
-    if show:
-        plt.show()
-    if figsize is not None:
-        plt.rcParams['figure.figsize'] = old_figsize
-        del old_figsize
 
-
-def hist(x, bins=300, histtype='step', density=True, figsize=None,
-         axis=True, title=None, label=None, legend=True, 
-         xlabel=None, ylabel=None, xlim=None, ylim=None,
-         grid=True, show=True, save=None, override=False):
-
-    if figsize is not None:
-        old_figsize = plt.rcParams['figure.figsize']
-        plt.rcParams['figure.figsize'] = figsize
-    if not axis:
-        plt.xticks([])
-        plt.yticks([])
-    if title is not None:
-        plt.title(title)
-    if grid is not None:    
-        plt.grid(grid)
-    if xlabel is not None:
-        plt.xlabel(xlabel)
-    if ylabel is not None:
-        plt.ylabel(ylabel)
-
-    plt.hist(x, bins=bins, histtype=histtype, density=density, label=label)
-
-    if xlim is not None:
-        plt.xlim(xlim)
-    if ylim is not None:
-        plt.ylim(ylim)
-    if legend and label is not None:
-        plt.legend()
-    if save is not None:
-        if (save == True) and (title is not None):
-            save_util(save=title, override=override)
-        else:
-            save_util(save=save, override=override)
-    if show:
-        plt.show()
-    if figsize is not None:
-        plt.rcParams['figure.figsize'] = old_figsize
-        del old_figsize
-
-
-def scatter(x, y, s=None, c=None, marker=None, colorbar=False, figsize=None,
-            alpha=None, xerr=None, yerr=None, capsize=3,
-            axis=True, title=None, label=None, legend=True, 
-            xlabel=None, ylabel=None, xlim=None, ylim=None,
-            grid=True, show=True, save=None, override=False):
-
-    if figsize is not None:
-        old_figsize = plt.rcParams['figure.figsize']
-        plt.rcParams['figure.figsize'] = figsize
-    if not axis:
-        plt.xticks([])
-        plt.yticks([])
-    if title is not None:
-        plt.title(title)
-    if grid is not None:    
-        plt.grid(grid)
-    if xlabel is not None:
-        plt.xlabel(xlabel)
-    if ylabel is not None:
-        plt.ylabel(ylabel)
-
+@plotter_decorator()
+def scatter(x, y, s=None, c=None, marker=None, alpha=None, xerr=None, yerr=None, capsize=3, label=None):
     if np.shape(x) == np.shape(y):
         plt.scatter(x, y, s=s, c=c, alpha=alpha, label=label, marker=marker)
         if xerr is not None or yerr is not None:
@@ -286,65 +215,17 @@ def scatter(x, y, s=None, c=None, marker=None, colorbar=False, figsize=None,
         raise ValueError( 'x and y must have same shape, ' +
                          f'but have shapes {np.shape(x)} and {np.shape(y)}')
 
-    if xlim is not None:
-        plt.xlim(xlim)
-    if ylim is not None:
-        plt.ylim(ylim)
-    if legend and label is not None:
-        plt.legend()
-    if colorbar and (c is not None):
-        plt.colorbar()
-    if save is not None:
-        if (save == True) and (title is not None):
-            save_util(save=title, override=override)
-        else:
-            save_util(save=save, override=override)
-    if show:
-        plt.show()
-    if figsize is not None:
-        plt.rcParams['figure.figsize'] = old_figsize
-        del old_figsize
+
+@plotter_decorator()
+def hist(x, bins=300, histtype='step', density=True, label=None):
+    plt.hist(x, bins=bins, histtype=histtype, density=density, label=label)
 
 
-def imshow(x, cmap=None, pillow=False, figsize=None, 
-           axis=False, title=None, colorbar=True,
-           xlabel=None, ylabel=None, xlim=None, ylim=None,
-           grid=True, show=True, save=None, override=False):
-
-
+@plotter_decorator(axis=False)
+def imshow(x, cmap=None, pillow=False, colorbar=True):
     if pillow:
         PIL.Image.fromarray(x).show()
     else:
-        if figsize is not None:
-            old_figsize = plt.rcParams['figure.figsize']
-            plt.rcParams['figure.figsize'] = figsize
-        if not axis:
-            plt.xticks([])
-            plt.yticks([])
-        if title is not None:
-            plt.title(title)
-        if grid is not None:    
-            plt.grid(grid)
-        if xlabel is not None:
-            plt.xlabel(xlabel)
-        if ylabel is not None:
-            plt.ylabel(ylabel)
-
         plt.imshow(x, cmap=cmap)
-
-        if xlim is not None:
-            plt.xlim(xlim)
-        if ylim is not None:
-            plt.ylim(ylim)
-        if colorbar:
-            plt.colorbar()
-        if save is not None:
-            if (save == True) and (title is not None):
-                save_util(save=title, override=override)
-            else:
-                save_util(save=save, override=override)
-        if show:
-            plt.show()
-        if figsize is not None:
-            plt.rcParams['figure.figsize'] = old_figsize
-            del old_figsize
+    if colorbar:
+        plt.colorbar()
