@@ -5,16 +5,16 @@ import os
 from math import *
 
 
-def where_is_mypy():
+def whereis_myutils():
     return os.path.dirname(__file__)
 
 
-def open_mypy():
+def open_myutils():
     import platform
     if platform.system() == 'Windows':
-        os.system('start ' + where_is_mypy())
+        os.system('start ' + whereis_myutils())
     else:
-        os.system('code ' + where_is_mypy())
+        os.system('code ' + whereis_myutils())
 
 
 def square_abs(array):
