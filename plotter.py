@@ -49,46 +49,31 @@ def plotter_decorator(**kwargs):
     def decorator(plotter_function):
         from functools import wraps
         @wraps(plotter_function)
-        def wrapper(
-                *args, 
-                figsize=params['figsize'], 
-                axis=params['axis'], 
-                grid=params['grid'], 
-                xlabel=params['xlabel'], 
-                ylabel=params['ylabel'], 
-                title=params['title'],
-                xlim=params['xlim'], 
-                ylim=params['ylim'], 
-                legend=params['legend'], 
-                label=params['label'], 
-                save=params['save'], 
-                override=params['override'], 
-                show=params['show'],
-                **kwargs
-        ):    
-            if figsize is not None:
+        def wrapper(*args, **kwargs):    
+            if params['figsize'] is not None:
                 old_figsize = plt.rcParams['figure.figsize']
-                plt.rcParams['figure.figsize'] = figsize
-            if not axis:
+                plt.rcParams['figure.figsize'] = params['figsize']
+            if not params['axis']:
                 plt.xticks([])
                 plt.yticks([])
-            if grid is not None:    
-                plt.grid(grid)
-            if xlabel is not None:
-                plt.xlabel(xlabel)
-            if ylabel is not None:
-                plt.ylabel(ylabel)
-            if title is not None:
-                plt.title(title)
+            if params['grid'] is not None:    
+                plt.grid(params['grid'])
+            if params['xlabel'] is not None:
+                plt.xlabel(params['xlabel'])
+            if params['ylabel'] is not None:
+                plt.ylabel(params['ylabel'])
+            if params['title'] is not None:
+                plt.title(params['title'])
 
             plotter_function(*args, **kwargs)
             
-            if xlim is not None:
-                plt.xlim(xlim)
-            if ylim is not None:
-                plt.ylim(ylim)
-            if legend and label is not None:
+            if params['xlim'] is not None:
+                plt.xlim(params['xlim'])
+            if params['ylim'] is not None:
+                plt.ylim(params['ylim'])
+            if params['legend'] and params['label'] is not None:
                 plt.legend()
+            save = params['save']
             if save is not None:
                 if type(save) is bool or type(save) is str:
                     if save == True:
@@ -101,7 +86,7 @@ def plotter_decorator(**kwargs):
                         os.rename(src=temp_name, dst=f'{save}.svg')
                     elif type(save) is str:
                         if os.path.exists(save) or os.path.exists(f'{save}.svg'):
-                            if override:
+                            if params['override']:
                                 plt.savefig(save)
                             else:
                                 raise FileExistsError('file already exists')
@@ -109,12 +94,100 @@ def plotter_decorator(**kwargs):
                             plt.savefig(save)
                 else:
                     raise TypeError('type(save) must be bool or str')
-            if show:
+            if params['show']:
                 plt.show()
-            if figsize is not None:
+            if params['figsize'] is not None:
                 plt.rcParams['figure.figsize'] = old_figsize
         return wrapper
     return decorator
+
+
+# def plotter_decorator(**kwargs):
+#     default_params = {
+#           'figsize': None, 
+#              'axis': True, 
+#              'grid': True, 
+#            'xlabel': None, 
+#            'ylabel': None, 
+#             'title': None,
+#              'xlim': None, 
+#              'ylim': None, 
+#            'legend': True, 
+#             'label': None, 
+#              'save': None, 
+#          'override': False, 
+#              'show': True,
+#     }
+#     params = {**default_params, **kwargs}
+#     def decorator(plotter_function):
+#         from functools import wraps
+#         @wraps(plotter_function)
+#         def wrapper(
+#                 *args, 
+#                 figsize=params['figsize'], 
+#                 axis=params['axis'], 
+#                 grid=params['grid'], 
+#                 xlabel=params['xlabel'], 
+#                 ylabel=params['ylabel'], 
+#                 title=params['title'],
+#                 xlim=params['xlim'], 
+#                 ylim=params['ylim'], 
+#                 legend=params['legend'], 
+#                 label=params['label'], 
+#                 save=params['save'], 
+#                 override=params['override'], 
+#                 show=params['show'],
+#                 **kwargs
+#         ):    
+#             if figsize is not None:
+#                 old_figsize = plt.rcParams['figure.figsize']
+#                 plt.rcParams['figure.figsize'] = figsize
+#             if not axis:
+#                 plt.xticks([])
+#                 plt.yticks([])
+#             if grid is not None:    
+#                 plt.grid(grid)
+#             if xlabel is not None:
+#                 plt.xlabel(xlabel)
+#             if ylabel is not None:
+#                 plt.ylabel(ylabel)
+#             if title is not None:
+#                 plt.title(title)
+
+#             plotter_function(*args, **kwargs)
+            
+#             if xlim is not None:
+#                 plt.xlim(xlim)
+#             if ylim is not None:
+#                 plt.ylim(ylim)
+#             if legend and label is not None:
+#                 plt.legend()
+#             if save is not None:
+#                 if type(save) is bool or type(save) is str:
+#                     if save == True:
+#                         while True:
+#                             temp_name = f'{np.random.randint(0, 1e8)}.svg'
+#                             if not os.path.exists(temp_name):
+#                                 break
+#                         plt.savefig(temp_name)
+#                         save = sha1(temp_name)
+#                         os.rename(src=temp_name, dst=f'{save}.svg')
+#                     elif type(save) is str:
+#                         if os.path.exists(save) or os.path.exists(f'{save}.svg'):
+#                             if override:
+#                                 plt.savefig(save)
+#                             else:
+#                                 raise FileExistsError('file already exists')
+#                         else:
+#                             plt.savefig(save)
+#                 else:
+#                     raise TypeError('type(save) must be bool or str')
+#             if show:
+#                 plt.show()
+#             if figsize is not None:
+#                 plt.rcParams['figure.figsize'] = old_figsize
+#         return wrapper
+#     return decorator
 
 
 def show_all_fonts():
@@ -139,7 +212,7 @@ def figsize_fixed(x_figsize=None, y_figsize=None):
         plt.rcParams['figure.figsize'] = y_figsize
     elif x_figsize is None and y_figsize is None:
         plt.rcParams['figure.figsize'] = (6, 4)
-        print('warning: x_figsize and y_figsize is None, setting figsize to default.')
+        print('warning: x_figsize and y_figsize is None, setting figsize to default (6, 4)')
     elif isinstance(x_figsize, (int, float)) and isinstance(x_figsize, (int, float)):
         plt.rcParams['figure.figsize'] = (x_figsize, y_figsize)
     else:
@@ -173,11 +246,10 @@ def imwrite(array=None, save=None):
 
 
 @plotter_decorator()
-def plot(x, y, fmt='-', label=None, dots=300, alpha=None, xerr=None, yerr=None, capsize=3):
-    if len(x) == 0:
+def plot(x=[], y=[], fmt='-', label=None, dots=300, alpha=None, xerr=None, yerr=None, capsize=3):
+    if len(x) == 0 and len(y) != 0:
         x = (0, 1)
-        if len(y) != 0:
-            print('warning: x is a empty, x is treated as (0, 1)')
+        print('warning: x is a empty, x is treated as (0, 1)')
     if isinstance(x, tuple):
         if len(x) == 2:
             if callable(y):
@@ -188,13 +260,11 @@ def plot(x, y, fmt='-', label=None, dots=300, alpha=None, xerr=None, yerr=None, 
             raise TypeError('when x is a tuple, ' +
                             'it is treated as the domain of y, ' +
                             'so len(x) must be 2')
-
     if callable(y):
         try: 
             y = y(x)
         except TypeError:
             y = [y(x_) for x_ in x]
-
     if np.shape(x) == np.shape(y):
         if xerr is None and yerr is None:
             plt.plot(x, y, fmt, label=label, alpha=alpha)
