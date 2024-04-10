@@ -1,8 +1,9 @@
 from numpy.typing import ArrayLike
+from typing import Callable
 
 def plot(
     x: ArrayLike | tuple, 
-    y: ArrayLike | function, 
+    y: ArrayLike | Callable, 
     fmt: str, 
     dots: int, 
     alpha: float, 
