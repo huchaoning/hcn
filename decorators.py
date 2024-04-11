@@ -24,11 +24,12 @@ def plotter_decorator(**kwargs):
          'override': False, 
              'show': True,
     }
-    params = {**default_params, **kwargs}
+    default_params = {**default_params, **kwargs}
     def decorator(plotter_function):
         from functools import wraps
         @wraps(plotter_function)
-        def wrapper(*args, **kwargs):    
+        def wrapper(*args, **kwargs): 
+            params = {**default_params, **kwargs}
             if params['figsize'] is not None:
                 old_figsize = plt.rcParams['figure.figsize']
                 plt.rcParams['figure.figsize'] = params['figsize']

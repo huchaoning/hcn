@@ -85,7 +85,7 @@ def imwrite(array=None, save=None):
 
 
 @plotter_decorator()
-def plot(x=[], y=[], fmt='-', label=None, dots=300, alpha=None, xerr=None, yerr=None, capsize=3):
+def plot(x=[], y=[], fmt='-', label=None, dots=300, alpha=None, xerr=None, yerr=None, capsize=3, *args, **kwargs):
     if len(x) == 0 and len(y) != 0:
         x = (0, 1)
         print('warning: x is a empty, x is treated as (0, 1)')
