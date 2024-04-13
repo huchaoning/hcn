@@ -3,7 +3,7 @@ import numpy as np
 import scipy as sp
 import matplotlib.pyplot as plt
 
-import PIL
+from PIL import Image as image
 
 import os, shutil, timeit
 from glob import glob

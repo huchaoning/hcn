@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 import os
-import PIL
+from PIL import Image as image
 
 from .decorators import plotter_decorator
 
@@ -60,7 +60,7 @@ def figsize_fixed(x_figsize=None, y_figsize=None):
 
 def imread(img_path):
     if os.path.exists(img_path):
-        img = PIL.Image.open(img_path)
+        img = image.open(img_path)
         array = []
         for i in range(img.n_frames):
             img.seek(i)
@@ -77,7 +77,7 @@ def imread(img_path):
 def imwrite(array=None, save=None):
     if array is not None:
         if array.dtype == np.uint8:
-            PIL.Image.fromarray(array).save(save)
+            image.fromarray(array).save(save)
         else:
             raise TypeError('array.dtype must be np.uint8')
     else:
@@ -118,7 +118,7 @@ def plot(x=[], y=[], fmt='-', label=None, dots=300, alpha=None, xerr=None, yerr=
 
 
 @plotter_decorator()
-def scatter(x, y, s=None, c=None, marker=None, alpha=None, xerr=None, yerr=None, capsize=3, label=None):
+def scatter(x, y, s=None, c=None, marker=None, alpha=None, xerr=None, yerr=None, capsize=3, label=None, *args, **kwargs):
     if np.shape(x) == np.shape(y):
         plt.scatter(x, y, s=s, c=c, alpha=alpha, label=label, marker=marker)
         if xerr is not None or yerr is not None:
@@ -130,14 +130,14 @@ def scatter(x, y, s=None, c=None, marker=None, alpha=None, xerr=None, yerr=None,
 
 
 @plotter_decorator()
-def hist(x, bins=300, histtype='step', density=True, label=None):
+def hist(x, bins=300, histtype='step', density=True, label=None, *args, **kwargs):
     plt.hist(x, bins=bins, histtype=histtype, density=density, label=label)
 
 
 @plotter_decorator(axis=False)
-def imshow(x, cmap=None, pillow=False, colorbar=True):
+def imshow(x, cmap=None, pillow=False, colorbar=True, *args, **kwargs):
     if pillow:
-        PIL.Image.fromarray(x).show()
+        image.fromarray(x).show()
     else:
         plt.imshow(x, cmap=cmap)
     if colorbar:

@@ -1,6 +1,35 @@
 from numpy.typing import ArrayLike
 from typing import Callable
 
+
+def show_all_fonts(   
+):  pass
+
+
+def set_font(
+    family: str, 
+    weight: int | float
+):  pass
+
+
+def figsize_fixed(
+    x_figsize: int | float, 
+    y_figsize: int | float
+):  pass
+
+
+
+def imread(
+    img_path: str
+):  pass
+
+
+def imwrite(
+    array: ArrayLike,
+    save: str
+):  pass
+
+
 def plot(
     x: ArrayLike | tuple, 
     y: ArrayLike | Callable, 
