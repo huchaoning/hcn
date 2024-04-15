@@ -102,7 +102,7 @@ def plot(x=[], y=[], fmt='-', label=None, dots=300, alpha=None, xerr=None, yerr=
     if callable(y):
         try: 
             y = y(x)
-        except TypeError:
+        except (TypeError, ValueError):
             y = [y(x_) for x_ in x]
     if np.shape(x) == np.shape(y):
         if xerr is None and yerr is None:
