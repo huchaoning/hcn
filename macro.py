@@ -46,7 +46,12 @@ def to_csv(array=None, save=None):
         pd.DataFrame(array).to_csv(save, header=None, index=None)
     else:
         raise TypeError('array is None')
-    
+
+
+def relu(arr):
+    arr[arr<0] = 0 
+    return arr
+
 
 def gaussian_distribution(mean=0, std=1):
     return lambda x: np.exp(-((x-mean)**2)/(2*std**2))/np.sqrt(tau*std**2)

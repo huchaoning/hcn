@@ -2,7 +2,7 @@ import numpy as np
 import os 
 from ..plotter import imread
 
-zero_point = 110.3
+zero_point = 161.8
 pixel_size = 4.6
 ax_1d = 81
 
