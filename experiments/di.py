@@ -3,6 +3,8 @@ import os
 from ..plotter import imread
 
 zero_point = 161.8
+old_zero_point = 110.3
+
 pixel_size = 4.6
 ax_1d = 81
 
@@ -62,6 +64,23 @@ def run_all(img):
     if type(img) == str and os.path.exists(img):
         img = imread(img)
     return estimator(img), photon_number(img)
+
+
+def log_likehood(data):
+    def wapper(s):
+        arr = (np.arange(318) - s)**2
+        return (data * arr).sum()
+    return wapper
+
+
+def mle_estimator(img, eta, loops, init=0):
+    from ..macro import gradient_descent
+    sample = img[:, :, ax_1d].astype(float)
+    s_list = []
+    for i in range(sample.shape[0]):
+        result = gradient_descent(log_likehood(sample[i]), eta, loops, init)
+        s_list.append(result.argmin)
+    return (zero_point - np.array(s_list)) * 4.6
 
 
 # import numpy as np

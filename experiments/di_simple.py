@@ -2,7 +2,7 @@ import numpy as np
 import os 
 from ..plotter import imread
 from ..equipments import qcmos, dmd
-from .__init__ import sigma
+from . import sigma
 
 zero_point = 110.3
 pixel_size = 4.6

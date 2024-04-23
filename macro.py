@@ -69,7 +69,7 @@ def gradient_descent(func: callable, eta, loops, init):
 
     class result:
         def __init__(self):
-            self.argm = x
+            self.argmin = x
             self.min = func(x)
             self.x_list = np.array(x_list)
 
