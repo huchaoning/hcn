@@ -53,6 +53,45 @@ def relu(arr):
     return arr
 
 
+def gradient(func: callable, epsilon=1e-4):
+    def wapper(x):
+        return (func(x+epsilon) - func(x)) / epsilon
+    return wapper
+
+
+def gradient_descent(func: callable, eta, loops, init):
+    x = init
+    x_list = [init]
+
+    for _ in range(loops):
+        x = x - eta * gradient(func)(x)
+        x_list.append(x)
+
+    class result:
+        def __init__(self):
+            self.argm = x
+            self.min = func(x)
+            self.x_list = np.array(x_list)
+
+    return result()
+
+def gradient_ascent(func: callable, eta, loops, init):
+    x = init
+    x_list = [init]
+
+    for _ in range(loops):
+        x = x + eta * gradient(func)(x)
+        x_list.append(x)
+
+    class result:
+        def __init__(self):
+            self.argmax = x
+            self.max = func(x)
+            self.x_list = np.array(x_list)
+
+    return result()
+
+
 def gaussian_distribution(mean=0, std=1):
     return lambda x: np.exp(-((x-mean)**2)/(2*std**2))/np.sqrt(tau*std**2)
 
