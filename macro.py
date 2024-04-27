@@ -4,6 +4,9 @@ import pandas as pd
 import os
 from math import *
 
+import hashlib
+from inspect import signature
+
 
 def whereis_myutils():
     return os.path.dirname(__file__)
@@ -53,43 +56,59 @@ def relu(arr):
     return arr
 
 
-def gradient(func: callable, epsilon=1e-4):
-    def wapper(x):
-        return (func(x+epsilon) - func(x)) / epsilon
-    return wapper
+def variables_of(func: callable):
+    return len(signature(func).parameters)
 
 
-def gradient_descent(func: callable, eta, loops, init):
-    x = init
-    x_list = [init]
+def gradient(func: callable, variable=0, epsilon=1e-4):
+    def wrapper(*args):
+        if len(args) != variables_of(func):
+            raise ValueError('specific point to calculate gradient must be provided')
+        args_ = list(args[:])
+        args_[variable] = args_[variable] + epsilon
+        return (func(*args_) - func(*args)) / epsilon
+    return np.vectorize(wrapper)
 
-    for _ in range(loops):
-        x = x - eta * gradient(func)(x)
-        x_list.append(x)
 
-    class result:
-        def __init__(self):
-            self.argmin = x
-            self.min = func(x)
-            self.x_list = np.array(x_list)
+def gradient_descent(func: callable, *args, eta=None, accuracy=None, max_loops=inf):
+    variables = variables_of(func)
+    if len(args) != variables:
+        raise ValueError('specific initial value must be provided')
 
-    return result()
+    gd_result = list(args[:])
+    gd_process = []
+    converged = [False]*len(args)
+    loop = 1
 
-def gradient_ascent(func: callable, eta, loops, init):
-    x = init
-    x_list = [init]
+    while(True):
+        for variable in range(len(args)):
+            gd_process.append(gd_result[variable])
+            update = eta * gradient(func, variable, accuracy)(*gd_result)
+            gd_result[variable] = gd_result[variable] - update
+            if (abs(update) < accuracy):
+                converged[variable] = True
+            loop = loop + 1
+        if np.array(converged).all() or (loop >= max_loops):
+            break
 
-    for _ in range(loops):
-        x = x + eta * gradient(func)(x)
-        x_list.append(x)
+    if variables == 1:
+        return gd_result, np.array(gd_process)
+    else:
+        return gd_result, np.array(gd_process).reshape(int(len(gd_process)/variables), variables).T
 
-    class result:
-        def __init__(self):
-            self.argmax = x
-            self.max = func(x)
-            self.x_list = np.array(x_list)
 
-    return result()
+# def gradient_descent(func: callable, eta, loops, init):
+#     x = init
+#     x_list = [init]
+#     for _ in range(loops):
+#         x = x - eta * gradient(func)(x)
+#         x_list.append(x)
+#     class result:
+#         def __init__(self):
+#             self.argmin = x
+#             self.min = func(x)
+#             self.x_list = np.array(x_list)
+#     return result()
 
 
 def gaussian_distribution(mean=0, std=1):
@@ -101,7 +120,6 @@ def poisson_distribution(param):
 
 
 def sha1(file, chunk_size=65535):
-    import hashlib
     with open(file, 'rb') as file:
         hash = hashlib.sha1()
         while True:
@@ -113,7 +131,6 @@ def sha1(file, chunk_size=65535):
 
 
 def sha256(file, chunk_size=65535):
-    import hashlib
     with open(file, 'rb') as file:
         hash = hashlib.sha256()
         while True:
@@ -125,7 +142,6 @@ def sha256(file, chunk_size=65535):
 
 
 def md5(file, chunk_size=65535):
-    import hashlib
     with open(file, 'rb') as file:
         hash = hashlib.md5()
         while True:
