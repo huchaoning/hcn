@@ -7,6 +7,8 @@ from math import *
 import hashlib
 from inspect import signature
 
+from numpy.typing import ArrayLike
+
 
 def whereis_myutils():
     return os.path.dirname(__file__)
@@ -64,33 +66,48 @@ def gradient(func: callable, variable=0, epsilon=1e-4):
     def wrapper(*args):
         if len(args) != variables_of(func):
             raise ValueError('specific point to calculate gradient must be provided')
-        args_ = list(args[:])
-        args_[variable] = args_[variable] + epsilon
-        return (func(*args_) - func(*args)) / epsilon
+        
+        args_1 = list(args[:])
+        args_1[variable] = args_1[variable] + epsilon / 2
+
+        args_2 = list(args[:])
+        args_2[variable] = args_2[variable] - epsilon / 2
+
+        return (func(*args_1) - func(*args_2)) / epsilon
     return np.vectorize(wrapper)
 
 
-def gradient_descent(func: callable, *args, eta=None, accuracy=None, max_loops=inf):
+def gradient_descent(func: callable, 
+                     init: ArrayLike = None, 
+                     eta: ArrayLike = None,
+                     accuracy: float = None,
+                     max_loops:float = inf,
+                     epsilon = 1e-4):
+    
     variables = variables_of(func)
-    if len(args) != variables:
+    if len(init) != variables:
         raise ValueError('specific initial value must be provided')
 
-    gd_result = list(args[:])
-    gd_process = []
-    converged = [False]*len(args)
+    gd_result = list(init[:])
+    gd_process = list(init[:])
+
+    converged = [False for _ in range(variables)]
     loop = 1
 
     while(True):
-        for variable in range(len(args)):
+        for variable in range(variables):
+            if not converged[variable]:
+                update = eta[variable] * gradient(func, variable, epsilon)(*gd_result)
+                gd_result[variable] = gd_result[variable] - update
+                if (abs(update) <= accuracy):
+                    converged[variable] = True
             gd_process.append(gd_result[variable])
-            update = eta * gradient(func, variable, accuracy)(*gd_result)
-            gd_result[variable] = gd_result[variable] - update
-            if (abs(update) < accuracy):
-                converged[variable] = True
-            loop = loop + 1
+        loop = loop + 1
         if np.array(converged).all() or (loop >= max_loops):
             break
 
+    if loop >= max_loops:
+        print('warning: max_loops has reached, the algorithm might not converged')
     if variables == 1:
         return gd_result, np.array(gd_process)
     else:
