@@ -95,12 +95,12 @@ def gradient_descent(func: callable,
     loop = 1
 
     while(True):
+        converged = [False for _ in range(variables)]
         for variable in range(variables):
-            if not converged[variable]:
-                update = eta[variable] * gradient(func, variable, epsilon)(*gd_result)
-                gd_result[variable] = gd_result[variable] - update
-                if (abs(update) <= accuracy):
-                    converged[variable] = True
+            update = eta[variable] * gradient(func, variable, epsilon)(*gd_result)
+            gd_result[variable] = gd_result[variable] - update
+            if (abs(update) <= accuracy):
+                converged[variable] = True
             gd_process.append(gd_result[variable])
         loop = loop + 1
         if np.array(converged).all() or (loop >= max_loops):
