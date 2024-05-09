@@ -64,8 +64,8 @@ def variables_of(func: callable):
 
 def gradient(func: callable, variable=0, epsilon=1e-4):
     def wrapper(*args):
-        if len(args) != variables_of(func):
-            raise ValueError('specific point to calculate gradient must be provided')
+        # if len(args) != variables_of(func):
+        #     raise ValueError('specific point to calculate gradient must be provided')
         
         args_1 = list(args[:])
         args_1[variable] = args_1[variable] + epsilon / 2
@@ -75,6 +75,14 @@ def gradient(func: callable, variable=0, epsilon=1e-4):
 
         return (func(*args_1) - func(*args_2)) / epsilon
     return np.vectorize(wrapper)
+
+
+def pdv(order: int):
+    def wrapper(func: callable, variable=0, epsilon=1e-4):
+        for _ in range(order):
+            func = gradient(func, variable=variable, epsilon=epsilon)
+        return func
+    return wrapper
 
 
 def gradient_descent(func: callable, 
@@ -112,20 +120,6 @@ def gradient_descent(func: callable,
         return gd_result, np.array(gd_process)
     else:
         return gd_result, np.array(gd_process).reshape(int(len(gd_process)/variables), variables).T
-
-
-# def gradient_descent(func: callable, eta, loops, init):
-#     x = init
-#     x_list = [init]
-#     for _ in range(loops):
-#         x = x - eta * gradient(func)(x)
-#         x_list.append(x)
-#     class result:
-#         def __init__(self):
-#             self.argmin = x
-#             self.min = func(x)
-#             self.x_list = np.array(x_list)
-#     return result()
 
 
 def gaussian_distribution(mean=0, std=1):
