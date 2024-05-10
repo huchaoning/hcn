@@ -162,3 +162,18 @@ def md5(file, chunk_size=65535):
             hash.update(chunk)
     return hash.hexdigest()
 
+
+def aviread(avi_path):
+    try:
+        import cv2
+    except ImportError:
+        raise ImportError('import cv2 failed, try pip install opencv-python')
+    avi = cv2.VideoCapture(avi_path)
+    mptiff = []
+    while True:
+        ret, frame = avi.read()
+        if not ret:
+            break
+        mptiff.append(cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY))
+    avi.release()
+    return np.array(mptiff).astype(float)
