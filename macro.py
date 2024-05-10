@@ -169,11 +169,11 @@ def aviread(avi_path):
     except ImportError:
         raise ImportError('import cv2 failed, try pip install opencv-python')
     avi = cv2.VideoCapture(avi_path)
-    mptiff = []
+    arr = []
     while True:
         ret, frame = avi.read()
         if not ret:
             break
-        mptiff.append(cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY))
+        arr.append(cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY))
     avi.release()
-    return np.array(mptiff).astype(float)
+    return np.array(arr).astype(float)
