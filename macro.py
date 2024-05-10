@@ -3,6 +3,7 @@ import scipy as sp
 import pandas as pd
 import os
 from math import *
+from PIL import Image as image
 
 import hashlib
 from inspect import signature
@@ -168,6 +169,8 @@ def aviread(avi_path):
         import cv2
     except ImportError:
         raise ImportError('import cv2 failed, try pip install opencv-python')
+    if not os.path.exists(avi_path):
+        raise FileNotFoundError(f'{avi_path} is not exists')
     avi = cv2.VideoCapture(avi_path)
     arr = []
     while True:
@@ -177,3 +180,39 @@ def aviread(avi_path):
         arr.append(cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY))
     avi.release()
     return np.array(arr).astype(float)
+
+
+def imread(img_path):
+    if not os.path.exists(img_path):
+        raise FileNotFoundError(f'{img_path} is not exists')
+    img = image.open(img_path)
+    array = []
+    for i in range(img.n_frames):
+        img.seek(i)
+        array.append(np.array(img))
+    array = np.array(array, dtype=float)
+    if np.shape(array)[0] == 1:
+        return array[0]
+    else:
+        return array
+        
+
+def imwrite(array=None, save=None, convert=False):
+    if array is not None:
+        if array.dtype == np.uint8:
+            image.fromarray(array).save(save)
+        elif not (array.dtype == np.uint8) and convert:
+            image.fromarray(array.astype(np.uint8)).save(save)
+        else:
+            raise TypeError('array.dtype must be np.uint8')
+    else:
+        raise TypeError('array is None')
+    
+
+def load_npz(npz_path):
+    if not os.path.exists(npz_path):
+        raise FileNotFoundError(f'{npz_path} is not exists')
+    dic = dict(np.load(npz_path))
+    for key in dic.keys():
+        dic[key] = dic[key].astype(float)
+    return dic

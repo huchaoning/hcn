@@ -21,8 +21,6 @@ plt.rcParams['savefig.format'] = 'svg'
 __all__ = ['show_all_fonts', 
            'set_font',
            'figsize_fixed',
-           'imread',
-           'imwrite',
            'plot',
            'hist',
            'scatter',
@@ -56,32 +54,6 @@ def figsize_fixed(x_figsize=None, y_figsize=None):
         plt.rcParams['figure.figsize'] = (x_figsize, y_figsize)
     else:
         raise ValueError('invalid figsize parameters')
-
-
-def imread(img_path):
-    if os.path.exists(img_path):
-        img = image.open(img_path)
-        array = []
-        for i in range(img.n_frames):
-            img.seek(i)
-            array.append(np.array(img))
-        array = np.array(array, dtype=float)
-        if np.shape(array)[0] == 1:
-            return array[0]
-        else:
-            return array
-    else:
-        raise FileNotFoundError(f'{img_path} is not exists')
-
-
-def imwrite(array=None, save=None):
-    if array is not None:
-        if array.dtype == np.uint8:
-            image.fromarray(array).save(save)
-        else:
-            raise TypeError('array.dtype must be np.uint8')
-    else:
-        raise TypeError('array is None')
 
 
 @plotter_decorator()

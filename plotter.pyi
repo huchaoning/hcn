@@ -18,18 +18,6 @@ def figsize_fixed(
 ):  pass
 
 
-
-def imread(
-    img_path: str
-):  pass
-
-
-def imwrite(
-    array: ArrayLike,
-    save: str
-):  pass
-
-
 def plot(
     x: ArrayLike | tuple, 
     y: ArrayLike | Callable, 

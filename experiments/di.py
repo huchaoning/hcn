@@ -1,6 +1,6 @@
 import numpy as np
 import os 
-from ..plotter import imread
+from ..macro import imread
 
 zero_point = 161.8
 old_zero_point = 110.3

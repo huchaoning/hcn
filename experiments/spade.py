@@ -1,7 +1,7 @@
 import numpy as np
 from math import sqrt
 import os 
-from ..plotter import imread
+from ..macro import imread
 from .__init__ import sigma
 
 point_1 = (91, 110)

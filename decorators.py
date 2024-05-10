@@ -22,7 +22,7 @@ def plotter_decorator(**kwargs):
             'label': None, 
              'save': None, 
          'override': False, 
-             'show': True,
+             'show': False,
     }
     default_params = {**default_params, **kwargs}
     def decorator(plotter_function):
@@ -90,12 +90,3 @@ def print_run_time(func):
         print(f'Function {func.__name__} took: {time() - start} seconds')
         return result
     return wrapper
-
-# def npy_cache_mkdir(func):
-#     @wraps
-#     def wrapper(*args, **kwargs):
-#         if kwargs['npy_cache']:
-#             if not os.path.exists('./__npy_cache__'):
-#                 os.mkdir('./__npy_cache__')
-#         return func(*args, **kwargs)
-#     return wrapper
