@@ -9,6 +9,7 @@ import hashlib
 from inspect import signature
 
 from numpy.typing import ArrayLike
+from typing import Callable
 
 
 def whereis_myutils():
@@ -77,11 +78,11 @@ def max_min_normalization(array: ArrayLike, max_=1, min_=0):
     return scaled * (max_ - min_)  + min_
 
 
-def variables_of(func: callable):
+def variables_of(func: Callable):
     return len(signature(func).parameters)
 
 
-def gradient(func: callable, variable=0, epsilon=1e-4):
+def gradient(func: Callable, variable=0, epsilon=1e-4):
     def wrapper(*args):
         # if len(args) != variables_of(func):
         #     raise ValueError('specific point to calculate gradient must be provided')
@@ -97,14 +98,14 @@ def gradient(func: callable, variable=0, epsilon=1e-4):
 
 
 def pdv(order: int):
-    def wrapper(func: callable, variable=0, epsilon=1e-4):
+    def wrapper(func: Callable, variable=0, epsilon=1e-4):
         for _ in range(order):
             func = gradient(func, variable=variable, epsilon=epsilon)
         return func
     return wrapper
 
 
-def gradient_descent(func: callable, 
+def gradient_descent(func: Callable, 
                      init: ArrayLike = None, 
                      eta: ArrayLike = None,
                      accuracy: float = None,
@@ -200,7 +201,7 @@ def aviread(avi_path):
     return np.array(arr).astype(float)
 
 
-def imread(img_path):
+def imread(img_path) -> np.ndarray:
     if not os.path.exists(img_path):
         raise FileNotFoundError(f'{img_path} is not exists')
     img = image.open(img_path)
@@ -227,7 +228,7 @@ def imwrite(array=None, save=None, convert=False):
         raise TypeError('array is None')
     
 
-def load_npz(npz_path):
+def load_npz(npz_path) -> dict:
     if not os.path.exists(npz_path):
         raise FileNotFoundError(f'{npz_path} is not exists')
     dic = dict(np.load(npz_path))

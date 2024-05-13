@@ -8,6 +8,9 @@ from PIL import Image as image
 import os, shutil, timeit
 from glob import glob
 
+from typing import Callable
+from numpy.typing import ArrayLike
+
 from .experiments import *
 from .equipments import *
 

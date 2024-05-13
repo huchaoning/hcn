@@ -948,3 +948,549 @@
 #         plt.imshow(x, cmap=cmap)
 #     if colorbar:
 #         plt.colorbar()
+
+
+# from math import sqrt
+
+# point_1 = None
+# point_2 = None
+# characteristic_width = 1
+
+# mode = '+-'
+
+# def photon_number(img):
+#     return img[point_1[1]][point_1[0]], img[point_2[1]][point_2[0]]
+
+
+# def estimator(img, mode = mode):
+#     if img[point_2[1]][point_2[0]] == 0:
+#         return - 2 * characteristic_width
+#     else:
+#         if mode == '+-':
+#             k = sqrt(img[point_1[1]][point_1[0]] / img[point_2[1]][point_2[0]])
+#             return 2 * characteristic_width * (1-k)/(1+k)
+#         elif mode == '0001':
+#             return 2 * characteristic_width * sqrt(img[point_1[1]][point_1[0]] / img[point_2[1]][point_2[0]])
+
+
+
+# import numpy as np
+
+# zero_point = 0
+# pixel_size = 1
+
+# def photon_number(img):
+#     return img.sum()
+
+# def estimator(img, axis = 'y'):
+#     if axis == 'x':
+#         img = np.sum(img, axis=0)
+#         img = img / img.sum()
+#         index = np.arange(len(img))
+#         return (zero_point - index @ img) * pixel_size
+#     elif axis == 'y':
+#         img = np.sum(img, axis=1)
+#         img = img / img.sum()
+#         index = np.arange(len(img))
+#         return (zero_point - index @ img) * pixel_size
+
+# def estimator_1d(img):
+#     if len(np.shape(img)) != 1:
+#         raise ValueError('img must be 1d')
+#     else:
+#         img = img / img.sum()
+#         index = np.arange(len(img))
+#         return (zero_point - index @ img) * pixel_size
+
+
+# import numpy as np
+# from math import sqrt, exp
+# import os 
+# from ..plotter import imread
+# from .__init__ import sigma
+
+# point_1 = (91, 110)
+# point_2 = (91, 404)
+# characteristic_width = sigma
+
+# def photon_number(img):
+#     if type(img) == str and os.path.exists(img):
+#         img = imread(img)
+#     return img[:, point_1[1], point_1[0]] + img[:, point_2[1], point_2[0]]
+
+
+# def estimator(img, output_photon_number=True):
+#     if type(img) == str and os.path.exists(img):
+#         img = imread(img)
+
+#     k = np.sqrt(img[:, point_1[1], point_1[0]] / img[:, point_2[1], point_2[0]])
+#     result = 2 * characteristic_width * (1-k)/(1+k)
+#     result[np.logical_not(np.isfinite(k))] = -2 * characteristic_width
+
+#     if output_photon_number:
+#         return result, photon_number(img)
+#     else:
+#         return result
+
+
+# def p1(s, sigma):
+#     return (s+2*sigma)**2*exp(-s**2/(4*sigma**2))/(8*sigma**2)
+
+# def p2(s, sigma):
+#     return (s-2*sigma)**2*exp(-s**2/(4*sigma**2))/(8*sigma**2)
+
+# def gen_signal(s, resource):
+#     random_data = np.random.uniform(0, 1, size = resource)
+#     return np.histogram(random_data, bins=[0, p1(s), p1(s)+p2(s)])[0]
+
+
+# import numpy as np
+# import os 
+# from ..plotter import imread
+# from ..equipments import qcmos, dmd
+# from . import sigma
+
+# zero_point = 110.3
+# pixel_size = 4.6
+# axis_of_interest = 81
+# bad_points = -2
+
+
+# # def photon_number(img):
+# #     if type(img) == str and os.path.exists(img):
+# #         img = imread(img)
+# #     img = img[:, :bad_points, axis_of_interest]
+# #     return img.sum(axis=1)
+
+
+# # def estimator(img, output_photon_number=True):
+# #     if type(img) == str and os.path.exists(img):
+# #         img = imread(img)
+# #     img = img[:, :bad_points, axis_of_interest]
+# #     normalized_img = img / img.sum()
+# #     index = np.arange(len(normalized_img))
+# #     if output_photon_number:
+# #         return (zero_point - index @ normalized_img) * pixel_size, photon_number(img)
+# #     else:
+# #         return (zero_point - index @ normalized_img) * pixel_size
+
+
+# # def gen_signal(s, resource, roi=218):
+# #     s_pixels = zero_point - s / qcmos.pixel_size
+# #     sigma_pixels = sigma / qcmos.pixel_size
+# #     random_data = np.random.normal(s_pixels, sigma_pixels, size=resource)
+# #     return np.histogram(random_data, bins=np.arange(roi+1))[0]
+
+
+
+# # %%
+# from mypy import *
+# import cv2
+
+# # 读取图像并转换为灰度图
+# image = cv2.imread('/Users/me/Desktop/1.png')
+# gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+# imshow(gray)
+
+# # %%
+# gray = cv2.flip(gray, 0)
+# imshow(gray)
+
+# # %%
+# # 二值化处理，找到曲线的轮廓
+# _, thresh = cv2.threshold(gray, 127, 255, cv2.THRESH_BINARY)
+# imshow(thresh)
+
+# # %%
+# # 寻找轮廓
+# contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+# # plot(np.arange(len(contours)), contours)
+# scatter(contours[1].T[0], contours[1].T[1])
+
+# # %%
+# cnt = contours[1]
+# # 获取轮廓的所有点
+# x, y = max_min_normalization(cnt[:, 0, 0])*850+250, max_min_normalization(cnt[:, 0, 1])*90
+
+# plot(x, y, label='QE')
+
+# # %%
+# qe = sp.interpolate.interp1d(x, y)
+
+# # %%
+# wavelength_range = np.linspace(250, 1100, 8501)
+
+# # %%
+# qe_line = qe(wavelength_range)
+
+# # %%
+# # np.save(arr=qe_line, file='/Users/me/Desktop/qe.npy')
+
+# # %%
+# # scatter(max_min_normalization(contours[1].T[0])*1100, max_min_normalization(contours[1].T[1])*90, show=False, marker='.')
+# # plot((1,1100), qe, fmt='k')
+
+# # %%
+# qe(770)
+
+# # %%
+# qcmos.quantum_efficiency
+
+# # %%
+# open_mypy()
+
+# # %%
+
+
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+import os
+import PIL
+
+from .macro import sha1
+
+from matplotlib_inline import backend_inline
+backend_inline.set_matplotlib_formats('svg')
+del backend_inline
+
+from matplotlib.font_manager import fontManager
+fontManager.addfont(os.path.join(os.path.dirname(__file__), 'font/SourceHanSans.otf'))
+del fontManager
+
+plt.rcParams['font.family'] = ['Source Han Sans SC']
+plt.rcParams['figure.figsize'] = (6, 4)
+plt.rcParams['savefig.format'] = 'svg'
+
+__all__ = ['show_all_fonts', 
+           'set_font',
+           'figsize_fixed',
+           'imread',
+           'imwrite',
+           'plot',
+           'hist',
+           'scatter',
+           'imshow']
+
+
+def show_all_fonts():
+    from matplotlib.font_manager import get_font_names
+    all_fonts = get_font_names()
+    print('font list got from matplotlib.font_manager:')
+    for font in sorted(all_fonts):
+        print('\t' + font)
+
+
+def set_font(family=None, weight=None):
+    if family is None:
+        plt.rcParams['font.family'] = ['Source Han Sans SC']
+    else:
+        plt.rc('font', family=family, weight=weight)
+
+
+def figsize_fixed(x_figsize=None, y_figsize=None):
+    if isinstance(x_figsize, (tuple, list)) and (y_figsize is None):
+        plt.rcParams['figure.figsize'] = x_figsize
+    elif isinstance(y_figsize, (tuple, list)) and (x_figsize is None):
+        plt.rcParams['figure.figsize'] = y_figsize
+    elif x_figsize is None and y_figsize is None:
+        plt.rcParams['figure.figsize'] = (6, 4)
+        print('warning: x_figsize and y_figsize is None, setting figsize to default.')
+    elif isinstance(x_figsize, (int, float)) and isinstance(x_figsize, (int, float)):
+        plt.rcParams['figure.figsize'] = (x_figsize, y_figsize)
+    else:
+        raise ValueError('invalid figsize parameters')
+
+
+def imread(img_path):
+    if os.path.exists(img_path):
+        img = PIL.Image.open(img_path)
+        array = []
+        for i in range(img.n_frames):
+            img.seek(i)
+            array.append(np.array(img))
+        array = np.array(array, dtype=float)
+        if np.shape(array)[0] == 1:
+            return array[0]
+        else:
+            return array
+    else:
+        raise FileNotFoundError(f'{img_path} is not exists')
+
+
+def imwrite(array=None, save=None):
+    if array is not None:
+        if array.dtype == np.uint8:
+            PIL.Image.fromarray(array).save(save)
+        else:
+            raise TypeError('array.dtype must be np.uint8')
+    else:
+        raise TypeError('array is None')
+
+
+def save_util(save=None, override=False):
+    if type(save) is bool or type(save) is str:
+        if save == True:
+            while True:
+                temp_name = f'{np.random.randint(0, 1e8)}.svg'
+                if not os.path.exists(temp_name):
+                    break
+            plt.savefig(temp_name)
+            save = sha1(temp_name)
+            os.rename(src=temp_name, dst=f'{save}.svg')
+        elif type(save) is str:
+            if os.path.exists(save) or os.path.exists(f'{save}.svg'):
+                if override:
+                    plt.savefig(save)
+                else:
+                    raise FileExistsError('file already exists')
+            else:
+                plt.savefig(save)
+    else:
+        raise TypeError('type(save) must be bool or str')
+    
+
+# pre_params = ['figsize', 'axis', 'grid', 'title', 'xlabel', 'ylabel']
+
+# post_params = ['xlim', 'ylim', 'legend', 'label', 'save', 'override', 'show']
+
+
+# def pre_process(**kwargs):
+#     if kwargs['figsize'] is not None:
+#         old_figsize = plt.rcParams['figure.figsize']
+#         plt.rcParams['figure.figsize'] = kwargs['figsize']
+#     if not kwargs['axis']:
+#         plt.xticks([])
+#         plt.yticks([])
+#     if kwargs['title'] is not None:
+#         plt.title(kwargs['title'])
+#     if kwargs['grid'] is not None:    
+#         plt.grid(kwargs['grid'])
+#     if kwargs['xlabel'] is not None:
+#         plt.xlabel(kwargs['xlabel'])
+#     if kwargs['ylabel'] is not None:
+#         plt.ylabel(kwargs['ylabel'])
+#     return old_figsize
+
+
+
+# def post_process(old_figsize, **kwargs):
+#     if kwargs['xlim'] is not None:
+#         plt.xlim(kwargs['xlim'])
+#     if kwargs['ylim'] is not None:
+#         plt.ylim(['ylim'])
+#     if kwargs['legend'] and kwargs['label'] is not None:
+#         plt.legend()
+#     if kwargs['save'] is not None:
+#         if (kwargs['save'] == True) and (kwargs['title'] is not None):
+#             save_util(save=kwargs['title'], override=kwargs['override'])
+#         else:
+#             save_util(save=kwargs['save'], override=kwargs['override'])
+#     if kwargs['show']:
+#         plt.show()
+#     if kwargs['figsize'] is not None:
+#         plt.rcParams['figure.figsize'] = old_figsize
+
+
+# def plot(x, y, fmt='-', dots=300, figsize=None,
+#          alpha=None, xerr=None, yerr=None, capsize=3, 
+#          axis=True, title=None, label=None, legend=True, 
+#          xlabel=None, ylabel=None, xlim=None, ylim=None,
+#          grid=True, show=True, save=None, override=False):
+
+#     if isinstance(x, tuple):
+#         if len(x) == 2:
+#             if callable(y):
+#                 x = np.linspace(x[0], x[1], dots)
+#             else:
+#                 x = np.linspace(x[0], x[1], len(y))
+#         else:
+#             raise TypeError('when x is a tuple, ' +
+#                             'it is treated as the domain of y, ' +
+#                             'so the len(x) must be 2')
+
+#     if callable(y):
+#         try: 
+#             y = y(x)
+#         except TypeError:
+#             y = [y(x_) for x_ in x]
+
+#     if figsize is not None:
+#         old_figsize = plt.rcParams['figure.figsize']
+#         plt.rcParams['figure.figsize'] = figsize
+#     if not axis:
+#         plt.xticks([])
+#         plt.yticks([])
+#     if title is not None:
+#         plt.title(title)
+#     if grid is not None:    
+#         plt.grid(grid)
+#     if xlabel is not None:
+#         plt.xlabel(xlabel)
+#     if ylabel is not None:
+#         plt.ylabel(ylabel)
+
+#     if np.shape(x) == np.shape(y):
+#         if xerr is None and yerr is None:
+#             plt.plot(x, y, fmt, label=label, alpha=alpha)
+#         else:
+#             c = None if fmt=='-' or fmt=='' else fmt
+#             plt.errorbar(x, y, c=c, xerr=xerr, yerr=yerr, 
+#                          label=label, alpha=alpha, capsize=capsize,
+#                          marker='o', linestyle='--')
+#     else:
+#         raise ValueError( 'x and y must have same shape, ' +
+#                          f'but have shapes {np.shape(x)} and {np.shape(y)}')
+
+#     if xlim is not None:
+#         plt.xlim(xlim)
+#     if ylim is not None:
+#         plt.ylim(ylim)
+#     if legend and label is not None:
+#         plt.legend()
+#     if save is not None:
+#         if (save == True) and (title is not None):
+#             save_util(save=title, override=override)
+#         else:
+#             save_util(save=save, override=override)
+#     if show:
+#         plt.show()
+#     if figsize is not None:
+#         plt.rcParams['figure.figsize'] = old_figsize
+#         del old_figsize
+
+
+# def hist(x, bins=300, histtype='step', density=True, figsize=None,
+#          axis=True, title=None, label=None, legend=True, 
+#          xlabel=None, ylabel=None, xlim=None, ylim=None,
+#          grid=True, show=True, save=None, override=False):
+
+#     if figsize is not None:
+#         old_figsize = plt.rcParams['figure.figsize']
+#         plt.rcParams['figure.figsize'] = figsize
+#     if not axis:
+#         plt.xticks([])
+#         plt.yticks([])
+#     if title is not None:
+#         plt.title(title)
+#     if grid is not None:    
+#         plt.grid(grid)
+#     if xlabel is not None:
+#         plt.xlabel(xlabel)
+#     if ylabel is not None:
+#         plt.ylabel(ylabel)
+
+#     plt.hist(x, bins=bins, histtype=histtype, density=density, label=label)
+
+#     if xlim is not None:
+#         plt.xlim(xlim)
+#     if ylim is not None:
+#         plt.ylim(ylim)
+#     if legend and label is not None:
+#         plt.legend()
+#     if save is not None:
+#         if (save == True) and (title is not None):
+#             save_util(save=title, override=override)
+#         else:
+#             save_util(save=save, override=override)
+#     if show:
+#         plt.show()
+#     if figsize is not None:
+#         plt.rcParams['figure.figsize'] = old_figsize
+#         del old_figsize
+
+
+# def scatter(x, y, s=None, c=None, marker=None, colorbar=False, figsize=None,
+#             alpha=None, xerr=None, yerr=None, capsize=3,
+#             axis=True, title=None, label=None, legend=True, 
+#             xlabel=None, ylabel=None, xlim=None, ylim=None,
+#             grid=True, show=True, save=None, override=False):
+
+#     if figsize is not None:
+#         old_figsize = plt.rcParams['figure.figsize']
+#         plt.rcParams['figure.figsize'] = figsize
+#     if not axis:
+#         plt.xticks([])
+#         plt.yticks([])
+#     if title is not None:
+#         plt.title(title)
+#     if grid is not None:    
+#         plt.grid(grid)
+#     if xlabel is not None:
+#         plt.xlabel(xlabel)
+#     if ylabel is not None:
+#         plt.ylabel(ylabel)
+
+#     if np.shape(x) == np.shape(y):
+#         plt.scatter(x, y, s=s, c=c, alpha=alpha, label=label, marker=marker)
+#         if xerr is not None or yerr is not None:
+#             plt.errorbar(x, y, xerr=xerr, yerr=yerr, alpha=alpha, ecolor=c,
+#                          marker='none', linestyle='none', capsize=capsize)
+#     else:
+#         raise ValueError( 'x and y must have same shape, ' +
+#                          f'but have shapes {np.shape(x)} and {np.shape(y)}')
+
+#     if xlim is not None:
+#         plt.xlim(xlim)
+#     if ylim is not None:
+#         plt.ylim(ylim)
+#     if legend and label is not None:
+#         plt.legend()
+#     if colorbar and (c is not None):
+#         plt.colorbar()
+#     if save is not None:
+#         if (save == True) and (title is not None):
+#             save_util(save=title, override=override)
+#         else:
+#             save_util(save=save, override=override)
+#     if show:
+#         plt.show()
+#     if figsize is not None:
+#         plt.rcParams['figure.figsize'] = old_figsize
+#         del old_figsize
+
+
+# def imshow(x, cmap=None, pillow=False, figsize=None, 
+#            axis=False, title=None, colorbar=True,
+#            xlabel=None, ylabel=None, xlim=None, ylim=None,
+#            grid=True, show=True, save=None, override=False):
+
+
+#     if pillow:
+#         PIL.Image.fromarray(x).show()
+#     else:
+#         if figsize is not None:
+#             old_figsize = plt.rcParams['figure.figsize']
+#             plt.rcParams['figure.figsize'] = figsize
+#         if not axis:
+#             plt.xticks([])
+#             plt.yticks([])
+#         if title is not None:
+#             plt.title(title)
+#         if grid is not None:    
+#             plt.grid(grid)
+#         if xlabel is not None:
+#             plt.xlabel(xlabel)
+#         if ylabel is not None:
+#             plt.ylabel(ylabel)
+
+#         plt.imshow(x, cmap=cmap)
+
+#         if xlim is not None:
+#             plt.xlim(xlim)
+#         if ylim is not None:
+#             plt.ylim(ylim)
+#         if colorbar:
+#             plt.colorbar()
+#         if save is not None:
+#             if (save == True) and (title is not None):
+#                 save_util(save=title, override=override)
+#             else:
+#                 save_util(save=save, override=override)
+#         if show:
+#             plt.show()
+#         if figsize is not None:
+#             plt.rcParams['figure.figsize'] = old_figsize
+#             del old_figsize
