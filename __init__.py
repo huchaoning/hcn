@@ -8,6 +8,11 @@ from PIL import Image as image
 import os, shutil, timeit
 from glob import glob
 
+try:
+    from tqdm import tqdm
+except ImportError:
+    pass
+
 from typing import Callable
 from numpy.typing import ArrayLike
 
