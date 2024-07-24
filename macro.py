@@ -237,3 +237,21 @@ def load_npz(npz_path) -> dict:
     return dic
 
 
+try:
+    import git
+    def push(commit='An auto commit'):
+        repo = git.Repo(whereis_myutils())
+        repo.git.add(all=True)
+        repo.git.commit('-m', commit)
+        repo.remotes.origin.push()
+
+    def pull():
+        repo = git.Repo(whereis_myutils())
+        repo.remotes.origin.pull()
+
+    def status():
+        repo = git.Repo(whereis_myutils())
+        print(repo.git.status())
+
+except ModuleNotFoundError:
+    pass
