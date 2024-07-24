@@ -51,7 +51,6 @@ def relu(arr):
     arr[arr<0] = 0 
     return arr
 
-
 def integrate(target, int_range=(-inf, inf)):
     if isinstance(target, np.ndarray):
         print('warning: integrate target is an array, doing numerical integration')
@@ -78,68 +77,69 @@ def max_min_normalization(array: ArrayLike, max_=1, min_=0):
     return scaled * (max_ - min_)  + min_
 
 
-def variables_of(func: Callable):
-    return len(signature(func).parameters)
+# 这部分内容有 Bug, 而且可能会和做实验的模块冲突. 等到实验做完再从那边整合过来
+# def variables_of(func: Callable):
+#     return len(signature(func).parameters)
 
-
-def gradient(func: Callable, variable=0, epsilon=1e-4):
-    def wrapper(*args):
-        # if len(args) != variables_of(func):
-        #     raise ValueError('specific point to calculate gradient must be provided')
+# 
+# def gradient(func: Callable, variable=0, epsilon=1e-4):
+#     def wrapper(*args):
+#         # if len(args) != variables_of(func):
+#         #     raise ValueError('specific point to calculate gradient must be provided')
         
-        args_1 = list(args[:])
-        args_1[variable] = args_1[variable] + epsilon / 2
+#         args_1 = list(args[:])
+#         args_1[variable] = args_1[variable] + epsilon / 2
 
-        args_2 = list(args[:])
-        args_2[variable] = args_2[variable] - epsilon / 2
+#         args_2 = list(args[:])
+#         args_2[variable] = args_2[variable] - epsilon / 2
 
-        return (func(*args_1) - func(*args_2)) / epsilon
-    return np.vectorize(wrapper)
-
-
-def pdv(order: int):
-    def wrapper(func: Callable, variable=0, epsilon=1e-4):
-        for _ in range(order):
-            func = gradient(func, variable=variable, epsilon=epsilon)
-        return func
-    return wrapper
+#         return (func(*args_1) - func(*args_2)) / epsilon
+#     return np.vectorize(wrapper)
 
 
-def gradient_descent(func: Callable, 
-                     init: ArrayLike = None, 
-                     eta: ArrayLike = None,
-                     accuracy: float = None,
-                     max_loops:float = inf,
-                     epsilon = 1e-4):
+# def pdv(order: int):
+#     def wrapper(func: Callable, variable=0, epsilon=1e-4):
+#         for _ in range(order):
+#             func = gradient(func, variable=variable, epsilon=epsilon)
+#         return func
+#     return wrapper
+
+
+# def gradient_descent(func: Callable, 
+#                      init: ArrayLike = None, 
+#                      eta: ArrayLike = None,
+#                      accuracy: float = None,
+#                      max_loops:float = inf,
+#                      epsilon = 1e-4):
     
-    variables = variables_of(func)
-    if len(init) != variables:
-        raise ValueError('specific initial value must be provided')
+#     variables = variables_of(func)
+#     if len(init) != variables:
+#         raise ValueError('specific initial value must be provided')
 
-    gd_result = list(init[:])
-    gd_process = list(init[:])
+#     gd_result = list(init[:])
+#     gd_process = list(init[:])
 
-    converged = [False for _ in range(variables)]
-    loop = 1
+#     converged = [False for _ in range(variables)]
+#     loop = 1
 
-    while(True):
-        converged = [False for _ in range(variables)]
-        for variable in range(variables):
-            update = eta[variable] * gradient(func, variable, epsilon)(*gd_result)
-            gd_result[variable] = gd_result[variable] - update
-            if (abs(update) <= accuracy):
-                converged[variable] = True
-            gd_process.append(gd_result[variable])
-        loop = loop + 1
-        if np.array(converged).all() or (loop >= max_loops):
-            break
+#     while(True):
+#         converged = [False for _ in range(variables)]
+#         for variable in range(variables):
+#             update = eta[variable] * gradient(func, variable, epsilon)(*gd_result)
+#             gd_result[variable] = gd_result[variable] - update
+#             if (abs(update) <= accuracy):
+#                 converged[variable] = True
+#             gd_process.append(gd_result[variable])
+#         loop = loop + 1
+#         if np.array(converged).all() or (loop >= max_loops):
+#             break
 
-    if loop >= max_loops:
-        print('warning: max_loops has reached, the algorithm might not converged')
-    if variables == 1:
-        return gd_result, np.array(gd_process)
-    else:
-        return gd_result, np.array(gd_process).reshape(int(len(gd_process)/variables), variables).T
+#     if loop >= max_loops:
+#         print('warning: max_loops has reached, the algorithm might not converged')
+#     if variables == 1:
+#         return gd_result, np.array(gd_process)
+#     else:
+#         return gd_result, np.array(gd_process).reshape(int(len(gd_process)/variables), variables).T
 
 
 def gaussian_distribution(mean=0, std=1):
@@ -235,3 +235,5 @@ def load_npz(npz_path) -> dict:
     for key in dic.keys():
         dic[key] = dic[key].astype(float)
     return dic
+
+
