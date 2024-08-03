@@ -51,6 +51,15 @@ def relu(arr):
     arr[arr<0] = 0 
     return arr
 
+
+def format_time(seconds):
+    hours = int(seconds // 3600)
+    minutes = int((seconds % 3600) // 60)
+    seconds = int(seconds % 60)
+    milliseconds = int((seconds * 100) % 100)
+    return f'{hours:02}:{minutes:02}:{seconds:02}.{milliseconds:02}'
+
+
 def integrate(target, int_range=(-inf, inf)):
     if isinstance(target, np.ndarray):
         print('warning: integrate target is an array, doing numerical integration')
@@ -239,7 +248,25 @@ def load_npz(npz_path) -> dict:
 
 try:
     import git
-    def push(commit='An auto commit'):
+    def push(commit: str = None):
+        if commit is None:
+            auto = input('commit is None, do you wish to generate an auto commit [y]/n')
+            while True:
+                if auto == '' or auto.lower() == 'y' or auto.lower() == 'yes':
+                    commit = 'An auto commit.'
+                    break
+                elif auto.lower() == 'n' or auto.lower() == 'no':
+                    commit = input('enter the commit message for your changes')
+                    break
+                else:
+                    auto = input('invalid input, do you wish to generate an auto commit [y]/n')
+
+        while True:
+            if type(commit) == str:
+                break
+            else:
+                commit = input('commit must be a str, enter the commit message for your changes')
+
         repo = git.Repo(whereis_myutils())
         repo.git.add(all=True)
         repo.git.commit('-m', commit)
@@ -255,3 +282,5 @@ try:
 
 except ModuleNotFoundError:
     pass
+
+
