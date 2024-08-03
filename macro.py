@@ -250,7 +250,7 @@ try:
     import git
     def push(commit: str = None):
         if commit is None:
-            auto = input('commit is None, do you wish to generate an auto commit [y]/n')
+            auto = input('commit is None, do you wish to generate an auto commit ([y]/n)? ')
             while True:
                 if auto == '' or auto.lower() == 'y' or auto.lower() == 'yes':
                     commit = 'An auto commit.'
@@ -259,7 +259,7 @@ try:
                     commit = input('enter the commit message for your changes')
                     break
                 else:
-                    auto = input('invalid input, do you wish to generate an auto commit [y]/n')
+                    auto = input('invalid input, do you wish to generate an auto commit ([y]/n)? ')
 
         while True:
             if type(commit) == str:

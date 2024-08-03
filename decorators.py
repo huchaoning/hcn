@@ -4,8 +4,15 @@ from matplotlib import pyplot as plt
 import os
 from time import time
 from functools import wraps
+import inspect
 
-from .macro import sha1
+from .macro import sha1, whereis_myutils, format_time
+
+
+__all__ = [
+    'stopwatch',
+    # 'save'
+]
 
 
 def plotter_decorator(**kwargs):
@@ -82,11 +89,34 @@ def plotter_decorator(**kwargs):
     return decorator
 
 
-def print_run_time(func):
-    @wraps
+def stopwatch(func):
+    @wraps(func)
     def wrapper(*args, **kargs):
         start = time()
         result = func(*args, **kargs)
-        print(f'Function {func.__name__} took: {time() - start} seconds')
+        print(f'Function {func.__name__} took: {format_time(time() - start)}')
         return result
     return wrapper
+
+
+# 有一些问题暂时搁置:
+# 1. 保存进去的函数不一定是可以运行的, 比如保存的函数:
+# @save
+# def f():
+#     np.random.randn(1)
+# 这个函数必须要 import numpy as np 才可以, 但是这个函数不会自动检查并添加这一段
+# 2. 如果有错误的函数一旦保存进去后续 import 就会不通过, 从而导致整个 saved 都不会被 import. 所以要加一个 clear 函数
+# 3. 还是得去看看李沐的 d2l 怎么写的
+
+# def save(func):
+#     module_path = os.path.join(whereis_myutils(), 'saved.py')
+#     func_code = inspect.getsource(func)
+    
+#     if not os.path.exists(module_path):
+#         with open(module_path, 'w') as f:
+#             f.write('# Automatically generated locally. Will not be synchronized by git.\n')
+    
+#     with open(module_path, 'a') as f:
+#         f.write(func_code[5:])
+
+#     return func
