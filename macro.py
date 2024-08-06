@@ -11,6 +11,8 @@ from inspect import signature
 from numpy.typing import ArrayLike
 from typing import Callable
 
+import inspect
+
 
 def whereis_myutils():
     return os.path.dirname(__file__)
@@ -284,3 +286,15 @@ except ModuleNotFoundError:
     pass
 
 
+def code(module):
+    os.system(f'code {inspect.getfile(module)}')
+
+
+def empty_list(dimensions):
+    if isinstance(dimensions, (tuple, list)):
+        raise ValueError('dimensions must a tuple or a list')
+    def _create(dimensions):
+        if len(dimensions) == 1:
+            return [[] for _ in range(dimensions[0])]
+        return [_create(dimensions[1:]) for _ in range(dimensions[0])]
+    return _create(dimensions)
