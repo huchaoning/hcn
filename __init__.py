@@ -7,7 +7,7 @@ from PIL import Image as image
 
 import os, shutil, timeit
 from glob import glob
-from copy import deepcopy as cp
+# from copy import deepcopy as cp
 import inspect
 
 try:
@@ -28,10 +28,10 @@ from .decorators import *
 
 from . import simulations
 
-try:
-    from .saved import *
-except ModuleNotFoundError:
-    pass
+# try:
+#     from .saved import *
+# except ModuleNotFoundError:
+#     pass
 
 # from .temp_code import *
 

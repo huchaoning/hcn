@@ -1,3 +1,2 @@
-from . import cgh, spade, di
-
-sigma = 103
+from . import cgh
+from .new import *

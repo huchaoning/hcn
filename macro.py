@@ -5,9 +5,6 @@ import os
 from math import *
 from PIL import Image as image
 
-import hashlib
-from inspect import signature
-
 from numpy.typing import ArrayLike
 from typing import Callable
 
@@ -88,7 +85,158 @@ def max_min_normalization(array: ArrayLike, max_=1, min_=0):
     return scaled * (max_ - min_)  + min_
 
 
-# 这部分内容有 Bug, 而且可能会和做实验的模块冲突. 等到实验做完再从那边整合过来
+def gaussian_distribution(mean=0, std=1):
+    return lambda x: np.exp(-((x-mean)**2)/(2*std**2))/np.sqrt(tau*std**2)
+
+
+def poisson_distribution(param):
+    return lambda k: np.exp(-param)*param**k/sp.special.factorial(k)
+
+
+def hash(file, algorithm='all', chunk_size=65535):
+    import hashlib
+
+    def wrapper(file, algorithm, chunk_size):
+        if algorithm.lower() == 'md5':
+            hash = hashlib.md5()
+        elif algorithm.lower() == 'sha1':
+            hash = hashlib.sha1()
+        elif algorithm.lower() == 'sha256':
+            hash = hashlib.sha256()
+        else:
+            raise ValueError('Unsupported hash algorithm. Use md5, sha1, or sha256')
+        
+        with open(file, 'rb') as file:
+            while True:
+                chunk = file.read(chunk_size)
+                if not chunk:
+                    break
+                hash.update(chunk)
+        return hash.hexdigest()
+    
+    if algorithm.lower() == 'all' or algorithm is None:
+        return {k: wrapper(file, k, chunk_size) for k in ('md5', 'sha1', 'sha256')}
+    else:
+        return wrapper(file, algorithm, chunk_size)
+
+
+
+def aviread(avi_path):
+    try:
+        import cv2
+    except ImportError:
+        raise ImportError('import cv2 failed, try pip install opencv-python')
+    if not os.path.exists(avi_path):
+        raise FileNotFoundError(f'{avi_path} is not exists')
+    avi = cv2.VideoCapture(avi_path)
+    arr = []
+    while True:
+        ret, frame = avi.read()
+        if not ret:
+            break
+        arr.append(cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY))
+    avi.release()
+    return np.array(arr).astype(float)
+
+
+def imread(img_path) -> np.ndarray:
+    if not os.path.exists(img_path):
+        raise FileNotFoundError(f'{img_path} is not exists')
+    img = image.open(img_path)
+    array = []
+    for i in range(img.n_frames):
+        img.seek(i)
+        array.append(np.array(img))
+    array = np.array(array, dtype=float)
+    if np.shape(array)[0] == 1:
+        return array[0]
+    else:
+        return array
+        
+
+def imwrite(array=None, save=None, convert=False):
+    if array is not None:
+        if array.dtype == np.uint8:
+            image.fromarray(array).save(save)
+        elif not (array.dtype == np.uint8) and convert:
+            image.fromarray(array.astype(np.uint8)).save(save)
+        else:
+            raise TypeError('array.dtype must be np.uint8')
+    else:
+        raise TypeError('array is None')
+    
+
+def load_npz(npz_path) -> dict:
+    if not os.path.exists(npz_path):
+        raise FileNotFoundError(f'{npz_path} is not exists')
+    dic = dict(np.load(npz_path))
+    for key in dic.keys():
+        dic[key] = dic[key].astype(float)
+    return dic
+
+
+def read(input_):
+    if isinstance(input_, str):
+        return load_npz(input_)
+    else:
+        return input_
+
+
+try:
+    import git
+    def push(commit: str = None):
+        if commit is None:
+            auto = input('commit is None, do you wish to generate an auto commit ([y]/n)? ')
+            while True:
+                if auto == '' or auto.lower() == 'y' or auto.lower() == 'yes':
+                    commit = 'An auto commit.'
+                    break
+                elif auto.lower() == 'n' or auto.lower() == 'no':
+                    commit = input('enter the commit message for your changes')
+                    break
+                else:
+                    auto = input('invalid input, do you wish to generate an auto commit ([y]/n)? ')
+
+        while True:
+            if type(commit) == str:
+                break
+            else:
+                commit = input('commit must be a str, enter the commit message for your changes')
+
+        repo = git.Repo(whereis_myutils())
+        repo.git.add(all=True)
+        repo.git.commit('-m', commit)
+        repo.remotes.origin.push()
+
+    def pull():
+        repo = git.Repo(whereis_myutils())
+        repo.remotes.origin.pull()
+
+    def status():
+        repo = git.Repo(whereis_myutils())
+        print(repo.git.status())
+
+except ModuleNotFoundError:
+    pass
+
+
+def code(module):
+    os.system(f'code {inspect.getfile(module)}')
+
+
+def empty_list(dimensions):
+    if isinstance(dimensions, (tuple, list)):
+        raise ValueError('dimensions must a tuple or a list')
+    def _create(dimensions):
+        if len(dimensions) == 1:
+            return [[] for _ in range(dimensions[0])]
+        return [_create(dimensions[1:]) for _ in range(dimensions[0])]
+    return _create(dimensions)
+
+
+# from inspect import signature
+# 由于自己写的算法效率低, 计算速度慢, 弃用
+
 # def variables_of(func: Callable):
 #     return len(signature(func).parameters)
 
@@ -152,149 +300,3 @@ def max_min_normalization(array: ArrayLike, max_=1, min_=0):
 #     else:
 #         return gd_result, np.array(gd_process).reshape(int(len(gd_process)/variables), variables).T
 
-
-def gaussian_distribution(mean=0, std=1):
-    return lambda x: np.exp(-((x-mean)**2)/(2*std**2))/np.sqrt(tau*std**2)
-
-
-def poisson_distribution(param):
-    return lambda k: np.exp(-param)*param**k/sp.special.factorial(k)
-
-
-def sha1(file, chunk_size=65535):
-    with open(file, 'rb') as file:
-        hash = hashlib.sha1()
-        while True:
-            chunk = file.read(chunk_size)
-            if not chunk:
-                break
-            hash.update(chunk)
-    return hash.hexdigest()
-
-
-def sha256(file, chunk_size=65535):
-    with open(file, 'rb') as file:
-        hash = hashlib.sha256()
-        while True:
-            chunk = file.read(chunk_size)
-            if not chunk:
-                break
-            hash.update(chunk)
-    return hash.hexdigest()
-
-
-def md5(file, chunk_size=65535):
-    with open(file, 'rb') as file:
-        hash = hashlib.md5()
-        while True:
-            chunk = file.read(chunk_size)
-            if not chunk:
-                break
-            hash.update(chunk)
-    return hash.hexdigest()
-
-
-def aviread(avi_path):
-    try:
-        import cv2
-    except ImportError:
-        raise ImportError('import cv2 failed, try pip install opencv-python')
-    if not os.path.exists(avi_path):
-        raise FileNotFoundError(f'{avi_path} is not exists')
-    avi = cv2.VideoCapture(avi_path)
-    arr = []
-    while True:
-        ret, frame = avi.read()
-        if not ret:
-            break
-        arr.append(cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY))
-    avi.release()
-    return np.array(arr).astype(float)
-
-
-def imread(img_path) -> np.ndarray:
-    if not os.path.exists(img_path):
-        raise FileNotFoundError(f'{img_path} is not exists')
-    img = image.open(img_path)
-    array = []
-    for i in range(img.n_frames):
-        img.seek(i)
-        array.append(np.array(img))
-    array = np.array(array, dtype=float)
-    if np.shape(array)[0] == 1:
-        return array[0]
-    else:
-        return array
-        
-
-def imwrite(array=None, save=None, convert=False):
-    if array is not None:
-        if array.dtype == np.uint8:
-            image.fromarray(array).save(save)
-        elif not (array.dtype == np.uint8) and convert:
-            image.fromarray(array.astype(np.uint8)).save(save)
-        else:
-            raise TypeError('array.dtype must be np.uint8')
-    else:
-        raise TypeError('array is None')
-    
-
-def load_npz(npz_path) -> dict:
-    if not os.path.exists(npz_path):
-        raise FileNotFoundError(f'{npz_path} is not exists')
-    dic = dict(np.load(npz_path))
-    for key in dic.keys():
-        dic[key] = dic[key].astype(float)
-    return dic
-
-
-try:
-    import git
-    def push(commit: str = None):
-        if commit is None:
-            auto = input('commit is None, do you wish to generate an auto commit ([y]/n)? ')
-            while True:
-                if auto == '' or auto.lower() == 'y' or auto.lower() == 'yes':
-                    commit = 'An auto commit.'
-                    break
-                elif auto.lower() == 'n' or auto.lower() == 'no':
-                    commit = input('enter the commit message for your changes')
-                    break
-                else:
-                    auto = input('invalid input, do you wish to generate an auto commit ([y]/n)? ')
-
-        while True:
-            if type(commit) == str:
-                break
-            else:
-                commit = input('commit must be a str, enter the commit message for your changes')
-
-        repo = git.Repo(whereis_myutils())
-        repo.git.add(all=True)
-        repo.git.commit('-m', commit)
-        repo.remotes.origin.push()
-
-    def pull():
-        repo = git.Repo(whereis_myutils())
-        repo.remotes.origin.pull()
-
-    def status():
-        repo = git.Repo(whereis_myutils())
-        print(repo.git.status())
-
-except ModuleNotFoundError:
-    pass
-
-
-def code(module):
-    os.system(f'code {inspect.getfile(module)}')
-
-
-def empty_list(dimensions):
-    if isinstance(dimensions, (tuple, list)):
-        raise ValueError('dimensions must a tuple or a list')
-    def _create(dimensions):
-        if len(dimensions) == 1:
-            return [[] for _ in range(dimensions[0])]
-        return [_create(dimensions[1:]) for _ in range(dimensions[0])]
-    return _create(dimensions)

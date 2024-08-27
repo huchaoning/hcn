@@ -6,7 +6,7 @@ from time import time
 from functools import wraps
 import inspect
 
-from .macro import sha1, whereis_myutils, format_time
+from .macro import hash, format_time
 
 
 __all__ = [
@@ -69,7 +69,7 @@ def plotter_decorator(**kwargs):
                             if not os.path.exists(temp_name):
                                 break
                         plt.savefig(temp_name)
-                        save = sha1(temp_name)
+                        save = hash(temp_name, algorithm='sha1')
                         os.rename(src=temp_name, dst=f'{save}.svg')
                     elif type(save) is str:
                         if os.path.exists(save) or os.path.exists(f'{save}.svg'):
