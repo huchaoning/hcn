@@ -34,9 +34,9 @@ def estimator(data, noise=0, method='mle'):
             x = np.arange(roi)
             return lambda s: - sample.T @ np.log(p(x, s, w)) / sample.sum()
 
-        for k in data.keys():
-            print(f'{k}: ')
-            for i in tqdm(range(data[k].shape[0])):
+        for k in tqdm(data.keys()):
+            # print(f'{k}: ')
+            for i in range(data[k].shape[0]):
                 if noise == 0:
                     w = 0
                 else:

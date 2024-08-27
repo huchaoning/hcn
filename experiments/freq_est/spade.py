@@ -5,7 +5,7 @@ def estimator(data):
     data = read(data)
     time_domain = {}
     for k in data.keys():
-        time_domain[k] = data[k][:, 1] - data[k][:, 0]
+        time_domain[k] = data[k][:, 0] - data[k][:, 1]
     return time_domain
 
 
