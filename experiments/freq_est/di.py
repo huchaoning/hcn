@@ -3,14 +3,15 @@ from math import *
 from tqdm import tqdm
 
 from .common import *
+from ...equipments import qcmos
 
 # Use SciPy to do find the minimize function.
 from scipy.optimize import minimize
 
-# Using MLE as DI's time domain estimator.
-# And using BFGS algorithm as optimizer to optimize the negative likelihood.
+# Use MLE as DI's time domain estimator.
+# BFGS algorithm as optimizer to optimize the negative likelihood.
 # Also accepts 'simple' to use the centroid position estimator.
-def estimator(data, noise, method='mle'):
+def estimator(data, noise=0, method='mle'):
     data = read(data)
     noise = read(noise)
 
@@ -25,8 +26,8 @@ def estimator(data, noise, method='mle'):
         def p(x, s, w):
             # The sigma (AKA characteristic width) of Airy disk is 103um.
             # And the camera pixel size is 4.6 um per pixel.
-            sigma = 103 / 4.6
-            return (1-w)/np.sqrt(2*pi*sigma**2)*np.exp(-(x-s)**2/(2*sigma**2)) + w/roi
+            sigma_ = sigma / qcmos.pixel_size
+            return (1-w)/np.sqrt(tau*sigma_**2)*np.exp(-(x-s)**2/(2*sigma_**2)) + w/roi
 
         # negative log-likelihood
         def ll(sample, w):
@@ -49,6 +50,7 @@ def estimator(data, noise, method='mle'):
                     print(f"warning: data['di'][{i}] may not converged")
                     
             time_domain[k] = np.array(time_domain[k])
+            time_domain[k] = (time_domain[k] - time_domain[k].mean() + 1) * qcmos.pixel_size
         return time_domain
     
     elif method.lower() == 'simple':
@@ -56,4 +58,18 @@ def estimator(data, noise, method='mle'):
             index = np.arange(roi)
             normalized = data[k] / data[k].sum(axis=1).reshape(data[k].shape[0], 1)
             time_domain[k] = normalized @ index
+            time_domain[k] = (time_domain[k] - time_domain[k].mean() + 1) * qcmos.pixel_size
         return time_domain
+    
+
+def gen(s_list, photons, noise=0):
+    # Convert length units to camera pixel size to match experimental data.
+    s_list_ = s_list / qcmos.pixel_size
+    sigma_ = sigma / qcmos.pixel_size
+
+    roi = int(s_list_.max() - s_list_.min() + 6*sigma_)
+    
+    data = [np.histogram(np.random.normal(s, sigma_, photons), 
+                         bins=roi, range=(-roi/2, roi/2))[0] for s in s_list_]
+    
+    return (np.array(data) + np.random.poisson(noise, roi)).astype(float)

@@ -2,6 +2,7 @@ from math import *
 import numpy as np
 from ...macro import read
 
+sigma = 103
 
 def photons(data):
     data = read(data)

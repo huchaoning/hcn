@@ -1,2 +1,2 @@
 from . import cgh
-from .new import *
+from .freq_est import *
