@@ -59,30 +59,30 @@ def format_time(seconds):
     return f'{hours:02}:{minutes:02}:{seconds:02}.{milliseconds:02}'
 
 
-def integrate(target, int_range=(-inf, inf)):
-    if isinstance(target, np.ndarray):
-        print('warning: integrate target is an array, doing numerical integration')
-        return target.sum()
-    else:
-        return sp.integrate.quad(target, *int_range)[0]
+# def integrate(target, int_range=(-inf, inf)):
+#     if isinstance(target, np.ndarray):
+#         print('warning: integrate target is an array, doing numerical integration')
+#         return target.sum()
+#     else:
+#         return sp.integrate.quad(target, *int_range)[0]
 
 
-def normalization(target, int_range=(-inf, inf)):
-    if isinstance(target, np.ndarray):
-        print('warning: normalization target is an array, doing numerical integration')
-        return target / target.sum()
-    if callable(target):
-        norm = integrate(target, int_range)
-        def wrapper(*args, **kwargs):
-            return target(*args, **kwargs) / norm
-        return wrapper
+# def normalization(target, int_range=(-inf, inf)):
+#     if isinstance(target, np.ndarray):
+#         print('warning: normalization target is an array, doing numerical integration')
+#         return target / target.sum()
+#     if callable(target):
+#         norm = integrate(target, int_range)
+#         def wrapper(*args, **kwargs):
+#             return target(*args, **kwargs) / norm
+#         return wrapper
 
 
-def max_min_normalization(array: ArrayLike, max_=1, min_=0):
-    if min_ > max_:
-        raise ValueError('min_ must smaller than max_')
-    scaled = (array - array.min()) / (array.max() - array.min())
-    return scaled * (max_ - min_)  + min_
+# def max_min_normalization(array: ArrayLike, max_=1, min_=0):
+#     if min_ > max_:
+#         raise ValueError('min_ must smaller than max_')
+#     scaled = (array - array.min()) / (array.max() - array.min())
+#     return scaled * (max_ - min_)  + min_
 
 
 def gaussian_distribution(mean=0, std=1):

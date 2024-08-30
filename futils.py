@@ -7,7 +7,7 @@ from numpy.typing import ArrayLike
 __all__ = [
     'integrate',
     'normalization',
-    'max_min_normalization',
+    'min_max_normalization',
     'futils',
 ]
 
@@ -43,7 +43,7 @@ class Futils:
         self.func = func
 
     def __repr__(self):
-        return f'math_func({self.func})'
+        return f'Futils({self.func})'
 
     def __call__(self, *args, **kwargs):
         return self.func(*args, **kwargs)
