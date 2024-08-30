@@ -3,10 +3,43 @@ from math import *
 from tqdm import tqdm
 
 from .common import *
-from ...equipments import qcmos
+from ...macro import read
+from ...equipments import qcmos, dmd
 
 # Use SciPy to do find the minimize function.
 from scipy.optimize import minimize
+
+
+# DI's hyperparameter
+ax = 81
+center = 110
+
+def roi(pixels):
+    s = pixels * dmd.pixel_size / qcmos.pixel_size
+    sigma_ = sigma / qcmos.pixel_size
+    return np.round([center - s - 3*sigma_, center + 3*sigma_]).astype(int)
+
+
+def cropper(file, pixels):
+    data = read(file)
+
+    def _crop(data):
+        temp = data[:, :-4, :]
+        copped = temp[:, roi(pixels)[0]:roi(pixels)[1], ax]
+        noise = (temp[:, :5, :5].mean((1,2)) + temp[:, -5:, :5].mean((1,2)) + 
+                 temp[:, :5, -5:].mean((1,2)) + temp[:, -5:, -5:].mean((1,2))) / 4
+        return copped, noise
+    
+    if isinstance(data, dict):
+        copped, noise = {}, {}
+        for k in data.keys():
+            copped[k], noise[k] = _crop(data[k])
+        return copped, noise
+    
+    else:
+        return _crop(data)
+
+
 
 # Use MLE as DI's time domain estimator.
 # BFGS algorithm as optimizer to optimize the negative likelihood.
