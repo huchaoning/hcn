@@ -2,7 +2,6 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 import os
-from time import time
 from functools import wraps
 import inspect
 
@@ -90,6 +89,7 @@ def plotter_decorator(**kwargs):
 
 
 def stopwatch(func):
+    from time import time
     @wraps(func)
     def wrapper(*args, **kargs):
         start = time()
