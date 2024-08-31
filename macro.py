@@ -67,6 +67,14 @@ def gaussian_distribution(mean=0, std=1):
 def poisson_distribution(param):
     return lambda k: np.exp(-param)*param**k/sp.special.factorial(k)
 
+def pwm(A, omega):
+    k = np.arange(1, 1e4)
+    def wrapper(n):
+        result = [A/2 + 2*A/pi * np.sum(np.sin(k*pi/2) * np.cos(k*omega*n_) / k)
+                  for n_ in [[n] if isinstance(n, (int, float)) else n][0]]
+        return np.array(result)
+    return wrapper
+
 
 def hash(file, algorithm='all', chunk_size=65535):
     import hashlib
