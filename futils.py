@@ -6,8 +6,8 @@ from numpy.typing import ArrayLike
 
 __all__ = [
     'integrate',
-    'normalization',
-    'min_max_normalization',
+    'normalize',
+    'min_max_normalize',
     'futils',
 ]
 
@@ -20,7 +20,7 @@ def integrate(target, int_range=(-inf, inf)):
         return sp.integrate.quad(target, *int_range)[0]
 
 
-def normalization(target, int_range=(-inf, inf)):
+def normalize(target, int_range=(-inf, inf)):
     if isinstance(target, np.ndarray):
         print('warning: normalization target is an array, doing numerical integration')
         return target / target.sum()
@@ -31,7 +31,7 @@ def normalization(target, int_range=(-inf, inf)):
         return wrapper
 
 
-def min_max_normalization(array: ArrayLike, min_=1, max_=0):
+def min_max_normalize(array: ArrayLike, min_=1, max_=0):
     if min_ > max_:
         raise ValueError('min_ must smaller than max_')
     scaled = (array - array.min()) / (array.max() - array.min())
@@ -116,7 +116,20 @@ class Futils:
         if not isinstance(other, Futils):
             raise TypeError("Operand must be an instance of Futils")
         return other @ self
+    
+    def normalize(self, int_range=(-inf, inf)):
+        return Futils(normalize(self.func, int_range))
+    
+    def as_pdf(self, normalize=True, int_range=(-inf, inf)):
+        if normalize:
+            func_ = self.normalize(int_range)
+        else:
+            func_ = self.func
+        class distribution(sp.stats.rv_continuous):
+            def _pdf(self, x):
+                return func_(x)
+        return distribution()
 
 
-def futils(func):
+def futils(func) -> Futils:
     return Futils(func)

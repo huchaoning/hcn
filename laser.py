@@ -2,7 +2,7 @@ import numpy as np
 from math import *
 from scipy.special import hermite, laguerre
 
-from .futils import min_max_normalization as nl
+from .futils import min_max_normalize as nl
 from .macro import fast_meshgrid, square_abs
 from .plotter import imshow
 

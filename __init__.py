@@ -27,6 +27,8 @@ from .laser import *
 from .plotter import *
 from .decorators import *
 
+from .cache import *
+
 # from . import simulations
 
 # try:

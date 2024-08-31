@@ -76,10 +76,10 @@ def pwm(A, omega):
     return wrapper
 
 
-def hash(file, algorithm='all', chunk_size=65535):
+def hashsum(file, algorithm='all', chunk_size=65535):
     import hashlib
 
-    def wrapper(file, algorithm, chunk_size):
+    def _core(file, algorithm, chunk_size):
         if algorithm.lower() == 'md5':
             hash = hashlib.md5()
         elif algorithm.lower() == 'sha1':
@@ -96,11 +96,13 @@ def hash(file, algorithm='all', chunk_size=65535):
                     break
                 hash.update(chunk)
         return hash.hexdigest()
-    
-    if algorithm.lower() == 'all' or algorithm is None:
-        return {k: wrapper(file, k, chunk_size) for k in ('md5', 'sha1', 'sha256')}
+        
+    if isinstance(file, bytes):
+        return hashlib.md5(file).hexdigest()
+    elif algorithm.lower() == 'all' or algorithm is None:
+        return {k: _core(file, k, chunk_size) for k in ('md5', 'sha1', 'sha256')}
     else:
-        return wrapper(file, algorithm, chunk_size)
+        return _core(file, algorithm, chunk_size)
 
 
 
