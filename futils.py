@@ -31,7 +31,7 @@ def normalize(target, int_range=(-inf, inf)):
         return wrapper
 
 
-def min_max_normalize(array: ArrayLike, min_=1, max_=0):
+def min_max_normalize(array: ArrayLike, min_=0, max_=1):
     if min_ > max_:
         raise ValueError('min_ must smaller than max_')
     scaled = (array - array.min()) / (array.max() - array.min())

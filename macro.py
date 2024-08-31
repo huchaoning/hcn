@@ -4,6 +4,7 @@ import pandas as pd
 import os
 from math import *
 from PIL import Image as image
+from .futils import min_max_normalize
 
 from numpy.typing import ArrayLike
 from typing import Callable
@@ -64,8 +65,11 @@ def gaussian_distribution(mean=0, std=1):
     return lambda x: np.exp(-((x-mean)**2)/(2*std**2))/np.sqrt(tau*std**2)
 
 
+
 def poisson_distribution(param):
     return lambda k: np.exp(-param)*param**k/sp.special.factorial(k)
+
+
 
 def pwm(A, omega):
     k = np.arange(1, 1e4)
@@ -74,6 +78,7 @@ def pwm(A, omega):
                   for n_ in [[n] if isinstance(n, (int, float)) else n][0]]
         return np.array(result)
     return wrapper
+
 
 
 def hashsum(file, algorithm='all', chunk_size=65535):
@@ -124,6 +129,7 @@ def aviread(avi_path):
     return np.array(arr).astype(float)
 
 
+
 def imread(img_path) -> np.ndarray:
     if not os.path.exists(img_path):
         raise FileNotFoundError(f'{img_path} is not exists')
@@ -137,7 +143,54 @@ def imread(img_path) -> np.ndarray:
         return array[0]
     else:
         return array
+
+
+
+def gifshow(array, auto_contrast=True, loops=0, fps=30, save=None, override=False):
+    import io
+    from IPython.display import display, Image as IPImage
+    
+    array = read(array)
+    if array.ndim != 3:
+        raise ValueError('array must be 3-d')
         
+    duration = int(1000 / fps)
+    if auto_contrast:
+        images = [image.fromarray(min_max_normalize(frame, min_=0, max_=255)) 
+                  for frame in array]
+    else:
+        images = [image.fromarray(frame)for frame in array]
+    gif_buffer = io.BytesIO()
+
+    if loops == 1:
+        loop = None
+    elif loops in (0, inf):
+        loop = 0
+    else:
+        loop = loops - 1
+
+    images[0].save(gif_buffer, 
+                   format='GIF', 
+                   save_all=True, 
+                   append_images=images[1:], 
+                   duration=duration, 
+                   loop=loop)
+    
+    gif_buffer.seek(0)
+
+    if save is not None:
+        if os.path.exists(save):
+            if override:
+                os.remove(save)
+            elif not override:
+                raise FileExistsError('file already exists')
+        else:
+            with open(save, 'wb') as f:
+                f.write(gif_buffer.getvalue())
+
+    display(IPImage(data=gif_buffer.getvalue(), format='gif'))
+     
+
 
 def imwrite(array=None, save=None, convert=False):
     if array is not None:
@@ -151,6 +204,7 @@ def imwrite(array=None, save=None, convert=False):
         raise TypeError('array is None')
     
 
+
 def load_npz(npz_path) -> dict:
     if not os.path.exists(npz_path):
         raise FileNotFoundError(f'{npz_path} is not exists')
@@ -158,6 +212,7 @@ def load_npz(npz_path) -> dict:
     for key in dic.keys():
         dic[key] = dic[key].astype(float)
     return dic
+
 
 
 def read(input_):
@@ -178,6 +233,7 @@ def read(input_):
             return input_
     else:
         return input_
+
 
 
 try:
