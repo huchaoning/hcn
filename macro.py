@@ -15,11 +15,14 @@ import inspect
 import platform
 import subprocess
 
-
+myutils_path = os.path.dirname(__file__)
 
 def code(module):
     file_path = inspect.getfile(module)
-    subprocess.run(['code', file_path], check=True)
+    if platform.system() == 'Darwin':
+        subprocess.run(['code', file_path], check=True)
+    elif platform.system() == 'Windows':
+        subprocess.run(['powershell.exe', '-Command', f'code {file_path}'], check=True)
 
 
 def finder(path):
@@ -28,8 +31,9 @@ def finder(path):
     elif platform.system() == 'Windows':
         subprocess.run(['start', '', path], shell=True, check=True)
 
-myutils_path = os.path.dirname(__file__)
-open_myutils = lambda: finder(myutils_path)
+
+def open_myutils():
+    finder(myutils_path)
 
 
 def square_abs(array):
