@@ -7,15 +7,17 @@ def fim(s, params, N=50, sigma=103):
 
     def grad(p):
         eps = np.sqrt(np.finfo(float).eps)
-        params_ = np.copy(params)
-        params_[p] = params_[p] + eps
-        return (s(np.arange(N), *params_) - s(np.arange(N), *params)) / eps
+        params_1 = np.copy(params)
+        params_2 = np.copy(params)
+        params_1[p] = params_2[p] + eps
+        params_2[p] = params_2[p] - eps
+        return (s(np.arange(N), *params_1) - s(np.arange(N), *params_2)) / (2*eps)
 
     for i in range(size):
         for j in range(size):
             fim_[i, j] = np.sum(grad(i) * grad(j))
 
-    return fim_ / sigma**2
+    return [fim_.item()/sigma**2 if len(fim_) == 1 else fim_/sigma**2][0]
 
 
 # def s(A, omega, phi, c):

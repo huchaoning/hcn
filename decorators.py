@@ -2,11 +2,10 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 import os
-from time import time
 from functools import wraps
 import inspect
 
-from .macro import hash, format_time
+from .macro import hashsum, format_time
 
 
 __all__ = [
@@ -69,7 +68,7 @@ def plotter_decorator(**kwargs):
                             if not os.path.exists(temp_name):
                                 break
                         plt.savefig(temp_name)
-                        save = hash(temp_name, algorithm='sha1')
+                        save = hashsum(temp_name, algorithm='sha1')
                         os.rename(src=temp_name, dst=f'{save}.svg')
                     elif type(save) is str:
                         if os.path.exists(save) or os.path.exists(f'{save}.svg'):
@@ -90,6 +89,7 @@ def plotter_decorator(**kwargs):
 
 
 def stopwatch(func):
+    from time import time
     @wraps(func)
     def wrapper(*args, **kargs):
         start = time()

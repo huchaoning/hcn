@@ -5,22 +5,31 @@ import os
 from math import *
 from PIL import Image as image
 
+from .futils import futils, min_max_normalize
+from .cache import cache
+
 from numpy.typing import ArrayLike
 from typing import Callable
 
 import inspect
+import platform
+import subprocess
 
 
-def whereis_myutils():
-    return os.path.dirname(__file__)
+
+def code(module):
+    file_path = inspect.getfile(module)
+    subprocess.run(['code', file_path], check=True)
 
 
-def open_myutils():
-    import platform
-    if platform.system() == 'Windows':
-        os.system('start ' + whereis_myutils())
-    else:
-        os.system('code ' + whereis_myutils())
+def finder(path):
+    if platform.system() == 'Darwin':
+        subprocess.run(['open', path], check=True)
+    elif platform.system() == 'Windows':
+        subprocess.run(['start', '', path], shell=True, check=True)
+
+myutils_path = os.path.dirname(__file__)
+open_myutils = lambda: finder(myutils_path)
 
 
 def square_abs(array):
@@ -59,44 +68,35 @@ def format_time(seconds):
     return f'{hours:02}:{minutes:02}:{seconds:02}.{milliseconds:02}'
 
 
-# def integrate(target, int_range=(-inf, inf)):
-#     if isinstance(target, np.ndarray):
-#         print('warning: integrate target is an array, doing numerical integration')
-#         return target.sum()
-#     else:
-#         return sp.integrate.quad(target, *int_range)[0]
-
-
-# def normalization(target, int_range=(-inf, inf)):
-#     if isinstance(target, np.ndarray):
-#         print('warning: normalization target is an array, doing numerical integration')
-#         return target / target.sum()
-#     if callable(target):
-#         norm = integrate(target, int_range)
-#         def wrapper(*args, **kwargs):
-#             return target(*args, **kwargs) / norm
-#         return wrapper
-
-
-# def max_min_normalization(array: ArrayLike, max_=1, min_=0):
-#     if min_ > max_:
-#         raise ValueError('min_ must smaller than max_')
-#     scaled = (array - array.min()) / (array.max() - array.min())
-#     return scaled * (max_ - min_)  + min_
-
-
+@cache
 def gaussian_distribution(mean=0, std=1):
-    return lambda x: np.exp(-((x-mean)**2)/(2*std**2))/np.sqrt(tau*std**2)
+    def wrapper(x):
+        return np.exp(-((x-mean)**2)/(2*std**2))/np.sqrt(tau*std**2)
+    return futils(wrapper)
 
 
-def poisson_distribution(param):
-    return lambda k: np.exp(-param)*param**k/sp.special.factorial(k)
+@cache
+def poisson_distribution(lam):
+    def wrapper(k):
+        return np.exp(-lam)*lam**k/sp.special.factorial(k)
+    return futils(wrapper)
 
 
-def hash(file, algorithm='all', chunk_size=65535):
+
+def pwm(A, omega):
+    k = np.arange(1, 1e4)
+    def wrapper(n):
+        result = [A/2 + 2*A/pi * np.sum(np.sin(k*pi/2) * np.cos(k*omega*n_) / k)
+                  for n_ in [[n] if isinstance(n, (int, float)) else n][0]]
+        return np.array(result)
+    return wrapper
+
+
+
+def hashsum(file, algorithm='all', chunk_size=65535):
     import hashlib
 
-    def wrapper(file, algorithm, chunk_size):
+    def _core(file, algorithm, chunk_size):
         if algorithm.lower() == 'md5':
             hash = hashlib.md5()
         elif algorithm.lower() == 'sha1':
@@ -113,11 +113,13 @@ def hash(file, algorithm='all', chunk_size=65535):
                     break
                 hash.update(chunk)
         return hash.hexdigest()
-    
-    if algorithm.lower() == 'all' or algorithm is None:
-        return {k: wrapper(file, k, chunk_size) for k in ('md5', 'sha1', 'sha256')}
+        
+    if isinstance(file, bytes):
+        return hashlib.md5(file).hexdigest()
+    elif algorithm.lower() == 'all' or algorithm is None:
+        return {k: _core(file, k, chunk_size) for k in ('md5', 'sha1', 'sha256')}
     else:
-        return wrapper(file, algorithm, chunk_size)
+        return _core(file, algorithm, chunk_size)
 
 
 
@@ -139,6 +141,7 @@ def aviread(avi_path):
     return np.array(arr).astype(float)
 
 
+
 def imread(img_path) -> np.ndarray:
     if not os.path.exists(img_path):
         raise FileNotFoundError(f'{img_path} is not exists')
@@ -152,7 +155,54 @@ def imread(img_path) -> np.ndarray:
         return array[0]
     else:
         return array
+
+
+
+def gifshow(array, auto_contrast=True, loops=0, fps=30, save=None, override=False):
+    import io
+    from IPython.display import display, Image as IPImage
+    
+    array = read(array)
+    if array.ndim != 3:
+        raise ValueError('array must be 3-d')
         
+    duration = int(1000 / fps)
+    if auto_contrast:
+        images = [image.fromarray(min_max_normalize(frame, min_=0, max_=255)) 
+                  for frame in array]
+    else:
+        images = [image.fromarray(frame)for frame in array]
+    gif_buffer = io.BytesIO()
+
+    if loops == 1:
+        loop = None
+    elif loops in (0, inf):
+        loop = 0
+    else:
+        loop = loops - 1
+
+    images[0].save(gif_buffer, 
+                   format='GIF', 
+                   save_all=True, 
+                   append_images=images[1:], 
+                   duration=duration, 
+                   loop=loop)
+    
+    gif_buffer.seek(0)
+
+    if save is not None:
+        if os.path.exists(save):
+            if override:
+                os.remove(save)
+            elif not override:
+                raise FileExistsError('file already exists')
+        else:
+            with open(save, 'wb') as f:
+                f.write(gif_buffer.getvalue())
+
+    display(IPImage(data=gif_buffer.getvalue(), format='gif'))
+     
+
 
 def imwrite(array=None, save=None, convert=False):
     if array is not None:
@@ -166,6 +216,7 @@ def imwrite(array=None, save=None, convert=False):
         raise TypeError('array is None')
     
 
+
 def load_npz(npz_path) -> dict:
     if not os.path.exists(npz_path):
         raise FileNotFoundError(f'{npz_path} is not exists')
@@ -175,11 +226,26 @@ def load_npz(npz_path) -> dict:
     return dic
 
 
+
 def read(input_):
     if isinstance(input_, str):
-        return load_npz(input_)
+        extension = os.path.splitext(input_)[-1].lower()
+        if extension == '.npz':
+            return load_npz(input_)
+        elif extension == '.npy':
+            return np.load(input_)
+        elif extension == '.avi':
+            return aviread(input_)
+        elif extension in ['bmp', 'tif']:
+            return imread(input_)
+        elif extension == 'csv':
+            return read_csv(input_)
+        else:
+            print('warning: this file format is not supported')
+            return input_
     else:
         return input_
+
 
 
 try:
@@ -203,25 +269,22 @@ try:
             else:
                 commit = input('commit must be a str, enter the commit message for your changes')
 
-        repo = git.Repo(whereis_myutils())
+        repo = git.Repo(myutils_path)
         repo.git.add(all=True)
         repo.git.commit('-m', commit)
         repo.remotes.origin.push()
 
     def pull():
-        repo = git.Repo(whereis_myutils())
+        repo = git.Repo(myutils_path)
         repo.remotes.origin.pull()
 
     def status():
-        repo = git.Repo(whereis_myutils())
+        repo = git.Repo(myutils_path)
         print(repo.git.status())
 
 except ModuleNotFoundError:
     pass
 
-
-def code(module):
-    os.system(f'code {inspect.getfile(module)}')
 
 
 def empty_list(dimensions):

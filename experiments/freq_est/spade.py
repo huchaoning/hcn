@@ -1,4 +1,42 @@
+import numpy as np
+
 from .common import *
+from ...macro import read
+
+# SPADE's hyperparameter
+point1 = (119, 91)
+point2 = (407, 91)
+
+
+def reader(arr, point1, point2):
+    arr = np.array(arr)
+    if len(arr.shape) == 3:
+        return arr[:, point1[0], point1[1]], arr[:, point2[0], point2[1]]
+    elif len(arr.shape) == 2:
+        return arr[point1[0], point1[1]], arr[point2[0], point2[1]]
+    else:
+        raise ValueError('arr must be 2-d or 3-d')
+    
+
+def cropper(file):
+    data = read(file)
+
+    def _crop(data):
+        temp = data[:, :-4, :]
+        copped = reader(temp, point1, point2)
+        noise = (temp[:, :5, :5].mean((1,2)) + temp[:, -5:, :5].mean((1,2)) + 
+                 temp[:, :5, -5:].mean((1,2)) + temp[:, -5:, -5:].mean((1,2))) / 4
+        return np.array(copped).T, noise
+    
+    if isinstance(data, dict):
+        copped, noise = {}, {}
+        for k in data.keys():
+            copped[k], noise[k] = _crop(data[k])
+        return copped, noise
+    
+    else:
+        return _crop(data)
+
 
 # SPADE's time domain estmator is extremely simple.
 def estimator(data):
