@@ -4,24 +4,32 @@ import pandas as pd
 import os
 from math import *
 from PIL import Image as image
-from .futils import min_max_normalize
+
+from .futils import futils, min_max_normalize
+from .cache import cache
 
 from numpy.typing import ArrayLike
 from typing import Callable
 
 import inspect
+import platform
+import subprocess
 
 
-def whereis_myutils():
-    return os.path.dirname(__file__)
+
+def code(module):
+    file_path = inspect.getfile(module)
+    subprocess.run(['code', file_path], check=True)
 
 
-def open_myutils():
-    import platform
-    if platform.system() == 'Windows':
-        os.system('start ' + whereis_myutils())
-    else:
-        os.system('code ' + whereis_myutils())
+def finder(path):
+    if platform.system() == 'Darwin':
+        subprocess.run(['open', path], check=True)
+    elif platform.system() == 'Windows':
+        subprocess.run(['start', '', path], shell=True, check=True)
+
+myutils_path = os.path.dirname(__file__)
+open_myutils = lambda: finder(myutils_path)
 
 
 def square_abs(array):
@@ -60,14 +68,18 @@ def format_time(seconds):
     return f'{hours:02}:{minutes:02}:{seconds:02}.{milliseconds:02}'
 
 
-
+@cache
 def gaussian_distribution(mean=0, std=1):
-    return lambda x: np.exp(-((x-mean)**2)/(2*std**2))/np.sqrt(tau*std**2)
+    def wrapper(x):
+        return np.exp(-((x-mean)**2)/(2*std**2))/np.sqrt(tau*std**2)
+    return futils(wrapper)
 
 
-
-def poisson_distribution(param):
-    return lambda k: np.exp(-param)*param**k/sp.special.factorial(k)
+@cache
+def poisson_distribution(lam):
+    def wrapper(k):
+        return np.exp(-lam)*lam**k/sp.special.factorial(k)
+    return futils(wrapper)
 
 
 
@@ -257,25 +269,22 @@ try:
             else:
                 commit = input('commit must be a str, enter the commit message for your changes')
 
-        repo = git.Repo(whereis_myutils())
+        repo = git.Repo(myutils_path)
         repo.git.add(all=True)
         repo.git.commit('-m', commit)
         repo.remotes.origin.push()
 
     def pull():
-        repo = git.Repo(whereis_myutils())
+        repo = git.Repo(myutils_path)
         repo.remotes.origin.pull()
 
     def status():
-        repo = git.Repo(whereis_myutils())
+        repo = git.Repo(myutils_path)
         print(repo.git.status())
 
 except ModuleNotFoundError:
     pass
 
-
-def code(module):
-    os.system(f'code {inspect.getfile(module)}')
 
 
 def empty_list(dimensions):

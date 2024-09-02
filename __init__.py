@@ -29,4 +29,3 @@ from .decorators import *
 
 from .cache import *
 clean_expired_cache()
-del expiration_time, cache_dir
