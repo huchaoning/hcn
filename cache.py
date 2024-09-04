@@ -1,3 +1,22 @@
+"""
+WARNING: DO NOT ABUSE !!!
+
+Cache is stored on disk at the location specified by `cache_dir`,
+and is by default deleted after 2 days of inactivity.
+
+Since the cache is saved on disk, it will persist across kernel or
+computer restarts. However, this may introduce a risk of computation
+errors.
+
+Additionally, because the cache is stored on disk, using it might
+be less efficient than recomputing when the input data or function
+output is very large.
+
+Thus, caching is generally most effective for time-consuming
+computations where the input and output data sizes are relatively small.
+"""
+
+
 import os
 import shutil
 import inspect
@@ -62,6 +81,7 @@ def cache(func):
         cache_file = os.path.join(cache_dir, f'{hash_key}.pkl')
 
         if os.path.exists(cache_file):
+            print('cache hit: reading result from cache file')
             with open(cache_file, 'rb') as f:
                 metadata = pickle.load(f)
                 metadata['last_access_time'] = time.time()

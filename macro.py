@@ -4,6 +4,7 @@ import pandas as pd
 import os
 from math import *
 from PIL import Image as image
+from functools import lru_cache
 
 from .futils import futils, min_max_normalize
 from .cache import cache
@@ -17,8 +18,11 @@ import subprocess
 
 myutils_path = os.path.dirname(__file__)
 
-def code(module):
-    file_path = inspect.getfile(module)
+def code(input_):
+    if inspect.isfunction(input_) or inspect.ismodule(input_):
+        file_path = inspect.getfile(input_)
+    else:
+        file_path = input_
     if platform.system() == 'Darwin':
         subprocess.run(['code', file_path], check=True)
     elif platform.system() == 'Windows':
@@ -60,6 +64,7 @@ def to_csv(array=None, save=None):
 
 
 def relu(arr):
+    np.array(arr)
     arr[arr<0] = 0 
     return arr
 
@@ -72,17 +77,22 @@ def format_time(seconds):
     return f'{hours:02}:{minutes:02}:{seconds:02}.{milliseconds:02}'
 
 
-@cache
 def gaussian_distribution(mean=0, std=1):
     def wrapper(x):
         return np.exp(-((x-mean)**2)/(2*std**2))/np.sqrt(tau*std**2)
     return futils(wrapper)
 
 
-@cache
 def poisson_distribution(lam):
     def wrapper(k):
         return np.exp(-lam)*lam**k/sp.special.factorial(k)
+    return futils(wrapper)
+
+
+def uniform_distribution(a, b):
+    def wrapper(x):
+        result = np.where((x >= a) & (x <= b), 1 / (b - a), 0)
+        return result.item() if result.shape == () else result
     return futils(wrapper)
 
 
@@ -232,20 +242,25 @@ def load_npz(npz_path) -> dict:
 
 
 def read(input_):
-    if isinstance(input_, str):
-        extension = os.path.splitext(input_)[-1].lower()
-        if extension == '.npz':
+    if inspect.isfunction(input_) or inspect.ismodule(input_):
+        code(input_)
+        return
+    elif isinstance(input_, str):
+        extension = os.path.splitext(input_)[-1].lower()[1:]
+        if extension == 'npz':
             return load_npz(input_)
-        elif extension == '.npy':
+        elif extension == 'npy':
             return np.load(input_)
-        elif extension == '.avi':
+        elif extension == 'avi':
             return aviread(input_)
         elif extension in ['bmp', 'tif']:
             return imread(input_)
         elif extension == 'csv':
             return read_csv(input_)
+        elif os.path.exists(input_):
+            finder(input_)
+            return
         else:
-            print('warning: this file format is not supported')
             return input_
     else:
         return input_

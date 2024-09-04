@@ -98,8 +98,8 @@ class Futils:
     def __rtruediv__(self, other):
         return self._operate(other, lambda x, y: x / y)
     
-    def integrate(self, int_range=(-inf, inf)):
-        return integrate(self.func, int_range)
+    def integrate(self, a=-inf, b=inf):
+        return integrate(self.func, (a, b))
 
     def __matmul__(self, other):
         if not isinstance(other, Futils):
@@ -117,12 +117,12 @@ class Futils:
             raise TypeError("Operand must be an instance of Futils")
         return other @ self
     
-    def normalize(self, int_range=(-inf, inf)):
-        return Futils(normalize(self.func, int_range))
+    def normalize(self, a=-inf, b=inf):
+        return Futils(normalize(self.func, (a, b)))
     
-    def as_pdf(self, normalize=True, int_range=(-inf, inf)):
-        if normalize:
-            func_ = self.normalize(int_range)
+    def as_pdf(self, normalize=(-inf, inf)):
+        if normalize is not False:
+            func_ = self.normalize(*normalize)
         else:
             func_ = self.func
         class distribution(sp.stats.rv_continuous):
