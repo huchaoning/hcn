@@ -120,14 +120,16 @@ class Futils:
     def normalize(self, a=-inf, b=inf):
         return Futils(normalize(self.func, (a, b)))
     
-    def as_pdf(self, normalize=(-inf, inf)):
-        if normalize is not False:
-            func_ = self.normalize(*normalize)
+    def as_pdf(self, a=-inf, b=inf):
+        if (a and b) is not False:
+            func_ = self.normalize(a, b).func
         else:
             func_ = self.func
         class distribution(sp.stats.rv_continuous):
             def _pdf(self, x):
                 return func_(x)
+            def _cdf(self, x):
+                return integrate(func_, (a, x))
         return distribution()
 
 

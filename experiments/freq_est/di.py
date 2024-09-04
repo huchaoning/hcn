@@ -4,6 +4,7 @@ from tqdm import tqdm
 
 from .common import *
 from ...macro import read
+from ...futils import futils, integrate
 from ...equipments import qcmos, dmd
 
 # Use SciPy to do find the minimize function.
@@ -68,7 +69,6 @@ def estimator(data, noise=0, method='mle'):
             return lambda s: - sample.T @ np.log(p(x, s, w)) / sample.sum()
 
         for k in tqdm(data.keys()):
-            # print(f'{k}: ')
             for i in range(data[k].shape[0]):
                 if noise == 0:
                     w = 0
