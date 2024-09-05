@@ -29,3 +29,8 @@ from .decorators import *
 
 from .cache import *
 clean_expired_cache()
+
+try:
+    pull()
+except:
+    pass
