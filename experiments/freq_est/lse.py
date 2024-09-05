@@ -37,11 +37,11 @@ def lse(data):
         return wrapper
 
     for k in tqdm(data.keys()):
-        data[k] = normalize(data[k])
+        data[k] = norm(data[k])
         f_init, phi_init = fft_est(data[k])
         f_init = tau * f_init * expo_time
         for i, data_ in enumerate(data[k].reshape(len(data[k]) // N, N)):
-            phi = normalize_phase((i * f_init * N) + phi_init)
+            phi = norm_phase((i * f_init * N) + phi_init)
             popt, pcov = curve_fit(s(phi), n, data_, [f_init])
             if np.linalg.cond(pcov) <= 1e5:
                 f_est[k].append(popt.item())

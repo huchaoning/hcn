@@ -22,13 +22,13 @@ def photons(data):
 
 
 # Normalize the data into (-1, 1).
-def normalize(data):
+def norm(data):
     temp = data - data.mean()
     scale = (temp[temp>0].mean() - temp[temp<0].mean()) / 2
     return temp / scale
 
 
-def normalize_phase(phase):
+def norm_phase(phase):
     # Normalize phase to be within [0, 2*pi)
     phase = phase % tau
     # Adjust phase to be within [-pi, pi)
