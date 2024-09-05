@@ -1,6 +1,7 @@
 import numpy as np
 
 from .common import *
+from ...cache import cache
 from ...macro import read
 
 # SPADE's hyperparameter
@@ -39,6 +40,7 @@ def cropper(file):
 
 
 # SPADE's time domain estmator is extremely simple.
+@cache
 def estimator(data):
     data = read(data)
     time_domain = {}

@@ -4,6 +4,7 @@ from tqdm import tqdm
 
 from .common import *
 from ...macro import read
+from ...cache import cache
 from ...futils import futils, integrate
 from ...equipments import qcmos, dmd
 
@@ -45,6 +46,7 @@ def cropper(file, pixels):
 # Use MLE as DI's time domain estimator.
 # BFGS algorithm as optimizer to optimize the negative likelihood.
 # Also accepts 'simple' to use the centroid position estimator.
+@cache
 def estimator(data, noise=0, method='mle'):
     data = read(data)
     noise = read(noise)

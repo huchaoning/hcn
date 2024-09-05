@@ -19,7 +19,7 @@ import subprocess
 myutils_path = os.path.dirname(__file__)
 
 def code(input_):
-    if inspect.isfunction(input_) or inspect.ismodule(input_):
+    if inspect.isfunction(input_) or inspect.ismodule(input_) or inspect.isclass(input_):
         file_path = inspect.getfile(input_)
     else:
         file_path = input_
@@ -242,7 +242,7 @@ def load_npz(npz_path) -> dict:
 
 
 def read(input_):
-    if inspect.isfunction(input_) or inspect.ismodule(input_):
+    if inspect.isfunction(input_) or inspect.ismodule(input_) or inspect.isclass(input_):
         code(input_)
         return
     elif isinstance(input_, str):

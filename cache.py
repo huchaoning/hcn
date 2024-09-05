@@ -74,6 +74,17 @@ def clean_expired_cache():
 def cache(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
+        abspath = lambda p: os.path.abspath(os.path.normpath(p))
+
+        args = tuple(
+            abspath(arg) if isinstance(arg, str) and os.path.isfile(arg) else arg
+            for arg in args
+        )
+
+        kwargs = {
+            k: abspath(v) if isinstance(v, str) and os.path.isfile(v) else v
+            for k, v in kwargs.items()
+        }
 
         cache_key = str(inspect.getsource(func)) + str(func.__name__) + str(args) + str(kwargs)
         cache_key = cache_key.encode('utf-8')
