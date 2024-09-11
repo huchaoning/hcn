@@ -11,7 +11,7 @@ backend_inline.set_matplotlib_formats('svg')
 del backend_inline
 
 from matplotlib.font_manager import fontManager
-fontManager.addfont(os.path.join(os.path.dirname(__file__), 'font/SourceHanSans.otf'))
+fontManager.addfont(os.path.join(os.path.dirname(__file__), 'assets/SourceHanSans.otf'))
 del fontManager
 
 plt.rcParams['font.family'] = ['Source Han Sans SC']
