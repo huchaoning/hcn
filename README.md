@@ -1,3 +1,7 @@
+<div style="text-align: right;">
+    <img src="assets/logoOFwiz.svg" alt="logoOFwiz" width="100" height="100" style="float: right;"/>
+</div>
+
 # 个人使用 Python 常用函数集合
 
 ## 这是什么
@@ -44,4 +48,4 @@ import numpy as np
 print(np.__file__)
 ```
 
-<img src="assets/logoOFwiz.svg" alt="logoOFwiz" width="100" height="100"/>
+</>
