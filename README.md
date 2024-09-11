@@ -44,4 +44,4 @@ import numpy as np
 print(np.__file__)
 ```
 
-![logo](./assets/logoOFwiz.svg)
+<img src="assets/logoOFwiz.svg" alt="logoOFwiz" style="zoom:33%;" />
