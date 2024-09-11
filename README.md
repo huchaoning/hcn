@@ -1,6 +1,4 @@
-<div style="text-align: right;">
-    <img src="assets/logoOFwiz.svg" alt="logoOFwiz" width="100" height="100" style="float: right;"/>
-</div>
+<img src="assets/logoOFwiz.svg" alt="logoOFwiz" width="120" height="120"/>
 
 # 个人使用 Python 常用函数集合
 
@@ -47,5 +45,3 @@ opencv 用于读取 avi 视频, 如果样本比较长的时候用 tif 格式无�
 import numpy as np
 print(np.__file__)
 ```
-
-</>
