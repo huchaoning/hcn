@@ -1,3 +1,5 @@
+<img src="assets/logoOFwiz.svg" alt="logoOFwiz" width="120" height="120"/>
+
 # 个人使用 Python 常用函数集合
 
 ## 这是什么
