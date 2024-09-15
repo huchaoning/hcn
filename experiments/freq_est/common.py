@@ -2,15 +2,16 @@ from math import *
 import numpy as np
 from ...macro import read
 
+
 sigma = 103
 
-samples = 10000
-N = 50
+# samples = 10000
+# N = 50
 
 expo_time = 0.0451
 
 sampling_rate = 1 / expo_time
-timeline = np.arange(samples) * expo_time
+# timeline = np.arange(samples) * expo_time
 
 
 def photons(data):

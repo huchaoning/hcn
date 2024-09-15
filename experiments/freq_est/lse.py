@@ -27,6 +27,8 @@ def fft_est(signal):
 # Note that LSE and MLE are the same in WGN.
 def lse(data):
     data = read(data)
+    # _, N = data.shape
+    N = 50
     n = np.arange(N, dtype=np.float64)
 
     f_est = {k: [] for k in data.keys()}
@@ -40,9 +42,9 @@ def lse(data):
         data[k] = norm(data[k])
         f_init, phi_init = fft_est(data[k])
         f_init = tau * f_init * expo_time
-        for i, data_ in enumerate(data[k].reshape(len(data[k]) // N, N)):
-            phi = norm_phase((i * f_init * N) + phi_init)
-            popt, pcov = curve_fit(s(phi), n, data_, [f_init])
+        for i, data_ in enumerate(data[k].reshape(-1, 50)):
+            # phi = norm_phase((i * f_init * N) + phi_init)
+            popt, pcov = curve_fit(s(0), n, data_, [f_init])
             if np.linalg.cond(pcov) <= 1e5:
                 f_est[k].append(popt.item())
             else:

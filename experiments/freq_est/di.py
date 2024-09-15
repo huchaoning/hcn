@@ -85,7 +85,7 @@ def estimator(data, noise=0, method='mle'):
                     print(f"warning: data['di'][{i}] may not converged")
                     
             time_domain[k] = np.array(time_domain[k])
-            time_domain[k] = (time_domain[k] - time_domain[k].mean() + 1) * qcmos.pixel_size
+            # time_domain[k] = (time_domain[k] - roi/2) * qcmos.pixel_size
         return time_domain
     
     elif method.lower() == 'simple':
@@ -93,16 +93,17 @@ def estimator(data, noise=0, method='mle'):
             index = np.arange(roi)
             normalized = data[k] / data[k].sum(axis=1).reshape(data[k].shape[0], 1)
             time_domain[k] = normalized @ index
-            time_domain[k] = (time_domain[k] - time_domain[k].mean() + 1) * qcmos.pixel_size
+            # time_domain[k] = (time_domain[k] - roi/2) * qcmos.pixel_size
         return time_domain
     
 
-def gen(s_list, photons, noise=0):
+def gen(s_list, photons, dmd_pixels, noise=0):
     # Convert length units to camera pixel size to match experimental data.
     s_list_ = s_list / qcmos.pixel_size
     sigma_ = sigma / qcmos.pixel_size
+    A_ = dmd_pixels * dmd.pixel_size / qcmos.pixel_size
 
-    roi = int(s_list_.max() - s_list_.min() + 6*sigma_)
+    roi = int(A_ + 6*sigma_)
     
     data = [np.histogram(np.random.normal(s, sigma_, photons), 
                          bins=roi, range=(-roi/2, roi/2))[0] for s in s_list_]
