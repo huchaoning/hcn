@@ -123,19 +123,20 @@ def cache(func):
         hash_key = md5(cache_key).hexdigest()
         
         cache_file, success = find_cache(hash_key)
-
-        if success:
-            if os.path.isfile(cache_file):
-                print('cache hit: reading result from cache file')
-                update_timestamp(cache_file)
+            
+        if success and os.path.isfile(cache_file):
+            try:
                 with open(cache_file, 'rb') as f:
                     result = pickle.load(f)
-                    return result
-            
-        elif not success:
-            result = func(*args, **kwargs)
-            with open(cache_file, 'rb') as f:
-                pickle.dump(f)
+                update_timestamp(cache_file)
+                print('cache hit: reading result from cache file')
                 return result
+            except (EOFError, pickle.UnpicklingError, ValueError):
+                os.remove(cache_file)
+            
+        result = func(*args, **kwargs)
+        with open(cache_file, 'wb') as f:
+            pickle.dump(result, f)
+        return result
     
     return wrapper
