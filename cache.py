@@ -23,6 +23,7 @@ import inspect
 import pickle
 import time
 
+from glob import glob
 from functools import wraps
 from hashlib import md5
 
@@ -42,6 +43,38 @@ __all__ = [
 ]
 
 
+def extract_timestamp(file_path):
+    base_name = os.path.basename(file_path)
+    timestamp = base_name.split('_')[1].split('.pkl')[0]
+    return int(timestamp)
+
+
+def find_cache(hash_key):
+    time_stamp = int(time.time())
+    prefix_name = os.path.join(cache_dir, f'{hash_key}_*')
+    cache_file = glob(prefix_name)
+
+    if len(cache_file) == 0:
+        cache_file = os.path.join(cache_dir, f'{hash_key}_{time_stamp}.pkl')
+        return cache_file, False
+    
+    elif len(cache_file) == 1:
+        cache_file = cache_file[0]
+        return cache_file, True
+    
+    else:
+        raise
+
+
+def update_timestamp(cache_file):
+    time_stamp = int(time.time())
+    base_name = os.path.basename(cache_file)
+    hash_key = base_name.split('_')[0]
+    new_name = f'{hash_key}_{time_stamp}.pkl'
+    os.rename(cache_file, os.path.join(cache_dir, new_name))
+    
+
+
 def open_cache_dir():
     import platform
     if platform.system() == 'Windows':
@@ -57,25 +90,24 @@ def clean_all_cache():
 
 
 def clean_expired_cache():
-    current_time = time.time()
-    for filename in os.listdir(cache_dir):
-        file_path = os.path.join(cache_dir, filename)
-        if os.path.isfile(file_path):
+    now = int(time.time())
+    for file_name in os.listdir(cache_dir):
+        file_path = os.path.join(cache_dir, file_name)
+        
+        if file_name.endswith('.pkl'):
             try:
-                with open(file_path, 'rb') as f:
-                    metadata = pickle.load(f)
-                    last_access_time = metadata['last_access_time']
-                    if current_time - last_access_time > expiration_time:
-                        os.remove(file_path)
-            except (EOFError, pickle.UnpicklingError):
-                os.remove(file_path)
+                timestamp = extract_timestamp(file_path)
+                if now - timestamp > expiration_time:
+                    os.remove(file_path)
+            except Exception as e:
+                print(f"Error processing file {file_path}: {e}")
 
 
 def cache(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         abspath = lambda p: os.path.abspath(os.path.normpath(p))
-
+        
         args = tuple(
             abspath(arg) if isinstance(arg, str) and os.path.isfile(arg) else arg
             for arg in args
@@ -89,21 +121,22 @@ def cache(func):
         cache_key = str(inspect.getsource(func)) + str(func.__name__) + str(args) + str(kwargs)
         cache_key = cache_key.encode('utf-8')
         hash_key = md5(cache_key).hexdigest()
-        cache_file = os.path.join(cache_dir, f'{hash_key}.pkl')
-
-        if os.path.exists(cache_file):
-            print('cache hit: reading result from cache file')
-            with open(cache_file, 'rb') as f:
-                metadata = pickle.load(f)
-                metadata['last_access_time'] = time.time()
-                with open(cache_file, 'wb') as f:
-                    pickle.dump(metadata, f)
-                return metadata['result']
+        
+        cache_file, success = find_cache(hash_key)
+            
+        if success and os.path.isfile(cache_file):
+            try:
+                with open(cache_file, 'rb') as f:
+                    result = pickle.load(f)
+                update_timestamp(cache_file)
+                print('cache hit: reading result from cache file')
+                return result
+            except (EOFError, pickle.UnpicklingError, ValueError):
+                os.remove(cache_file)
             
         result = func(*args, **kwargs)
-        metadata = {'result': result, 'last_access_time': time.time()}
         with open(cache_file, 'wb') as f:
-            pickle.dump(metadata, f)
+            pickle.dump(result, f)
         return result
     
     return wrapper

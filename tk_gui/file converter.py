@@ -52,7 +52,7 @@ def save(data_dic, extension, root_path):
 class FileConverterApp:
     def __init__(self, root):
         self.root = root
-        self.root.title('File Converter')
+        self.root.title('File Converter (by Chao-Ning Hu)')
         self.file_paths = []
         self.converted_files = []
         # Dictionary with file extension and their display names
@@ -103,8 +103,9 @@ class FileConverterApp:
         return listbox
 
     def select_files(self):
-        file_types = [('AVI files', '*.avi'), ('Numpy files', '*.npy'), ('CSV files', '*.csv'),
-                      ('TIFF files', '*.tif'), ('Bitmap files', '*.bmp')]
+        # file_types = [('AVI files', '*.avi'), ('Numpy files', '*.npy'), ('CSV files', '*.csv'),
+        #               ('TIFF files', '*.tif'), ('Bitmap files', '*.bmp')]
+        file_types = [('Numpy files', '*.npy'), ('CSV files', '*.csv'), ('TIFF files', '*.tif')]
         file_paths = filedialog.askopenfilenames(
             title='Select Files',
             initialdir=os.path.join(os.path.expanduser('~'), 'Desktop'),
