@@ -18,7 +18,7 @@ def plotter_decorator(**kwargs):
     default_params = {
           'figsize': None, 
              'axis': True, 
-             'grid': True, 
+             'grid': None, 
            'xlabel': None, 
            'ylabel': None, 
             'title': None,
@@ -43,7 +43,7 @@ def plotter_decorator(**kwargs):
                 plt.xticks([])
                 plt.yticks([])
             if params['grid'] is not None:    
-                plt.grid(params['grid'], linestyle='--')
+                plt.grid(params['grid'])
             if params['xlabel'] is not None:
                 plt.xlabel(params['xlabel'])
             if params['ylabel'] is not None:

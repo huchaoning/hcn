@@ -1,0 +1,36 @@
+# Imitating 陆老师's PRX, cannot use Chinese fonts due to font
+
+# Line thickness, image size, and font size
+lines.linewidth: 2.5
+figure.figsize: 6.4, 4.8    # Same as matplotlib default
+font.size: 13
+
+# Font settings
+mathtext.fontset: cm
+font.family: Times New Roman
+
+# Axis ticks directed inward, with top and right ticks displayed
+xtick.direction: in
+ytick.direction: in
+xtick.top: True
+ytick.right: True
+
+# Remove default whitespace
+axes.xmargin: 0.0
+axes.ymargin: 0.0
+axes.zmargin: 0.0
+
+# Display labels in larger font size and set color and linestyle cycle 
+# Colors are slightly modified from 'bmh' style
+axes.labelsize: large
+axes.prop_cycle: cycler('color', ['348ABD', 'A60628', '7A68A6', '467821', 'CC79A7', '56B4E9', '00C800', 'F0E442']) + cycler('linestyle', ['-', '--', '-.', ':', '-', '--', '-.', ':'])
+
+# Set the style of the legend box; rectangular black border, opaque
+legend.fancybox: False
+legend.frameon: True
+legend.framealpha: None
+legend.facecolor: inherit
+legend.edgecolor: inherit
+
+# Display fonts in path format for better compatibility
+svg.fonttype: path

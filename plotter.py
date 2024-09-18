@@ -20,6 +20,7 @@ plt.rcParams['savefig.format'] = 'svg'
 
 __all__ = ['show_all_fonts', 
            'set_font',
+           'style_use',
            'figsize_fixed',
            'plot',
            'hist',
@@ -40,6 +41,10 @@ def set_font(family=None, weight=None):
         plt.rcParams['font.family'] = ['Source Han Sans SC']
     else:
         plt.rc('font', family=family, weight=weight)
+
+
+def style_use(style):
+    plt.style.use(os.path.join(os.path.dirname(__file__), f'assets/{style}.mplstyle'))
 
 
 def figsize_fixed(x_figsize=None, y_figsize=None):
