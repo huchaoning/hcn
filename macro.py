@@ -52,7 +52,7 @@ def fast_meshgrid(h, v, scale = 1):
     return np.meshgrid(np.arange(-h/2, h/2) * scale, -np.arange(-v/2, v/2) * scale)
 
 
-def read_csv(path=None):
+def load_csv(path=None):
     return np.array(pd.read_csv(path, header=None))
 
 
@@ -240,6 +240,14 @@ def load_npz(npz_path) -> dict:
     return dic
 
 
+def load_json(json_path) -> dict:
+    import json
+    if not os.path.exists(json_path):
+        raise FileNotFoundError(f'{json_path} is not exists')
+    with open(json_path, 'r') as f:
+        dic = json.load(f)
+    return dic
+
 
 def read(input_):
     if inspect.isfunction(input_) or inspect.ismodule(input_) or inspect.isclass(input_):
@@ -256,7 +264,9 @@ def read(input_):
         elif extension in ['bmp', 'tif']:
             return imread(input_)
         elif extension == 'csv':
-            return read_csv(input_)
+            return load_csv(input_)
+        elif extension == 'json':
+            return load_json(input_)
         elif os.path.exists(input_):
             finder(input_)
             return
