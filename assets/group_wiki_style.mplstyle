@@ -1,0 +1,14 @@
+figure.figsize: 3.3, 2.5
+figure.dpi: 150
+
+text.usetex: true
+
+font.size: 8
+font.family: sans-serif
+font.sans-serif: Helvetica
+
+lines.linewidth: 1.5
+lines.markersize: 4
+
+savefig.format: pdf
+savefig.bbox: tight
