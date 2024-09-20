@@ -23,8 +23,8 @@ def style_use(
 ):  pass
 
 
-def svg_inline(
-    svg: bool
+def inline_format(
+    fmt: str
 ):  pass
 
 

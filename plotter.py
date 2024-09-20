@@ -7,8 +7,11 @@ from PIL import Image as image
 from .decorators import plotter_decorator
 
 from matplotlib.font_manager import fontManager
-fontManager.addfont(os.path.join(os.path.dirname(__file__), 'assets/SourceHanSans.otf'))
-del fontManager
+assets_dir = os.path.join(os.path.dirname(__file__), 'assets/{}')
+fontManager.addfont(assets_dir.format('SourceHanSans.otf'))
+plt.style.use(assets_dir.format('draft.mplstyle'))
+del fontManager, assets_dir
+
 
 # plt.rcParams['font.family'] = ['Source Han Sans SC']
 # plt.rcParams['figure.figsize'] = (6, 4)
@@ -17,7 +20,7 @@ del fontManager
 __all__ = ['show_all_fonts', 
            'set_font',
            'style_use',
-           'svg_inline',
+           'inline_format',
            'figsize_fixed',
            'plot',
            'hist',
@@ -40,19 +43,18 @@ def set_font(family=None, weight=None):
         plt.rc('font', family=family, weight=weight)
 
 
-def style_use(style):
+def style_use(style='draft'):
+    plt.rcdefaults()
     plt.style.use(os.path.join(os.path.dirname(__file__), f'assets/{style}.mplstyle'))
 
 
-def svg_inline(svg):
+def inline_format(fmt='bitmap'):
     from matplotlib_inline import backend_inline
-    if svg:
+    if fmt.lower() == 'svg':
         backend_inline.set_matplotlib_formats('svg')
-    elif not svg:
+    elif fmt.lower() == 'bitmap':
         backend_inline.set_matplotlib_formats('retina')
-    del backend_inline
 
-svg_inline(False)
 
 def figsize_fixed(x_figsize=None, y_figsize=None):
     if isinstance(x_figsize, (tuple, list)) and (y_figsize is None):
@@ -69,10 +71,11 @@ def figsize_fixed(x_figsize=None, y_figsize=None):
 
 
 @plotter_decorator()
-def plot(x=[], y=[], fmt='-', label=None, dots=300, alpha=None, xerr=None, yerr=None, capsize=3, *args, **kwargs):
-    if len(x) != 0 and len(y) == 0:
+def plot(x=[], y=[], fmt=None, label=None, dots=300, alpha=None, xerr=None, yerr=None, capsize=3, *args, **kwargs):
+    if x != [] and y == []:
         y = np.copy(x)
         x = np.arange(len(y))
+
     if isinstance(x, tuple):
         if len(x) == 2:
             if callable(y):
@@ -83,14 +86,16 @@ def plot(x=[], y=[], fmt='-', label=None, dots=300, alpha=None, xerr=None, yerr=
             raise TypeError('when x is a tuple, ' +
                             'it is treated as the domain of y, ' +
                             'so len(x) must be 2')
+   
     if callable(y):
         try: 
             y = y(x)
         except (TypeError, ValueError):
             y = [y(x_) for x_ in x]
+
     if np.shape(x) == np.shape(y):
         if xerr is None and yerr is None:
-            plt.plot(x, y, fmt, label=label, alpha=alpha)
+            plt.plot(x, y, label=label, alpha=alpha)
         else:
             c = None if fmt=='-' or fmt=='' else fmt
             plt.errorbar(x, y, c=c, xerr=xerr, yerr=yerr, 
