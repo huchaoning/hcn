@@ -4,8 +4,10 @@ figure.dpi: 150
 text.usetex: true
 
 font.size: 8
-font.family: sans-serif
-font.sans-serif: Helvetica
+font.family: Source Han Sans SC
+
+# font.sans-serif: Helvetica    
+# font.family: sans-serif
 
 lines.linewidth: 1.5
 lines.markersize: 4
