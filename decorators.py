@@ -10,7 +10,7 @@ from .macro import hashsum, format_time
 
 __all__ = [
     'stopwatch',
-    # 'save'
+    'parallelize'
 ]
 
 
@@ -97,6 +97,30 @@ def stopwatch(func):
         print(f'Function {func.__name__} took: {format_time(time() - start)}')
         return result
     return wrapper
+
+
+
+def parallelize(cores=None):
+    from dask import delayed, compute
+    from dask.distributed import Client
+    def decorator(func):
+        @wraps(func)
+        def wrapper(tasks):
+
+            @delayed
+            def _delayed_func(*args, **kwargs):
+                return func(*args, **kwargs)
+
+            all_tasks = [_delayed_func(x) for x in tasks]
+            
+            if cores > 0:
+                with Client(n_workers=cores, threads_per_worker=1):
+                    results = compute(*all_tasks)
+            else:
+                results = compute(*all_tasks)
+            return results
+        return wrapper
+    return decorator
 
 
 # 有一些问题暂时搁置:

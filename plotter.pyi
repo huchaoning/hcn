@@ -18,6 +18,16 @@ def figsize_fixed(
 ):  pass
 
 
+def style_use(
+    style: str
+):  pass
+
+
+def svg_inline(
+    svg: bool
+):  pass
+
+
 def plot(
     x: ArrayLike | tuple, 
     y: ArrayLike | Callable, 

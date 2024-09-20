@@ -3,9 +3,9 @@ import matplotlib.pyplot as plt
 from scipy.stats import norm
 
 # 用矢量图来显示
-from matplotlib_inline import backend_inline
-backend_inline.set_matplotlib_formats('svg')
-del backend_inline
+# from matplotlib_inline import backend_inline
+# backend_inline.set_matplotlib_formats('svg')
+# del backend_inline
 
 from tqdm import tqdm
 import os

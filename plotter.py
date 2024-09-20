@@ -6,21 +6,18 @@ from PIL import Image as image
 
 from .decorators import plotter_decorator
 
-from matplotlib_inline import backend_inline
-backend_inline.set_matplotlib_formats('svg')
-del backend_inline
-
 from matplotlib.font_manager import fontManager
 fontManager.addfont(os.path.join(os.path.dirname(__file__), 'assets/SourceHanSans.otf'))
 del fontManager
 
-plt.rcParams['font.family'] = ['Source Han Sans SC']
-plt.rcParams['figure.figsize'] = (6, 4)
-plt.rcParams['savefig.format'] = 'svg'
+# plt.rcParams['font.family'] = ['Source Han Sans SC']
+# plt.rcParams['figure.figsize'] = (6, 4)
+# plt.rcParams['savefig.format'] = 'svg'
 
 __all__ = ['show_all_fonts', 
            'set_font',
            'style_use',
+           'svg_inline',
            'figsize_fixed',
            'plot',
            'hist',
@@ -47,6 +44,16 @@ def style_use(style):
     plt.style.use(os.path.join(os.path.dirname(__file__), f'assets/{style}.mplstyle'))
 
 
+def svg_inline(svg):
+    from matplotlib_inline import backend_inline
+    if svg:
+        backend_inline.set_matplotlib_formats('svg')
+    elif not svg:
+        backend_inline.set_matplotlib_formats('retina')
+    del backend_inline
+
+svg_inline(False)
+
 def figsize_fixed(x_figsize=None, y_figsize=None):
     if isinstance(x_figsize, (tuple, list)) and (y_figsize is None):
         plt.rcParams['figure.figsize'] = x_figsize
@@ -63,9 +70,9 @@ def figsize_fixed(x_figsize=None, y_figsize=None):
 
 @plotter_decorator()
 def plot(x=[], y=[], fmt='-', label=None, dots=300, alpha=None, xerr=None, yerr=None, capsize=3, *args, **kwargs):
-    if len(x) == 0 and len(y) != 0:
-        x = (0, 1)
-        print('warning: x is a empty, x is treated as (0, 1)')
+    if len(x) != 0 and len(y) == 0:
+        y = np.copy(x)
+        x = np.arange(len(y))
     if isinstance(x, tuple):
         if len(x) == 2:
             if callable(y):
