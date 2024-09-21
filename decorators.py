@@ -100,24 +100,26 @@ def stopwatch(func):
 
 
 
-def parallelize(cores=None):
+def parallelize(cores: int = 0):
     from dask import delayed, compute
     from dask.distributed import Client
+
+    if cores <= 0:
+        import psutil
+        cores = psutil.cpu_count(logical=False)
+
     def decorator(func):
         @wraps(func)
-        def wrapper(tasks):
+        def wrapper(tasks, *args, **kwargs):
 
             @delayed
             def _delayed_func(*args, **kwargs):
                 return func(*args, **kwargs)
-
-            all_tasks = [_delayed_func(x) for x in tasks]
             
-            if cores > 0:
-                with Client(n_workers=cores, threads_per_worker=1):
-                    results = compute(*all_tasks)
-            else:
+            all_tasks = [_delayed_func(task, *args, **kwargs) for task in tasks]
+            with Client(n_workers=cores, threads_per_worker=1):
                 results = compute(*all_tasks)
+
             return results
         return wrapper
     return decorator
