@@ -9,6 +9,7 @@ from .decorators import plotter_decorator
 from matplotlib.font_manager import fontManager
 assets_dir = os.path.join(os.path.dirname(__file__), 'assets/{}')
 fontManager.addfont(assets_dir.format('SourceHanSans.otf'))
+fontManager.addfont(assets_dir.format('lmroman10.otf'))
 plt.style.use(assets_dir.format('draft.mplstyle'))
 del fontManager, assets_dir
 

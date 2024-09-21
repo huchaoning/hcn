@@ -1,19 +1,20 @@
-# Settings from fast.mplstyle
+# Settings of fast.mplstyle
 path.simplify: True
 path.simplify_threshold: 1.0
 agg.path.chunksize: 10000   
 
 figure.figsize: 6, 4
-font.family: Source Han Sans SC
+font.family: Latin Modern Roman, Source Han Sans SC
+mathtext.fontset: cm
 
 axes.prop_cycle: cycler('color', 'bgrcmyk')
 axes.grid: True
 
-legend.fancybox: False
-legend.frameon: True
-legend.framealpha: None
-legend.facecolor: inherit
-legend.edgecolor: inherit
+# legend.fancybox: False
+# legend.frameon: True
+# legend.framealpha: None
+# legend.facecolor: inherit
+# legend.edgecolor: inherit
 
 savefig.format: pdf
 savefig.bbox: tight
