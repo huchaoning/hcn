@@ -73,7 +73,7 @@ def figsize_fixed(x_figsize=None, y_figsize=None):
 
 @plotter_decorator()
 def plot(x=[], y=[], fmt=None, label=None, dots=300, alpha=None, xerr=None, yerr=None, capsize=3, *args, **kwargs):
-    if x != [] and y == []:
+    if list(x) != [] and list(y) == []:
         y = np.copy(x)
         x = np.arange(len(y))
 

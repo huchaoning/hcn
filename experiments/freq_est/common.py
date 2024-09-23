@@ -2,6 +2,7 @@ from math import *
 import numpy as np
 from ...macro import read
 
+freq_list = np.array([0.1, 0.125, 0.15625, 0.2, 0.22, 0.25, 0.275, 0.3125, 0.34375, 0.4])
 
 sigma = 103
 
