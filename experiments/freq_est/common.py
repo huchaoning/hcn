@@ -1,18 +1,27 @@
 from math import *
 import numpy as np
-from ...macro import read
 
-freq_list = np.array([0.1, 0.125, 0.15625, 0.2, 0.22, 0.25, 0.275, 0.3125, 0.34375, 0.4])
+from ...macro import read
 
 sigma = 103
 
-# samples = 10000
-# N = 50
-
 expo_time = 0.0451
-
 sampling_rate = 1 / expo_time
-# timeline = np.arange(samples) * expo_time
+
+freq_list = np.array([0.1, 0.125, 0.15625, 0.2, 0.22, 0.25, 0.275, 0.3125, 0.34375, 0.4])
+pic_time = 1e6 / (2*freq_list*sampling_rate)
+
+
+def check_freq(freqs):
+    from fractions import Fraction
+    frac = np.array([Fraction(str(f)).denominator for f in freqs])
+    arr = 1e6/(2*freqs*sampling_rate)%1
+    temp = []
+    for i in freqs[arr == 0]:
+        for j in freqs[frac <= 50]:
+            if i == j:
+                temp.append(i)
+    return np.array(temp)
 
 
 def photons(data):

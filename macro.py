@@ -326,6 +326,15 @@ def empty_list(dimensions):
     return _create(dimensions)
 
 
+def closed_range(start, stop, step):
+    if step <= 0:
+        raise ValueError('step must be positive')
+    decimal = max(len(str(start+step).split('.')[1]) if '.' in str(start+step) else 0,
+                  len(str(stop-step).split('.')[1]) if '.' in str(stop-step) else 0)
+    arr = np.arange(start, stop + 0.1*step, step)
+    return np.round(arr, decimal)
+
+
 # from inspect import signature
 # 由于自己写的算法效率低, 计算速度慢, 弃用
 
