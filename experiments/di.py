@@ -3,10 +3,10 @@ from math import *
 from tqdm import tqdm
 
 from .common import *
-from ...macro import read
-from ...cache import cache
-from ...futils import futils, integrate
-from ...equipments import qcmos, dmd
+from ..macro import read
+from ..cache import cache
+from ..futils import futils, integrate
+from ..equipments import qcmos, dmd
 
 # Use SciPy to do find the minimize function.
 from scipy.optimize import minimize

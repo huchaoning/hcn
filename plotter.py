@@ -7,10 +7,10 @@ from PIL import Image as image
 from .decorators import plotter_decorator
 
 from matplotlib.font_manager import fontManager
-assets_dir = os.path.join(os.path.dirname(__file__), 'assets/{}')
-fontManager.addfont(assets_dir.format('fonts/SourceHanSans.otf'))
-fontManager.addfont(assets_dir.format('fonts/lmroman10.otf'))
-plt.style.use(assets_dir.format('mplstyle/draft.mplstyle'))
+assets_dir = os.path.join(os.path.dirname(__file__), 'assets/')
+fontManager.addfont(os.path.join(assets_dir, 'fonts/SourceHanSans.otf'))
+fontManager.addfont(os.path.join(assets_dir, 'fonts/lmroman10.otf'))
+plt.style.use(os.path.join(assets_dir, 'mplstyle/draft.mplstyle'))
 del fontManager, assets_dir
 
 

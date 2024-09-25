@@ -1,8 +1,8 @@
 import numpy as np
 
 from .common import *
-from ...cache import cache
-from ...macro import read
+from ..cache import cache
+from ..macro import read
 
 # SPADE's hyperparameter
 point1 = (119, 91)
