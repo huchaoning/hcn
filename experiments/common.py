@@ -20,11 +20,8 @@ samples_length = ((np.ceil(50 / samples_pre_cycle) * samples_pre_cycle) * 200).a
 
 cut_point = np.ceil(50 / samples_pre_cycle) * samples_pre_cycle
 
-del Fraction
-
 
 def check_freq(freqs):
-    from fractions import Fraction
     frac = np.array([Fraction(str(f)).denominator for f in freqs])
     arr = 1e6/(2*freqs*sampling_rate)%1
     temp = []
