@@ -8,15 +8,11 @@ from .decorators import plotter_decorator
 
 from matplotlib.font_manager import fontManager
 assets_dir = os.path.join(os.path.dirname(__file__), 'assets/{}')
-fontManager.addfont(assets_dir.format('SourceHanSans.otf'))
-fontManager.addfont(assets_dir.format('lmroman10.otf'))
-plt.style.use(assets_dir.format('draft.mplstyle'))
+fontManager.addfont(assets_dir.format('fonts/SourceHanSans.otf'))
+fontManager.addfont(assets_dir.format('fonts/lmroman10.otf'))
+plt.style.use(assets_dir.format('mplstyle/draft.mplstyle'))
 del fontManager, assets_dir
 
-
-# plt.rcParams['font.family'] = ['Source Han Sans SC']
-# plt.rcParams['figure.figsize'] = (6, 4)
-# plt.rcParams['savefig.format'] = 'svg'
 
 __all__ = ['show_all_fonts', 
            'set_font',
@@ -47,7 +43,9 @@ def set_font(family=None, weight=None):
 
 def style_use(style='draft'):
     plt.rcdefaults()
-    plt.style.use(os.path.join(os.path.dirname(__file__), f'assets/{style}.mplstyle'))
+    plt.style.use(os.path.join(
+        os.path.dirname(__file__), 
+        f'assets/mplstyle/{style}.mplstyle'))
 
 
 def inline_format(fmt='bitmap'):
