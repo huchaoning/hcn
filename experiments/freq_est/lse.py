@@ -33,23 +33,27 @@ def lse(data):
 
     f_est = {k: [] for k in data.keys()}
 
-    def s(phi):
-        def wrapper(n, omega):
-            return np.cos(omega * n + phi)
-        return wrapper
+    # def s(phi):
+    #     def wrapper(n, omega):
+    #         return np.sin(omega * n + phi)
+    #     return wrapper
+    
+    def s(n, omega, phi):
+        return np.sin(omega * n + phi)
 
     for k in tqdm(data.keys()):
         data[k] = norm(data[k])
-        f_init, phi_init = fft_est(data[k])
+        f_init, phi_init = fft_est(np.ravel(data[k]))
         f_init = tau * f_init * expo_time
-        for i, data_ in enumerate(data[k].reshape(-1, 50)):
-            # phi = norm_phase((i * f_init * N) + phi_init)
-            popt, pcov = curve_fit(s(0), n, data_, [f_init])
+        for i, data_ in enumerate(data[k]):
+            phi_init = norm_phase((i * f_init * N) + phi_init)
+            popt, pcov = curve_fit(s, n, data_, [f_init, phi_init])
             if np.linalg.cond(pcov) <= 1e5:
-                f_est[k].append(popt.item())
+                # f_est[k].append(popt.item())
+                f_est[k].append(popt[0])
             else:
                 raise RuntimeError('np.linalg.cond(pcov) > 1e5, the algorithm may not converge')
-        f_est[k] = np.array(f_est[k]) * sampling_rate / tau
+        f_est[k] = np.array(f_est[k]) / tau
         
     return f_est
 

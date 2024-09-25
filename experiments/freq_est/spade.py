@@ -19,7 +19,8 @@ def reader(arr, point1, point2):
         raise ValueError('arr must be 2-d or 3-d')
     
 
-def cropper(file):
+# param pixels is used here only for convince
+def cropper(file, pixels=None):
     data = read(file)
 
     def _crop(data):
@@ -37,15 +38,26 @@ def cropper(file):
     
     else:
         return _crop(data)
+    
+
+def reshape(file, pixels=None):
+    raw = read(file)
+
+    for i, key in enumerate(freq_list):
+        key = str(key)
+        raw[key] = raw[key][:samples_length[i], :]
+        raw[key] = raw[key].reshape(200, -1, 2)
+        raw[key] = raw[key][:, :50, :]
+
+    return raw
 
 
 # SPADE's time domain estmator is extremely simple.
-@cache
 def estimator(data):
     data = read(data)
     time_domain = {}
     for k in data.keys():
-        time_domain[k] = data[k][:, 0] - data[k][:, 1]
+        time_domain[k] = data[k][:, :, 0] - data[k][:, :, 1]
     return time_domain
 
 

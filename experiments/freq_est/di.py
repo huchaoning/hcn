@@ -40,6 +40,19 @@ def cropper(file, pixels):
     
     else:
         return _crop(data)
+    
+
+
+def reshape(file, pixels):
+    raw = read(file)
+
+    for i, key in enumerate(freq_list):
+        key = str(key)
+        raw[key] = raw[key][:samples_length[i], :]
+        raw[key] = raw[key].reshape(200, -1, -np.subtract(*roi(pixels)))
+        raw[key] = raw[key][:, :50, :]
+
+    return raw
 
 
 
@@ -47,13 +60,18 @@ def cropper(file, pixels):
 # BFGS algorithm as optimizer to optimize the negative likelihood.
 # Also accepts 'simple' to use the centroid position estimator.
 @cache
-def estimator(data, noise=0, method='mle'):
-    data = read(data)
-    noise = read(noise)
+def estimator(data_, noise_=0, method='mle'):
+    from copy import deepcopy as cp 
+    
+    data_ = read(data_)
+    noise_ = read(noise_)
+
+    data = cp(data_)
+    noise = cp(noise_)
 
     time_domain = {k: [] for k in data.keys()}
 
-    roi = np.array([data[k].shape[1] for k in data.keys()])
+    roi = np.array([data[k].shape[-1] for k in data.keys()])
     if roi.var() != 0:
         raise ValueError('the shape of data must be same, check .npz file')
     roi = roi[0]
@@ -71,6 +89,8 @@ def estimator(data, noise=0, method='mle'):
             return lambda s: - sample.T @ np.log(p(x, s, w)) / sample.sum()
 
         for k in tqdm(data.keys()):
+            origin_shape = data[k].shape
+            data[k] = data[k].reshape(-1, roi)
             for i in range(data[k].shape[0]):
                 if noise == 0:
                     w = 0
@@ -84,15 +104,17 @@ def estimator(data, noise=0, method='mle'):
                 if not results.success:
                     print(f"warning: data['di'][{i}] may not converged")
                     
-            time_domain[k] = np.array(time_domain[k])
+            time_domain[k] = np.array(time_domain[k]).reshape(origin_shape[0], -1)
             # time_domain[k] = (time_domain[k] - roi/2) * qcmos.pixel_size
         return time_domain
     
     elif method.lower() == 'simple':
         for k in data.keys():
+            origin_shape = data[k].shape
+            data[k] = data[k].reshape(-1, roi)
             index = np.arange(roi)
             normalized = data[k] / data[k].sum(axis=1).reshape(data[k].shape[0], 1)
-            time_domain[k] = normalized @ index
+            time_domain[k] = (normalized @ index).reshape(origin_shape[0], -1)
             # time_domain[k] = (time_domain[k] - roi/2) * qcmos.pixel_size
         return time_domain
     
@@ -109,3 +131,5 @@ def gen(s_list, photons, dmd_pixels, noise=0):
                          bins=roi, range=(-roi/2, roi/2))[0] for s in s_list_]
     
     return (np.array(data) + np.random.poisson(noise, roi)).astype(float)
+
+

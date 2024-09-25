@@ -28,6 +28,15 @@ def inline_format(
 ):  pass
 
 
+def axline(
+    h: int | float,
+    v: int | float,
+    c: str,
+    w: str,
+    s: str
+):  pass
+
+
 def plot(
     x: ArrayLike | tuple, 
     y: ArrayLike | Callable, 

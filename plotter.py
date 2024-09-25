@@ -23,6 +23,7 @@ __all__ = ['show_all_fonts',
            'style_use',
            'inline_format',
            'figsize_fixed',
+           'axline',
            'plot',
            'hist',
            'scatter',
@@ -71,9 +72,17 @@ def figsize_fixed(x_figsize=None, y_figsize=None):
         raise ValueError('invalid figsize parameters')
 
 
+def axline(h=None, v=None, c='k', w=0.5, s='--'):
+    if h is not None:
+        plt.axhline(h, color=c, lw=w, ls=s)
+
+    if v is not None:
+        plt.axvline(v, color=c, lw=w, ls=s)
+
+
 @plotter_decorator()
 def plot(x=[], y=[], fmt=None, label=None, dots=300, alpha=None, xerr=None, yerr=None, capsize=3, *args, **kwargs):
-    if list(x) != [] and list(y) == []:
+    if y == []:
         y = np.copy(x)
         x = np.arange(len(y))
 
@@ -96,7 +105,8 @@ def plot(x=[], y=[], fmt=None, label=None, dots=300, alpha=None, xerr=None, yerr
 
     if np.shape(x) == np.shape(y):
         if xerr is None and yerr is None:
-            plt.plot(x, y, label=label, alpha=alpha)
+            _param = [x, y] if fmt is None else [x, y, fmt]
+            plt.plot(*_param, label=label, alpha=alpha)
         else:
             c = None if fmt=='-' or fmt=='' else fmt
             plt.errorbar(x, y, c=c, xerr=xerr, yerr=yerr, 

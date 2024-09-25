@@ -2,14 +2,23 @@ from math import *
 import numpy as np
 
 from ...macro import read
+from fractions import Fraction
 
 sigma = 103
 
 expo_time = 0.0451
 sampling_rate = 1 / expo_time
 
-freq_list = np.array([0.1, 0.125, 0.15625, 0.2, 0.22, 0.25, 0.275, 0.3125, 0.34375, 0.4])
+# freq_list = np.array([0.1, 0.125, 0.15625, 0.2, 0.22, 0.25, 0.275, 0.3125, 0.34375, 0.4])
+freq_list = np.array([0.1, 0.125, 0.15625, 0.2, 0.22, 0.25, 0.3125, 0.34375, 0.4])
 pic_time = 1e6 / (2*freq_list*sampling_rate)
+
+samples_pre_cycle = np.array([Fraction(str(f)).denominator for f in freq_list]).astype(int)
+samples_length = ((np.ceil(50 / samples_pre_cycle) * samples_pre_cycle) * 200).astype(int)
+
+cut_point = np.ceil(50 / samples_pre_cycle) * samples_pre_cycle
+
+del Fraction
 
 
 def check_freq(freqs):

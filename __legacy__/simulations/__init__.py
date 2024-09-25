@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.stats import norm
+# from scipy.stats import norm
 
 # 用矢量图来显示
 # from matplotlib_inline import backend_inline
@@ -99,6 +99,7 @@ def estimator(x_axis, raw, method='mle'):
         return x_axis @ raw / raw.sum()
     
     elif method.lower() == 'mle':
+        from scipy.stats import norm
         # 用 repeat 方法把每个光子所在的位置记录到一个数组里面
         x = np.repeat(x_axis, raw.astype(int))
         return norm.fit(x)[0]
