@@ -2,19 +2,22 @@ import numpy as np
 from math import *
 from tqdm import tqdm
 
-from .params import *
-from .share import *
+from .common import *
 from ..macro import read
 from ..cache import cache
+from ..futils import futils, integrate
+from ..equipments import qcmos, dmd
 
 # Use SciPy to do find the minimize function.
 from scipy.optimize import minimize
 
 
-
+# DI's hyperparameter
+ax = 81
+center = 110
 
 def roi(pixels):
-    s = pixels * dmd_pixel_size / qcmos_pixel_size
+    s = pixels * dmd.pixel_size / qcmos.pixel_size
     sigma_ = sigma / qcmos.pixel_size
     return np.round([center - s - 3*sigma_, center + 3*sigma_]).astype(int)
 
@@ -39,10 +42,18 @@ def cropper(file, pixels):
         return _crop(data)
     
 
-def reshape(data, length, pixels):
-    temp = data[:length, :]
-    temp = temp.reshape(200, -1, -np.subtract(*roi(pixels)))[:, :50, :]
-    return temp
+
+def reshape(file, pixels):
+    raw = read(file)
+
+    for i, key in enumerate(freq_list):
+        key = str(key)
+        raw[key] = raw[key][:samples_length[i], :]
+        raw[key] = raw[key].reshape(200, -1, -np.subtract(*roi(pixels)))
+        raw[key] = raw[key][:, :50, :]
+
+    return raw
+
 
 
 # Use MLE as DI's time domain estimator.
@@ -94,6 +105,7 @@ def estimator(data_, noise_=0, method='mle'):
                     print(f"warning: data['di'][{i}] may not converged")
                     
             time_domain[k] = np.array(time_domain[k]).reshape(origin_shape[0], -1)
+            # time_domain[k] = (time_domain[k] - roi/2) * qcmos.pixel_size
         return time_domain
     
     elif method.lower() == 'simple':
@@ -103,5 +115,21 @@ def estimator(data_, noise_=0, method='mle'):
             index = np.arange(roi)
             normalized = data[k] / data[k].sum(axis=1).reshape(data[k].shape[0], 1)
             time_domain[k] = (normalized @ index).reshape(origin_shape[0], -1)
+            # time_domain[k] = (time_domain[k] - roi/2) * qcmos.pixel_size
         return time_domain
     
+
+def gen(s_list, photons, dmd_pixels, noise=0):
+    # Convert length units to camera pixel size to match experimental data.
+    s_list_ = s_list / qcmos.pixel_size
+    sigma_ = sigma / qcmos.pixel_size
+    A_ = dmd_pixels * dmd.pixel_size / qcmos.pixel_size
+
+    roi = int(A_ + 6*sigma_)
+    
+    data = [np.histogram(np.random.normal(s, sigma_, photons), 
+                         bins=roi, range=(-roi/2, roi/2))[0] for s in s_list_]
+    
+    return (np.array(data) + np.random.poisson(noise, roi)).astype(float)
+
+

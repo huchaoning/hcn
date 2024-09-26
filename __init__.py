@@ -17,7 +17,7 @@ except ImportError:
 from . import cgh
 
 from .experiments import *
-from .equipments import *
+# from .equipments import *
 
 from .futils import *
 from .macro import *

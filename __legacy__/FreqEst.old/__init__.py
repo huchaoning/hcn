@@ -19,8 +19,9 @@
 # except ModuleNotFoundError:
 #     pass
 
-# from .share import *
-# from .bound import *
 
-from ._DataReader import DataReader
-from .params import *
+from . import di, spade
+from .bound import *
+
+from .common import *
+del Fraction, curve_fit, di.minimize
