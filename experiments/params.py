@@ -11,7 +11,8 @@ __all__ = [
     'DMD',
     'qCMOS',
 ]
-
+                    
+                    
 
 @dataclass
 class Expt:
@@ -22,7 +23,7 @@ class Expt:
         else:
             raise ValueError('invalid params')
         
-
+    # The sigma (AKA characteristic width) of Airy disk is 103um.
     sigma = 103 #um
     expo_time = 0.0451 #s
     # freq_list = np.array([0.1, 0.125, 0.15625, 0.2, 0.22, 0.25, 0.275, 0.3125, 0.34375, 0.4])
@@ -55,6 +56,7 @@ class SPADE:
 
 @dataclass
 class qCMOS:
+    # The camera pixel size is 4.6 um per pixel.
     pixel_size = 4.6 #um
 
 

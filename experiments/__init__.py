@@ -23,4 +23,5 @@
 # from .bound import *
 
 from ._DataReader import DataReader
+from ._TDEst import TDEst
 from .params import *
