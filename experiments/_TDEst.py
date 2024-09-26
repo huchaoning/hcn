@@ -1,12 +1,12 @@
-
 from math import *
 import numpy as np
+from scipy.optimize import minimize
 
 from .params import *
 from ..cache import cache
 
-from scipy.optimize import minimize
 
+__all__ = ['TDEst']
 
 class TDEst:
     def __init__(self, measure):
@@ -21,8 +21,9 @@ class TDEst:
         temp = data - data.mean()
         scale = (temp[temp>0].mean() - temp[temp<0].mean()) / 2
         return temp / scale
+    
 
-
+    @cache
     def estimator(self, dataset, noise=None, di_method='mle'):
         origin_shape = dataset.shape
 
@@ -65,4 +66,4 @@ class TDEst:
             # SPADE's time domain estmator is extremely simple.
             time_domain = flatten_data[:, 0] - flatten_data[:, 1]
 
-        return self._normalize(time_domain).reshape(*origin_shape[:-1])
+        return self._normalize(time_domain).reshape(*origin_shape[:-1]), dataset.sum(-1)

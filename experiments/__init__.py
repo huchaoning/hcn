@@ -24,4 +24,5 @@
 
 from ._DataReader import DataReader
 from ._TDEst import TDEst
+from ._FreqEst import FreqEst
 from .params import *
