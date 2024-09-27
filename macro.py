@@ -4,7 +4,7 @@ import pandas as pd
 import os
 from math import *
 from PIL import Image as image
-from functools import lru_cache
+from functools import wraps
 
 from .futils import futils, min_max_normalize
 from .cache import cache
@@ -18,44 +18,65 @@ import subprocess
 
 myutils_path = os.path.dirname(__file__)
 
+__all__ = ['myutils_path']
+
+
+def _all(func):
+    f_name = func.__name__
+    __all__.append(f_name)
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        return func(*args, **kwargs)
+    return wrapper
+
+
+@_all
 def code(input_):
     if inspect.isfunction(input_) or inspect.ismodule(input_) or inspect.isclass(input_):
         file_path = inspect.getfile(input_)
     else:
-        file_path = input_
+        file_path = os.path.expanduser(input_)
     if platform.system() == 'Darwin':
         subprocess.run(['code', file_path], check=True)
     elif platform.system() == 'Windows':
         subprocess.run(['powershell.exe', '-Command', f'code {file_path}'], check=True)
 
 
+@_all
 def finder(path):
+    path = os.path.expanduser(path)
     if platform.system() == 'Darwin':
         subprocess.run(['open', path], check=True)
     elif platform.system() == 'Windows':
         subprocess.run(['start', '', path], shell=True, check=True)
 
 
+@_all
 def open_myutils():
     finder(myutils_path)
 
 
+@_all
 def square_abs(array):
     return np.square(np.abs(array))
 
 
+@_all
 def abs_fft(array):
     return np.abs(np.fft.fft(array))
 
 
+@_all
 def fast_meshgrid(h, v, scale = 1):
     return np.meshgrid(np.arange(-h/2, h/2) * scale, -np.arange(-v/2, v/2) * scale)
 
 
+@_all
 def load_csv(path=None):
     return np.array(pd.read_csv(path, header=None))
 
 
+@_all
 def to_csv(array=None, save=None):
     if array is not None:
         pd.DataFrame(array).to_csv(save, header=None, index=None)
@@ -63,12 +84,14 @@ def to_csv(array=None, save=None):
         raise TypeError('array is None')
 
 
+@_all
 def relu(arr):
     np.array(arr)
     arr[arr<0] = 0 
     return arr
 
 
+@_all
 def format_time(seconds):
     hours = int(seconds // 3600)
     minutes = int((seconds % 3600) // 60)
@@ -77,18 +100,21 @@ def format_time(seconds):
     return f'{hours:02}:{minutes:02}:{seconds:02}.{milliseconds:02}'
 
 
+@_all
 def gaussian_distribution(mean=0, std=1):
     def wrapper(x):
         return np.exp(-((x-mean)**2)/(2*std**2))/np.sqrt(tau*std**2)
     return futils(wrapper)
 
 
+@_all
 def poisson_distribution(lam):
     def wrapper(k):
         return np.exp(-lam)*lam**k/sp.special.factorial(k)
     return futils(wrapper)
 
 
+@_all
 def uniform_distribution(a, b):
     def wrapper(x):
         result = np.where((x >= a) & (x <= b), 1 / (b - a), 0)
@@ -97,6 +123,7 @@ def uniform_distribution(a, b):
 
 
 
+@_all
 def pwm(A, omega):
     k = np.arange(1, 1e4)
     def wrapper(n):
@@ -107,6 +134,7 @@ def pwm(A, omega):
 
 
 
+@_all
 def hashsum(file, algorithm='all', chunk_size=65535):
     import hashlib
 
@@ -137,6 +165,7 @@ def hashsum(file, algorithm='all', chunk_size=65535):
 
 
 
+@_all
 def aviread(avi_path) -> np.ndarray:
     try:
         import cv2
@@ -156,6 +185,7 @@ def aviread(avi_path) -> np.ndarray:
 
 
 
+@_all
 def imread(img_path) -> np.ndarray:
     if not os.path.exists(img_path):
         raise FileNotFoundError(f'{img_path} is not exists')
@@ -172,6 +202,7 @@ def imread(img_path) -> np.ndarray:
 
 
 
+@_all
 def gifshow(array, auto_contrast=True, loops=0, fps=30, save=None, override=False):
     import io
     from IPython.display import display, Image as IPImage
@@ -218,6 +249,7 @@ def gifshow(array, auto_contrast=True, loops=0, fps=30, save=None, override=Fals
      
 
 
+@_all
 def imwrite(array=None, save=None, convert=False):
     if array is not None:
         if array.dtype == np.uint8:
@@ -231,6 +263,7 @@ def imwrite(array=None, save=None, convert=False):
     
 
 
+@_all
 def load_npz(npz_path) -> dict:
     if not os.path.exists(npz_path):
         raise FileNotFoundError(f'{npz_path} is not exists')
@@ -240,6 +273,7 @@ def load_npz(npz_path) -> dict:
     return dic
 
 
+@_all
 def load_json(json_path) -> dict:
     import json
     if not os.path.exists(json_path):
@@ -249,6 +283,7 @@ def load_json(json_path) -> dict:
     return dic
 
 
+@_all
 def read(input_):
     if inspect.isfunction(input_) or inspect.ismodule(input_) or inspect.isclass(input_):
         code(input_)
@@ -279,6 +314,7 @@ def read(input_):
 
 try:
     import git
+    @_all
     def push(commit: str = None):
         if commit is None:
             auto = input('commit is None, do you wish to generate an auto commit ([y]/n)? ')
@@ -303,10 +339,12 @@ try:
         repo.git.commit('-m', commit)
         repo.remotes.origin.push()
 
+    @_all
     def pull():
         repo = git.Repo(myutils_path)
         repo.remotes.origin.pull()
 
+    @_all
     def status():
         repo = git.Repo(myutils_path)
         print(repo.git.status())
@@ -316,6 +354,7 @@ except ModuleNotFoundError:
 
 
 
+@_all
 def empty_list(dimensions):
     if isinstance(dimensions, (tuple, list)):
         raise ValueError('dimensions must a tuple or a list')
@@ -326,6 +365,7 @@ def empty_list(dimensions):
     return _create(dimensions)
 
 
+@_all
 def closed_range(start, stop, step):
     if step <= 0:
         raise ValueError('step must be positive')
@@ -336,11 +376,13 @@ def closed_range(start, stop, step):
 
 
 
+@_all
 def sinc(x):
     x = np.array(x)
     return np.sinc(x / pi)
 
 
+@_all
 def jinc(x):
     _type_check = False
     if type(x) in (int, float):
@@ -360,6 +402,7 @@ def jinc(x):
         return result
 
 
+@_all
 class psf:
     def gaus(x, sigma):
         return np.exp(-(x**2)/(4*sigma**2)) / (tau * sigma**2)**(1/4)
