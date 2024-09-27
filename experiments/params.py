@@ -1,6 +1,6 @@
 import numpy as np
 from fractions import Fraction
-from dataclasses import dataclass 
+
 
 __all__ = [
     'Expt',
@@ -13,7 +13,6 @@ __all__ = [
 ]
 
 
-@dataclass
 class Expt:
     def validate(params):
         params = np.array(params)
@@ -44,25 +43,21 @@ class Expt:
     di_avis = [f'di{i}.avi' for i in range(len(freq_list))]
 
 
-@dataclass
 class DI:
     ax = 81
     center = 110
 
 
-@dataclass
 class SPADE:
     point1 = (119, 91)
     point2 = (407, 91)
 
 
-@dataclass
 class qCMOS:
     # The camera pixel size is 4.6 um per pixel.
     pixel_size = 4.6 #um
 
 
-@dataclass
 class DMD:
     pixel_size = 19.374725804511403 #um
 
