@@ -43,9 +43,7 @@ def set_font(family=None, weight=None):
 
 def style_use(style='draft'):
     plt.rcdefaults()
-    plt.style.use(os.path.join(
-        os.path.dirname(__file__), 
-        f'assets/mplstyle/{style}.mplstyle'))
+    plt.style.use(os.path.join(assets_dir, f'mplstyle/{style}.mplstyle'))
 
 
 def inline_format(fmt='bitmap'):

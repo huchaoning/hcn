@@ -362,78 +362,11 @@ def jinc(x):
 
 class psf:
     def gaus(x, sigma):
-        return  np.exp(-(x**2)/(4*sigma**2)) / (tau * sigma**2)**(1/4)
+        return np.exp(-(x**2)/(4*sigma**2)) / (tau * sigma**2)**(1/4)
 
     def rect(x, sigma):
         return sinc(x / sigma) / sqrt(pi*sigma)
 
     def circ(x, sigma):
         return jinc(x / sigma) * (sqrt(3*pi)) / (sqrt(32*sigma))
-
-
-# from inspect import signature
-# 由于自己写的算法效率低, 计算速度慢, 弃用
-
-# def variables_of(func: Callable):
-#     return len(signature(func).parameters)
-
-# 
-# def gradient(func: Callable, variable=0, epsilon=1e-4):
-#     def wrapper(*args):
-#         # if len(args) != variables_of(func):
-#         #     raise ValueError('specific point to calculate gradient must be provided')
-        
-#         args_1 = list(args[:])
-#         args_1[variable] = args_1[variable] + epsilon / 2
-
-#         args_2 = list(args[:])
-#         args_2[variable] = args_2[variable] - epsilon / 2
-
-#         return (func(*args_1) - func(*args_2)) / epsilon
-#     return np.vectorize(wrapper)
-
-
-# def pdv(order: int):
-#     def wrapper(func: Callable, variable=0, epsilon=1e-4):
-#         for _ in range(order):
-#             func = gradient(func, variable=variable, epsilon=epsilon)
-#         return func
-#     return wrapper
-
-
-# def gradient_descent(func: Callable, 
-#                      init: ArrayLike = None, 
-#                      eta: ArrayLike = None,
-#                      accuracy: float = None,
-#                      max_loops:float = inf,
-#                      epsilon = 1e-4):
-    
-#     variables = variables_of(func)
-#     if len(init) != variables:
-#         raise ValueError('specific initial value must be provided')
-
-#     gd_result = list(init[:])
-#     gd_process = list(init[:])
-
-#     converged = [False for _ in range(variables)]
-#     loop = 1
-
-#     while(True):
-#         converged = [False for _ in range(variables)]
-#         for variable in range(variables):
-#             update = eta[variable] * gradient(func, variable, epsilon)(*gd_result)
-#             gd_result[variable] = gd_result[variable] - update
-#             if (abs(update) <= accuracy):
-#                 converged[variable] = True
-#             gd_process.append(gd_result[variable])
-#         loop = loop + 1
-#         if np.array(converged).all() or (loop >= max_loops):
-#             break
-
-#     if loop >= max_loops:
-#         print('warning: max_loops has reached, the algorithm might not converged')
-#     if variables == 1:
-#         return gd_result, np.array(gd_process)
-#     else:
-#         return gd_result, np.array(gd_process).reshape(int(len(gd_process)/variables), variables).T
 
