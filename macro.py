@@ -137,7 +137,7 @@ def hashsum(file, algorithm='all', chunk_size=65535):
 
 
 
-def aviread(avi_path):
+def aviread(avi_path) -> np.ndarray:
     try:
         import cv2
     except ImportError:
