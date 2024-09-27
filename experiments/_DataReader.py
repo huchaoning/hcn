@@ -44,8 +44,8 @@ class DataReader:
 
     def _reshaping(self, data, noise, length, mirrors=None):
         detectors = 2 if self.measure == 'spade' else - np.subtract(*self._di_roi(mirrors))
-        reshaped_data = data[:length, :].reshape(200, -1, detectors)[:, :50, :]
-        reshaped_noise = noise[:length].reshape(200, -1)[:, :50]
+        reshaped_data = data[:length, :].reshape(Expt.repeat_times, -1, detectors)[:, :Expt.samples_length, :]
+        reshaped_noise = noise[:length].reshape(Expt.repeat_times, -1)[:, :Expt.samples_length]
         return reshaped_data, reshaped_noise
 
 

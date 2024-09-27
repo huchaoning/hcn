@@ -8,8 +8,8 @@ __all__ = [
     'DI',
     'SPADE',
 
-    'DMD',
     'qCMOS',
+    'DMD'
 ]
 
 
@@ -28,14 +28,17 @@ class Expt:
     # freq_list = np.array([0.1, 0.125, 0.15625, 0.2, 0.22, 0.25, 0.275, 0.3125, 0.34375, 0.4])
     freq_list = np.array([0.1, 0.125, 0.15625, 0.2, 0.22, 0.25, 0.3125, 0.34375, 0.4])
 
+    samples_length = 50
+    repeat_times = 200
+
     sampling_rate = 1 / expo_time
 
     pic_time = validate(1e6 / (2 * freq_list * sampling_rate))
 
     samples_pre_cycle = validate([Fraction(str(f)).denominator for f in freq_list])
-    samples_length = validate((np.ceil(50 / samples_pre_cycle) * samples_pre_cycle) * 200)
+    video_length = validate((np.ceil(samples_length / samples_pre_cycle) * samples_pre_cycle) * repeat_times)
 
-    cut_point = validate(np.ceil(50 / samples_pre_cycle) * samples_pre_cycle)
+    cut_point = validate(np.ceil(samples_length / samples_pre_cycle) * samples_pre_cycle)
 
     spade_avis = [f'spade{i}.avi' for i in range(len(freq_list))]
     di_avis = [f'di{i}.avi' for i in range(len(freq_list))]

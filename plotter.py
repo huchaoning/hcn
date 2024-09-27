@@ -79,8 +79,8 @@ def axline(h=None, v=None, c='k', w=0.5, s='--'):
 
 
 @plotter_decorator()
-def plot(x=[], y=[], fmt=None, label=None, dots=300, alpha=None, xerr=None, yerr=None, capsize=3, *args, **kwargs):
-    if y is []:
+def plot(x, y=None, fmt=None, label=None, dots=300, alpha=None, xerr=None, yerr=None, capsize=3, *args, **kwargs):
+    if y is None:
         y = np.copy(x)
         x = np.arange(len(y))
 
@@ -100,7 +100,8 @@ def plot(x=[], y=[], fmt=None, label=None, dots=300, alpha=None, xerr=None, yerr
             y = y(x)
         except (TypeError, ValueError):
             y = [y(x_) for x_ in x]
-
+    
+    y == [] if y is None else y
     if np.shape(x) == np.shape(y):
         if xerr is None and yerr is None:
             _param = [x, y] if fmt is None else [x, y, fmt]
