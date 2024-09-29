@@ -16,8 +16,7 @@ __all__ = [
 ]
 
 
-
-class DataReader:
+class _ChooseMeasurement:
     def __init__(self, measure):
         if measure.lower() in ('spade', 'di'):
             self.measure = measure.lower()
@@ -25,6 +24,7 @@ class DataReader:
             raise ValueError('measure must be one of spade or di')
 
 
+class DataReader(_ChooseMeasurement):
     def _spade_reader(self, data):
         return data[:, SPADE.point1[0], SPADE.point1[1]], data[:, SPADE.point2[0], SPADE.point2[1]]
 
@@ -83,14 +83,7 @@ class DataReader:
 
 
 
-class TDEst:
-    def __init__(self, measure):
-        if measure.lower() in ('spade', 'di'):
-            self.measure = measure.lower()
-        else:
-            raise ValueError('measure must be one of spade or di')
-
-
+class TDEst(_ChooseMeasurement):
     def _normalize(self, data):
         data = np.array(data)
         temp = data - data.mean()
