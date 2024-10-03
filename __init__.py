@@ -14,8 +14,6 @@ try:
 except ImportError:
     pass
 
-from . import cgh
-
 from .experiments import *
 # from .equipments import *
 
