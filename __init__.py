@@ -19,7 +19,7 @@ from .macro import *
 from .laser import *
 from .decorators import *
 
-if os.path.exists(os.path.join(myutils_path, 'passwd.json')):
+if os.path.exists(os.path.join(myutils_path, 'ezmail/passwd.json')):
     from .ezmail.core import *
 
 from .plotter import *

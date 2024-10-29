@@ -13,7 +13,7 @@ __all__ = [
 ]
 
 
-def email_send(cls, subject, message, user):
+def email_send(subject, message, user):
     sender = 'vxyi@qq.com'
     passwd = read(os.path.join(os.path.dirname(__file__), 'passwd.json'))['passwd']
 
