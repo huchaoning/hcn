@@ -14,13 +14,13 @@ try:
 except ImportError:
     pass
 
-# from .experiments import *
-# from .equipments import *
-
 from .futils import *
 from .macro import *
 from .laser import *
 from .decorators import *
+
+if os.path.exists(os.path.join(myutils_path, 'passwd.json')):
+    from .ezmail.core import *
 
 from .plotter import *
 inline_format()
