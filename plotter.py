@@ -11,7 +11,7 @@ assets_dir = os.path.join(os.path.dirname(__file__), 'assets/')
 fontManager.addfont(os.path.join(assets_dir, 'fonts/SourceHanSans.otf'))
 fontManager.addfont(os.path.join(assets_dir, 'fonts/lmroman10.otf'))
 plt.style.use(os.path.join(assets_dir, 'mplstyle/draft.mplstyle'))
-del fontManager, assets_dir
+del fontManager
 
 
 __all__ = ['show_all_fonts', 

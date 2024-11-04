@@ -1,7 +1,7 @@
 figure.figsize: 3.3, 2.5
 figure.dpi: 150
 
-text.usetex: true
+# text.usetex: true
 
 font.size: 8
 font.family: Source Han Sans SC
