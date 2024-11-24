@@ -13,7 +13,7 @@ def generate_key_from_password(password: str, salt: bytes) -> bytes:
         algorithm=hashes.SHA256(),  # 使用SHA-256散列算法
         length=32,                  # 生成32字节的密钥
         salt=salt,
-        iterations=100000,          # 迭代次数
+        iterations=10_000_000,          # 迭代次数
     )
     key = kdf.derive(password.encode())  # 从密码派生出密钥
     return key
