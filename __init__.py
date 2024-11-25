@@ -20,7 +20,7 @@ from .laser import *
 from .decorators import *
 
 from .ezmail import *
-
+from .cryptutils import *
 
 from .plotter import *
 inline_format()
