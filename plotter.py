@@ -68,12 +68,12 @@ def figsize_fixed(x_figsize=None, y_figsize=None):
         raise ValueError('invalid figsize parameters')
 
 
-def axline(h=None, v=None, c='k', w=0.5, s='--'):
+def axline(h=None, v=None, c='k', w=0.5, s='--', *args, **kwargs):
     if h is not None:
-        plt.axhline(h, color=c, lw=w, ls=s)
+        plt.axhline(h, color=c, lw=w, ls=s, *args, **kwargs)
 
     if v is not None:
-        plt.axvline(v, color=c, lw=w, ls=s)
+        plt.axvline(v, color=c, lw=w, ls=s, *args, **kwargs)
 
 
 @plotter_decorator()
@@ -103,12 +103,12 @@ def plot(x=[], y=None, fmt=None, label=None, dots=300, alpha=None, xerr=None, ye
     if np.shape(x) == np.shape(y):
         if xerr is None and yerr is None:
             _param = [x, y] if fmt is None else [x, y, fmt]
-            plt.plot(*_param, label=label, alpha=alpha)
+            plt.plot(*_param, label=label, alpha=alpha, *args, **kwargs)
         else:
             c = None if fmt=='-' or fmt=='' else fmt
             plt.errorbar(x, y, c=c, xerr=xerr, yerr=yerr, 
                          label=label, alpha=alpha, capsize=capsize,
-                         marker='o', linestyle='--')
+                         marker='o', linestyle='--', *args, **kwargs)
     else:
         raise ValueError( 'x and y must have same shape, ' +
                          f'but have shapes {np.shape(x)} and {np.shape(y)}')
@@ -117,10 +117,10 @@ def plot(x=[], y=None, fmt=None, label=None, dots=300, alpha=None, xerr=None, ye
 @plotter_decorator()
 def scatter(x, y, s=None, c=None, marker=None, alpha=None, xerr=None, yerr=None, capsize=3, label=None, *args, **kwargs):
     if np.shape(x) == np.shape(y):
-        plt.scatter(x, y, s=s, c=c, alpha=alpha, label=label, marker=marker)
+        plt.scatter(x, y, s=s, c=c, alpha=alpha, label=label, marker=marker, *args, **kwargs)
         if xerr is not None or yerr is not None:
             plt.errorbar(x, y, xerr=xerr, yerr=yerr, alpha=alpha, ecolor=c,
-                         marker='none', linestyle='none', capsize=capsize)
+                         marker='none', linestyle='none', capsize=capsize, *args, **kwargs)
     else:
         raise ValueError( 'x and y must have same shape, ' +
                          f'but have shapes {np.shape(x)} and {np.shape(y)}')
@@ -128,7 +128,7 @@ def scatter(x, y, s=None, c=None, marker=None, alpha=None, xerr=None, yerr=None,
 
 @plotter_decorator()
 def hist(x, bins=300, histtype='step', density=True, label=None, *args, **kwargs):
-    plt.hist(x, bins=bins, histtype=histtype, density=density, label=label)
+    plt.hist(x, bins=bins, histtype=histtype, density=density, label=label, *args, **kwargs)
 
 
 @plotter_decorator(axis=False)
@@ -136,6 +136,6 @@ def imshow(x, cmap=None, pillow=False, colorbar=True, *args, **kwargs):
     if pillow:
         image.fromarray(x).show()
     else:
-        plt.imshow(x, cmap=cmap)
+        plt.imshow(x, cmap=cmap, *args, **kwargs)
     if colorbar:
         plt.colorbar()
