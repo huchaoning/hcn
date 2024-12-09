@@ -94,6 +94,8 @@ def hist(
     bins: int, 
     histtype: str, 
     density: bool,
+    rwidth: float,
+    align: str,
 
     figsize: tuple, 
     axis: bool, 

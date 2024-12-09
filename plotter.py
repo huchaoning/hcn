@@ -130,8 +130,8 @@ def scatter(x, y, s=None, c=None, marker=None, alpha=None, xerr=None, yerr=None,
 
 
 @plotter_decorator()
-def hist(x, bins=300, histtype='bar', rwidth=0.8, density=True, label=None, *args, **kwargs):
-    plt.hist(x, bins=bins, histtype=histtype, density=density, label=label)
+def hist(x, bins=300, histtype='bar', density=True, label=None, rwidth=0.8, align='left', *args, **kwargs):
+    plt.hist(x, bins=bins, histtype=histtype, density=density, label=label, rwidth=rwidth, align=align)
 
 
 @plotter_decorator(axis=False)
