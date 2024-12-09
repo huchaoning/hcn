@@ -1,5 +1,6 @@
 import numpy as np
 from matplotlib import pyplot as plt
+import matplotlib.ticker as ticker
 
 import os
 from functools import wraps
@@ -51,6 +52,10 @@ def plotter_decorator(**kwargs):
                 plt.title(params['title'])
 
             plotter_function(*args, **kwargs)
+
+            plt.gca().xaxis.set_major_formatter(ticker.ScalarFormatter(useMathText=True))
+            plt.gca().yaxis.set_major_formatter(ticker.ScalarFormatter(useMathText=True))
+            plt.ticklabel_format(style='sci', axis='both')
             
             if params['xlim'] is not None:
                 plt.xlim(params['xlim'])

@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 
 import os
 from PIL import Image as image
+from copy import deepcopy as cp
 
 from .decorators import plotter_decorator
 
@@ -43,7 +44,8 @@ def set_font(family=None, weight=None):
 
 def style_use(style='draft'):
     plt.rcdefaults()
-    plt.style.use(os.path.join(assets_dir, f'mplstyle/{style}.mplstyle'))
+    if style.lower() != 'default':
+        plt.style.use(os.path.join(assets_dir, f'mplstyle/{style}.mplstyle'))
 
 
 def inline_format(fmt='bitmap'):
@@ -60,15 +62,15 @@ def figsize_fixed(x_figsize=None, y_figsize=None):
     elif isinstance(y_figsize, (tuple, list)) and (x_figsize is None):
         plt.rcParams['figure.figsize'] = y_figsize
     elif x_figsize is None and y_figsize is None:
-        plt.rcParams['figure.figsize'] = (6, 4)
-        print('warning: x_figsize and y_figsize is None, setting figsize to default (6, 4)')
+        plt.rcParams['figure.figsize'] = (6.4, 4.8)
+        print('warning: x_figsize and y_figsize is None, setting figsize to default (6.4, 4.8)')
     elif isinstance(x_figsize, (int, float)) and isinstance(x_figsize, (int, float)):
         plt.rcParams['figure.figsize'] = (x_figsize, y_figsize)
     else:
         raise ValueError('invalid figsize parameters')
 
 
-def axline(h=None, v=None, c='k', w=0.5, s='--', *args, **kwargs):
+def axline(h=None, v=None, c='r', w=2, s='--', *args, **kwargs):
     if h is not None:
         plt.axhline(h, color=c, lw=w, ls=s, *args, **kwargs)
 
@@ -77,9 +79,9 @@ def axline(h=None, v=None, c='k', w=0.5, s='--', *args, **kwargs):
 
 
 @plotter_decorator()
-def plot(x=[], y=None, fmt=None, label=None, dots=300, alpha=None, xerr=None, yerr=None, capsize=3, *args, **kwargs):
-    if y is None:
-        y = np.copy(x)
+def plot(x=None, y=None, fmt=None, label=None, dots=300, alpha=None, xerr=None, yerr=None, capsize=3, *args, **kwargs):
+    if (x is not None) and (y is None):
+        y = cp(x)
         x = np.arange(len(y))
 
     if isinstance(x, tuple):
@@ -99,16 +101,17 @@ def plot(x=[], y=None, fmt=None, label=None, dots=300, alpha=None, xerr=None, ye
         except (TypeError, ValueError):
             y = [y(x_) for x_ in x]
     
+    x == [] if x is None else x
     y == [] if y is None else y
     if np.shape(x) == np.shape(y):
         if xerr is None and yerr is None:
             _param = [x, y] if fmt is None else [x, y, fmt]
-            plt.plot(*_param, label=label, alpha=alpha, *args, **kwargs)
+            plt.plot(*_param, label=label, alpha=alpha)
         else:
             c = None if fmt=='-' or fmt=='' else fmt
             plt.errorbar(x, y, c=c, xerr=xerr, yerr=yerr, 
                          label=label, alpha=alpha, capsize=capsize,
-                         marker='o', linestyle='--', *args, **kwargs)
+                         marker='o', linestyle='--')
     else:
         raise ValueError( 'x and y must have same shape, ' +
                          f'but have shapes {np.shape(x)} and {np.shape(y)}')
@@ -117,25 +120,25 @@ def plot(x=[], y=None, fmt=None, label=None, dots=300, alpha=None, xerr=None, ye
 @plotter_decorator()
 def scatter(x, y, s=None, c=None, marker=None, alpha=None, xerr=None, yerr=None, capsize=3, label=None, *args, **kwargs):
     if np.shape(x) == np.shape(y):
-        plt.scatter(x, y, s=s, c=c, alpha=alpha, label=label, marker=marker, *args, **kwargs)
+        plt.scatter(x, y, s=s, c=c, alpha=alpha, label=label, marker=marker)
         if xerr is not None or yerr is not None:
             plt.errorbar(x, y, xerr=xerr, yerr=yerr, alpha=alpha, ecolor=c,
-                         marker='none', linestyle='none', capsize=capsize, *args, **kwargs)
+                         marker='none', linestyle='none', capsize=capsize)
     else:
         raise ValueError( 'x and y must have same shape, ' +
                          f'but have shapes {np.shape(x)} and {np.shape(y)}')
 
 
 @plotter_decorator()
-def hist(x, bins=300, histtype='step', density=True, label=None, *args, **kwargs):
-    plt.hist(x, bins=bins, histtype=histtype, density=density, label=label, *args, **kwargs)
+def hist(x, bins=300, histtype='bar', rwidth=0.8, density=True, label=None, *args, **kwargs):
+    plt.hist(x, bins=bins, histtype=histtype, density=density, label=label)
 
 
 @plotter_decorator(axis=False)
-def imshow(x, cmap=None, pillow=False, colorbar=True, *args, **kwargs):
+def imshow(x, cmap=None, pillow=False, colorbar=True):
     if pillow:
         image.fromarray(x).show()
     else:
-        plt.imshow(x, cmap=cmap, *args, **kwargs)
+        plt.imshow(x, cmap=cmap)
     if colorbar:
         plt.colorbar()
