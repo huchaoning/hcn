@@ -401,3 +401,9 @@ class psf:
     def circ(x, sigma):
         return jinc(x / sigma) * (sqrt(3*pi)) / (sqrt(32*sigma))
 
+
+def rgba_in_white_bg(color, alpha=None):
+    from matplotlib.colors import to_rgba, to_hex
+    color_ = np.array(to_rgba(color)[:-1])
+    alpha_ = to_rgba(color)[-1] if not alpha else alpha
+    return to_hex(np.array([1, 1, 1]) * (1-alpha_) + color_ * alpha_)
