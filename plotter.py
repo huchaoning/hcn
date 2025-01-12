@@ -101,8 +101,8 @@ def plot(x=None, y=None, fmt=None, label=None, dots=300, alpha=None, xerr=None, 
         except (TypeError, ValueError):
             y = [y(x_) for x_ in x]
     
-    x == [] if x is None else x
-    y == [] if y is None else y
+    x = [] if x is None else x
+    y = [] if y is None else y
     if np.shape(x) == np.shape(y):
         if xerr is None and yerr is None:
             _param = [x, y] if fmt is None else [x, y, fmt]
@@ -135,7 +135,7 @@ def hist(x, bins=300, histtype='bar', density=True, label=None, rwidth=0.8, alig
 
 
 @plotter_decorator(axis=False)
-def imshow(x, cmap=None, pillow=False, colorbar=True):
+def imshow(x, cmap=None, pillow=False, colorbar=True, *args, **kwargs):
     if pillow:
         image.fromarray(x).show()
     else:
