@@ -1,7 +1,7 @@
 # Settings of fast.mplstyle
-path.simplify: True
-path.simplify_threshold: 1.0
-agg.path.chunksize: 10000   
+# path.simplify: True
+# path.simplify_threshold: 1.0
+# agg.path.chunksize: 10000   
 
 figure.figsize: 6.4, 4.8
 font.family: Latin Modern Roman, Source Han Sans SC
