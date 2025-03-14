@@ -1,14 +1,21 @@
-# Settings of fast.mplstyle
-# path.simplify: True
-# path.simplify_threshold: 1.0
-# agg.path.chunksize: 10000   
+figure.figsize: 3.3, 2.5
+figure.dpi: 150
 
-figure.figsize: 6.4, 4.8
 font.family: Latin Modern Roman, Source Han Sans SC
 mathtext.fontset: cm
 
-axes.prop_cycle: cycler('color', 'bgrcmyk')
+lines.linewidth: 1.5
+lines.markersize: 4
+
 axes.grid: True
+axes.labelsize: large
+axes.prop_cycle: cycler('color', 'bgrcmyk') + cycler('linestyle', ['-', '--', '-.', ':', '-', '--', '-.'])
+
+legend.fancybox: False
+legend.frameon: True
+legend.framealpha: None
+legend.facecolor: inherit
+legend.edgecolor: inherit
 
 savefig.format: pdf
 savefig.bbox: tight
