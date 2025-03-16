@@ -1,6 +1,7 @@
 figure.figsize: 3.3, 2.5
 figure.dpi: 150
 
+font.size: 8
 font.family: Latin Modern Roman, Source Han Sans SC
 mathtext.fontset: cm
 
