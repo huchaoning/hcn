@@ -49,12 +49,13 @@ class HG(_Modes):
             self._term1 = 1
             self._term2 = 1
         else:
-            self._term1 = 1/(np.sqrt(2**self.q * factorial(self.q)))
+            self._term1 = (2**self.q * factorial(self.q))**-0.5
             self._H = hermite(self.q)
             
     def wave_function(self, x):
+        _x = x / (2**0.5 * self.sigma)
         if self.q != 0:
-            self._term2 = x / self.sigma if self.q == 1 else self._H(x / (2**0.5 * self.sigma))
+            self._term2 = 2*_x if self.q == 1 else self._H(_x)
         return self._c_term * self._term1 * self._term2 * self._exp_term(x)
 
 
@@ -74,13 +75,13 @@ def Born(s, modes: _Modes, psf: _PSF):
     result = []
     for _s in np.atleast_1d(s):
         fun = lambda x: modes.wave_function(x) * psf.psf(x, _s) 
-        result.append((quad(fun, -np.inf, np.inf)[0])**2)
+        result.append(np.abs(quad(fun, -np.inf, np.inf)[0])**2)
     return np.array(result)
 
 
 def FisherInfo(s, modes: _Modes, psf: _PSF, ds=1e-8):
-    p1 = Born(s, modes, psf)
+    p1 = Born(s+ds, modes, psf)
     p2 = Born(s-ds, modes, psf)
     dp = p1 - p2
-    dv = dp/ds
+    dv = dp/(2*ds)
     return dv**2 / p1

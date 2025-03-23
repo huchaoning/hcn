@@ -10,7 +10,7 @@ lines.markersize: 4
 
 axes.grid: True
 axes.labelsize: large
-axes.prop_cycle: cycler('color', 'bgrcmyk') + cycler('linestyle', ['-', '--', '-.', ':', '-', '--', '-.'])
+axes.prop_cycle: cycler('color', 'bgcmy') + cycler('linestyle', ['--', '-.', ':', '--', '-.'])
 
 legend.fancybox: False
 legend.frameon: True
