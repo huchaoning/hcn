@@ -365,41 +365,41 @@ def closed_range(start, stop, step):
 
 
 
-def sinc(x):
-    x = np.array(x)
-    return np.sinc(x / pi)
+# def sinc(x):
+#     x = np.array(x)
+#     return np.sinc(x / pi)
 
 
 
-def jinc(x):
-    _type_check = False
-    if type(x) in (int, float):
-        x = [x]
-        _type_check = True
-    x = np.abs(np.array(x))
+# def jinc(x):
+#     _type_check = False
+#     if type(x) in (int, float):
+#         x = [x]
+#         _type_check = True
+#     x = np.abs(np.array(x))
 
-    from scipy.special import j1
-    with np.errstate(invalid='ignore'):
-        result = 2 * j1(x) / x
+#     from scipy.special import j1
+#     with np.errstate(invalid='ignore'):
+#         result = 2 * j1(x) / x
         
-    result[np.isnan(result)] = 1
+#     result[np.isnan(result)] = 1
 
-    if _type_check:
-        return result.item()
-    else:
-        return result
+#     if _type_check:
+#         return result.item()
+#     else:
+#         return result
 
 
 
-class psf:
-    def gaus(x, sigma):
-        return np.exp(-(x**2)/(4*sigma**2)) / (tau * sigma**2)**(1/4)
+# class psf:
+#     def gaus(x, sigma):
+#         return np.exp(-(x**2)/(4*sigma**2)) / (tau * sigma**2)**(1/4)
 
-    def rect(x, sigma):
-        return sinc(x / sigma) / sqrt(pi*sigma)
+#     def rect(x, sigma):
+#         return sinc(x / sigma) / sqrt(pi*sigma)
 
-    def circ(x, sigma):
-        return jinc(x / sigma) * (sqrt(3*pi)) / (sqrt(32*sigma))
+#     def circ(x, sigma):
+#         return jinc(x / sigma) * (sqrt(3*pi)) / (sqrt(32*sigma))
 
 
 def rgba_in_white_bg(color, alpha=None):
