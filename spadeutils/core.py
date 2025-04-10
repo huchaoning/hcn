@@ -5,20 +5,35 @@ from scipy.integrate import quad
 
 
 class _PSF:
-    def __init__(self, sigma=1):
+    def __init__(self, sigma=1, bounds=(None, None), pixel_size=1):
         self.sigma = sigma
+        self.pixel_size = pixel_size
+        self.bounds = (
+            bounds[0] if bounds[0] is not None else np.round(-6 * sigma / pixel_size), 
+            bounds[1] if bounds[1] is not None else np.round( 6 * sigma / pixel_size)
+        )
+        self.pixels = int(self.bounds[1] - self.bounds[0])
 
-
-    def abs_sq(self, x):
-        return np.abs(self.psf(x))**2
-
-
-    def pixelized(self, j_th, pixel_size=1):
-        return quad(self.abs_sq, pixel_size*j_th - pixel_size/2, pixel_size*j_th + pixel_size/2, limit=1000)[0]
+    def pdf(self, x, s=0):
+        return np.abs(self.psf(x, s))**2
     
 
-    def prob_table(self, lower_limit: int, upper_limit: int, pixel_size=1):
-        return np.array([self.pixelized(j, pixel_size) for j in np.arange(lower_limit, upper_limit + 1, 1)])
+    def prob(self, s=0):
+        pdf = lambda x: self.pdf(x, s)
+        p = []
+        for j in np.arange(self.bounds[0], self.bounds[1] + 1, 1):
+            p.append(quad(pdf, self.pixel_size*j - self.pixel_size/2, self.pixel_size*j + self.pixel_size/2, limit=1000)[0])
+        return np.array(p)
+
+
+    def gen(self, s=0, photons=1):
+        p = self.prob(s)
+        outcomes = np.random.choice(len(p), photons, p=p/p.sum())
+        return np.histogram(outcomes, bins=self.pixels, range=(0, self.pixels))[0]
+
+
+    def fit(self, data):
+        ...
 
 
 
