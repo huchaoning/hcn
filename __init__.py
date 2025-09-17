@@ -23,7 +23,7 @@ from .ezmail import *
 from .cryptutils import *
 
 from .plotter import *
-inline_format()
+# inline_format()
 
 from .cache import *
 clean_expired_cache()
