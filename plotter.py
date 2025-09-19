@@ -26,7 +26,8 @@ __all__ = [
     'plot',
     'hist',
     'scatter',
-    'imshow'
+    'imshow',
+    'eqshow'
 ]
 
 
@@ -145,3 +146,24 @@ def imshow(x, cmap=None, pillow=False, colorbar=True, *args, **kwargs):
         plt.imshow(x, cmap=cmap)
     if colorbar:
         plt.colorbar()
+
+
+def eqshow(formula: str, fontsize=7, dpi=300, save=None):
+    fig, ax = plt.subplots(dpi=dpi)
+    ax.axis('off')
+
+    text_obj = ax.text(0, 0, formula, fontsize=fontsize)
+
+    fig.canvas.draw()
+    bbox = text_obj.get_window_extent(renderer=fig.canvas.get_renderer())
+
+    width, height = bbox.width / dpi, bbox.height / dpi
+    fig.set_size_inches(width, height)
+
+    text_obj.set_position((0, 0))
+
+    if save is not None:
+        plt.savefig(save)
+
+    plt.show()
+

@@ -133,3 +133,11 @@ def imshow(
     override: bool, 
     show: bool
 ):  pass
+
+
+def eqshow(
+    formula: str,
+    fontsize: int | float,
+    dpi: int | float, 
+    save: str
+): pass
