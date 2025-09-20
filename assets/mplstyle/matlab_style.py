@@ -127,4 +127,13 @@ plt.rcParams['image.cmap'] = 'parula'
 del mpl, parula, cm_data
 
 
-__all__ = []
+def no_margin(y_n=True):
+    if y_n:
+        plt.rcParams['axes.ymargin'] = 0
+        plt.rcParams['axes.ymargin'] = 0
+    else:
+        plt.rcParams['axes.ymargin'] = 0.05
+        plt.rcParams['axes.ymargin'] = 0.05
+
+
+__all__ = ['no_margin']
