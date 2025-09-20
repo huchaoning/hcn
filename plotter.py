@@ -27,7 +27,8 @@ __all__ = [
     'hist',
     'scatter',
     'imshow',
-    'eqshow'
+    'eqshow',
+    'no_margin'
 ]
 
 
@@ -167,3 +168,11 @@ def eqshow(formula: str, fontsize=7, dpi=300, save=None):
 
     plt.show()
 
+
+def no_margin(y_n=True):
+    if y_n:
+        plt.rcParams['axes.ymargin'] = 0
+        plt.rcParams['axes.ymargin'] = 0
+    else:
+        plt.rcParams['axes.ymargin'] = 0.05
+        plt.rcParams['axes.ymargin'] = 0.05

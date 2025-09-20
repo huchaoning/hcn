@@ -141,3 +141,8 @@ def eqshow(
     dpi: int | float, 
     save: str
 ): pass
+
+
+def no_margin(
+    y_n: bool
+): pass
