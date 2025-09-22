@@ -46,6 +46,7 @@ def plot(
     xerr: ArrayLike, 
     yerr: ArrayLike, 
     capsize: float,
+    aspect: float,
 
     figsize: tuple, 
     axis: bool, 

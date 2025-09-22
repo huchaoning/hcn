@@ -84,7 +84,7 @@ def axline(h=None, v=None, c='r', w=2, s='--', *args, **kwargs):
 
 
 @plotter_decorator()
-def plot(x=None, y=None, fmt=None, label=None, dots=300, alpha=None, xerr=None, yerr=None, capsize=3, *args, **kwargs):
+def plot(x=None, y=None, fmt=None, label=None, dots=300, alpha=None, xerr=None, yerr=None, capsize=3, aspect=3/4, *args, **kwargs):
     if (x is not None) and (y is None):
         y = cp(x)
         x = np.arange(len(y))
@@ -120,6 +120,8 @@ def plot(x=None, y=None, fmt=None, label=None, dots=300, alpha=None, xerr=None, 
     else:
         raise ValueError( 'x and y must have same shape, ' +
                          f'but have shapes {np.shape(x)} and {np.shape(y)}')
+    
+    plt.gca().set_box_aspect(aspect)
 
 
 @plotter_decorator()
@@ -171,8 +173,8 @@ def eqshow(formula: str, fontsize=7, dpi=300, save=None):
 
 def no_margin(y_n=True):
     if y_n:
-        plt.rcParams['axes.ymargin'] = 0
+        plt.rcParams['axes.xmargin'] = 0
         plt.rcParams['axes.ymargin'] = 0
     else:
-        plt.rcParams['axes.ymargin'] = 0.05
+        plt.rcParams['axes.xmargin'] = 0.05
         plt.rcParams['axes.ymargin'] = 0.05
