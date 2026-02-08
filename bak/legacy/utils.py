@@ -1,0 +1,112 @@
+# from math import *
+# import numpy as np
+
+# from scipy.integrate import quad # Use SciPy to do integrate.
+
+# from numpy.typing import ArrayLike
+# from typing import Callable
+
+
+# # DMD's pixel size and picture time, which correspond to 1Hz -> 5Hz.
+# dmd = 19.374725804511403
+# def picture_time(f):
+#     return np.round(1000000 / (2*f)).astype(int)
+
+
+# def load_npz(npz_path):
+#     dic = dict(np.load(npz_path))
+#     for key in dic.keys():
+#         dic[key] = dic[key].astype(float)
+#     return dic
+
+
+# def read(input_):
+#     if isinstance(input_, str):
+#         return load_npz(input_)
+#     else:
+#         return input_
+
+
+# def photons(data):
+#     data = read(data)
+#     n = {}
+#     for k in data.keys():
+#         n[k] = data[k].sum(axis=1)
+#     return n
+
+
+# # Normalize the data into (-1, 1).
+# def normalize(data):
+#     temp = data - data.mean()
+#     scale = (temp[temp>0].mean() - temp[temp<0].mean()) / 2
+#     return temp / scale
+
+
+# def integrate(target, int_range=(-inf, inf)):
+#     return quad(target, *int_range)[0]
+
+
+# def variables_of(func):
+#     from inspect import signature
+#     return len(signature(func).parameters)
+
+
+# def grad(func, variable=0, epsilon=1e-4):
+#     def wrapper(*args):
+#         args_1 = list(args[:])
+#         args_1[variable] = args_1[variable] + epsilon / 2
+
+#         args_2 = list(args[:])
+#         args_2[variable] = args_2[variable] - epsilon / 2
+
+#         return (func(*args_1) - func(*args_2)) / epsilon
+#     return np.vectorize(wrapper)
+
+
+# def pdv(order):
+#     def wrapper(func, variable=0, epsilon=1e-4):
+#         for _ in range(order):
+#             func = grad(func, variable=variable, epsilon=epsilon)
+#         return func
+#     return wrapper
+
+
+# # Homemade gradient descent algorithm.
+# def gradient_descent(func:   Callable = None, 
+#                      init:  ArrayLike = None, 
+#                      eta:   ArrayLike = None,
+#                      accuracy:  float = 1e-6,
+#                      epsilon:   float = 1e-8,
+#                      max_loops: float = 10000):
+    
+#     variables = variables_of(func)
+#     if len(init) != variables:
+#         raise ValueError('specific initial value must be provided')
+
+#     gd_result = list(init[:])
+#     gd_process = list(init[:])
+
+#     converged = [False for _ in range(variables)]
+#     loop = 1
+
+#     while(True):
+#         converged = [False for _ in range(variables)]
+#         for variable in range(variables):
+#             update = eta[variable] * grad(func, variable, epsilon)(*gd_result)
+#             gd_result[variable] = gd_result[variable] - update
+#             if (abs(update) <= accuracy):
+#                 converged[variable] = True
+#             gd_process.append(gd_result[variable])
+#         loop = loop + 1
+#         if np.array(converged).all() or (loop >= max_loops):
+#             break
+
+#     success = True
+#     if loop >= max_loops:
+#         print('warning: max_loops has reached, the algorithm might not converged')
+#         success = False
+#     if variables == 1:
+#         return gd_result, np.array(gd_process), success
+#     else:
+#         return gd_result, np.array(gd_process).reshape(int(len(gd_process)/variables), variables).T, success
+
