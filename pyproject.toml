@@ -12,7 +12,6 @@ dependencies = [
     "scipy",
     "matplotlib",
     "gitpython",
-    "setuptools_scm"
 ]
 
 readme = "README.md"
@@ -24,8 +23,8 @@ classifiers = [
 ]
 
 
-[tool.setuptools]
-package-dir = {"" = "src"}
+[tool.setuptools.packages.find]
+where = ["src"]
 
 
 [tool.setuptools_scm]
