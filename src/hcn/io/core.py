@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 from PIL import Image
-import cv2
+import imageio.v3 as iio
 import json
 
 import os
@@ -67,35 +67,35 @@ class _FileReader:
         self.stem = os.path.splitext(self.name)[0]
 
 
-    def _img(self):
-        img = Image.open(self.path)
-        try:
-            n_frames = img.n_frames
-        except AttributeError:
-            n_frames = 1
-        arr = []
-        for i in range(n_frames):
-            if n_frames > 1:
-                img.seek(i)
-            arr.append(np.array(img))
+    # def _img(self):
+    #     img = Image.open(self.path)
+    #     try:
+    #         n_frames = img.n_frames
+    #     except AttributeError:
+    #         n_frames = 1
+    #     arr = []
+    #     for i in range(n_frames):
+    #         if n_frames > 1:
+    #             img.seek(i)
+    #         arr.append(np.array(img))
 
-        arr = np.array(arr).astype(self.dtype)
-        if arr.shape[0] == 1:
-            return arr[0]
-        return arr
+    #     arr = np.array(arr).astype(self.dtype)
+    #     if arr.shape[0] == 1:
+    #         return arr[0]
+    #     return arr
 
 
 
-    def _avi(self):
-        avi = cv2.VideoCapture(self.path)
-        arr = []
-        while True:
-            ret, frame = avi.read()
-            if not ret:
-                break
-            arr.append(cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY))
-        avi.release()
-        return np.array(arr).astype(self.dtype)
+    # def _avi(self):
+    #     avi = cv2.VideoCapture(self.path)
+    #     arr = []
+    #     while True:
+    #         ret, frame = avi.read()
+    #         if not ret:
+    #             break
+    #         arr.append(cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY))
+    #     avi.release()
+    #     return np.array(arr).astype(self.dtype)
 
 
     def _json(self):
@@ -190,7 +190,7 @@ class _FileWriter:
 
 
     def _other(self):
-        msg = f"No implemented saver for '.{self.ext}', nothing saved."
+        msg = f"No implemented method for '.{self.ext}', nothing saved."
         print(msg)
 
 
