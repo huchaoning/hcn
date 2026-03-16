@@ -1661,3 +1661,34 @@
 #     else:
 #         return gd_result, np.array(gd_process).reshape(int(len(gd_process)/variables), variables).T
 
+
+    # def _img(self):
+    #     img = Image.open(self.path)
+    #     try:
+    #         n_frames = img.n_frames
+    #     except AttributeError:
+    #         n_frames = 1
+    #     arr = []
+    #     for i in range(n_frames):
+    #         if n_frames > 1:
+    #             img.seek(i)
+    #         arr.append(np.array(img))
+
+    #     arr = np.array(arr).astype(self.dtype)
+    #     if arr.shape[0] == 1:
+    #         return arr[0]
+    #     return arr
+
+
+
+    # def _avi(self):
+    #     avi = cv2.VideoCapture(self.path)
+    #     arr = []
+    #     while True:
+    #         ret, frame = avi.read()
+    #         if not ret:
+    #             break
+    #         arr.append(cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY))
+    #     avi.release()
+    #     return np.array(arr).astype(self.dtype)
+
