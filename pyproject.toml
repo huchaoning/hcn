@@ -12,6 +12,7 @@ dependencies = [
     "scipy",
     "matplotlib",
     "gitpython",
+    "imageio[tifffile,ffmpeg]"
 ]
 
 readme = "README.md"

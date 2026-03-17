@@ -18,25 +18,29 @@ __all__ = [
 ]
 
 
+ZLIB_MAP = { "xs": 1, "sm": 3, "md": 6, "lg": 8, "xl": 9 }
+JPG_MAP = { "xs": 98, "sm": 95, "md": 90, "lg": 80, "xl": 70 }
+
 COMPRESS_CONFIG = {
     "png": {
         "key": "compression",
-        "map": {"xs": 1, "sm": 3, "md": 6, "lg": 8, "xl": 9}
+        "map": ZLIB_MAP
     },
 
     "tif": {
-        "key": "compression",
-        "fixed": {"compression": "zlib"},
-        "map": {"xs": 1, "sm": 3, "md": 6, "lg": 8, "xl": 9}
+        "key": "compressionargs",
+        "map": ZLIB_MAP,
+        "flags": { "plugin": "tifffile", "compression": "zlib" }
     },
-    "tiff": "tif",
 
     "jpg": {
         "key": "quality",
-        "map": {"xs": 98, "sm": 95, "md": 90, "lg": 80, "xl": 70}
+        "map": JPG_MAP
     },
-    "jpeg": "jpg",
 }
+
+COMPRESS_CONFIG["tiff"] = COMPRESS_CONFIG["tif"]
+COMPRESS_CONFIG["jpeg"] = COMPRESS_CONFIG["jpg"]
 
 
 def code(input_):
@@ -177,17 +181,21 @@ class _FileWriter:
             raise TypeError("'.npz' format requires a dict of arrays")
         
     def _iio(self):
-        cfg = COMPRESS_CONFIG.get(self.ext)
-        if isinstance(cfg, str): 
-            cfg = COMPRESS_CONFIG.get(cfg)
-
+        if self.ext in ["jpg", "jpeg"] and self.compress is False:
+            raise ValueError(f"'.{self.ext}' format does not support lossless storage (compress=False).")
+        
+        if self.ext == "bmp" and self.compress is not False:
+            print(f"warning: '.bmp' format does not support compression, ignoring 'compress={self.compress}'")
+        
         lvl = "md" if self.compress is True else self.compress
-        params = {cfg["key"]: cfg["map"].get(lvl, lvl)} if (self.compress and cfg) else {}
+        cfg = COMPRESS_CONFIG.get(self.ext)
+        if cfg is not None and self.compress:
+            params = {cfg.get("key"): {"level": cfg["map"].get(lvl, lvl)} if self.ext in ["tiff", "tif"] else cfg["map"].get(lvl, lvl)} 
+            flags = cfg.get("flags", {})
+        else:
+            params, flags = {}, {}
 
-        if cfg and "fixed" in cfg: 
-            params.update(cfg["fixed"])
-
-        return iio.imwrite(self.path, self.data, extension=f".{self.ext}", **params)
+        return iio.imwrite(self.path, self.data, extension=f".{self.ext}", **params, **flags)
 
 
     def _other(self):
@@ -202,7 +210,7 @@ class _FileWriter:
         elif self.ext == "npy":
             self._npy()
 
-        elif self.ext in ["jpg", "jpeg", "png", "bmp", "tif", "tiff", "avi"]:
+        elif self.ext in ["jpg", "jpeg", "png", "bmp", "tif", "tiff"]:
             self._iio()
         
         elif self.ext == "csv":
