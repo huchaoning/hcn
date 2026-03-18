@@ -29,7 +29,7 @@ from hashlib import md5
 
 
 # CACHE_DIR = os.path.join(os.path.dirname(__file__), '__cache.py_cache_dir__/')
-CACHE_DIR = os.path.expanduser('~/.hcn_cache')
+CACHE_DIR = os.path.expanduser('~/.hcn.utils.cache.cache_dir')
 EXPIRATION_TIME = 2 * 24 * 60 * 60
 
 if not os.path.exists(CACHE_DIR):

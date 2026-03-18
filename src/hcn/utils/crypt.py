@@ -5,8 +5,72 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.fernet import Fernet
 
-# Expose the public functions for encryption and decryption
-__all__ = ['encrypt', 'decrypt', 'encrypt_file', 'decrypt_file']
+import hashlib
+import subprocess
+import platform
+
+
+def _fingerprint_windows():
+    try:
+        disk_sn = subprocess.check_output('wmic diskdrive get serialnumber', shell=True).decode().strip().split('\n')[1]
+        machine_id = subprocess.check_output('reg query "HKLM\\SOFTWARE\\Microsoft\\Cryptography" /v MachineGuid', shell=True).decode().strip().split('    ')[-1]
+        
+        hardware_info = f'{machine_id}|{disk_sn}'
+        return hashlib.sha256(hardware_info.encode()).hexdigest()
+    except Exception as e:
+        print(f'Failed to get hardware info (Windows): {e}')
+        return None
+
+
+def _fingerprint_macos():
+    try:
+        hw_uuid = subprocess.check_output("system_profiler SPHardwareDataType | grep 'Hardware UUID'", shell=True).decode().strip().split(':')[1].strip()
+        disk_uuid = subprocess.check_output("system_profiler SPStorageDataType | grep 'Volume UUID' | head -n 1", shell=True).decode().strip().split(':')[1].strip()
+
+        hardware_info = f'{hw_uuid}|{disk_uuid}'
+        return hashlib.sha256(hardware_info.encode()).hexdigest()
+    except Exception as e:
+        print(f'Failed to get hardware info (macOS): {e}')
+        return None
+
+
+def _fingerprint_linux():
+    try:
+        machine_id = subprocess.check_output('cat /etc/machine-id', shell=True).decode().strip()
+        disk_uuid = subprocess.check_output('lsblk -o NAME,UUID | grep \'sda\' | awk \'{print $2}\'', shell=True).decode().strip()
+
+        hardware_info = f'{machine_id}|{disk_uuid}'
+        return hashlib.sha256(hardware_info.encode()).hexdigest()
+    except Exception as e:
+        print(f'Failed to get hardware info (Linux): {e}')
+        return None
+
+
+def device_fingerprint():
+    system = platform.system().lower()
+
+    if system == 'windows':
+        return _fingerprint_windows()
+    elif system == 'darwin':
+        return _fingerprint_macos()
+    elif system == 'linux':
+        return _fingerprint_linux()
+    else:
+        return None
+
+
+def device_fingerprint():
+    system = platform.system().lower()
+
+    if system == 'windows':
+        return _fingerprint_windows()
+    elif system == 'darwin':
+        return _fingerprint_macos()
+    elif system == 'linux':
+        return _fingerprint_linux()
+    else:
+        return None
+
 
 # Internal function to derive the encryption key from the password
 def _derive_key(password: str, salt: bytes) -> bytes:
@@ -80,34 +144,3 @@ def decrypt(encrypted_message: bytes, password: str = None) -> str | bytes:
     except UnicodeDecodeError:
         # If decoding fails, return the original binary data
         return f.decrypt(encrypted_message)  # If it's binary data, return the raw binary data
-
-
-def encrypt_file(filename: str, password: str = None):
-    """Encrypt any file and save it with the '.locked' extension, then delete the original file."""
-    with open(filename, 'rb') as infile:
-        file_content = infile.read()  # Read file content in binary mode
-
-    encrypted_content = encrypt(file_content, _isNone(password))  # Encrypt the file content
-
-    locked_filename = filename + '.locked'  # The filename for the encrypted file
-    with open(locked_filename, 'wb') as outfile:
-        outfile.write(encrypted_content)  # Write the encrypted content to the file
-
-    os.remove(filename)  # Delete the original file
-
-
-def decrypt_file(filename: str, password: str = None):
-    """Decrypt a '.locked' file and restore the original file."""
-    if not filename.endswith('.locked'):
-        raise ValueError("The file must have a '.locked' extension")
-
-    with open(filename, 'rb') as infile:
-        encrypted_content = infile.read()  # Read the encrypted binary content
-
-    decrypted_content = decrypt(encrypted_content, _isNone(password))  # Decrypt the content
-
-    original_filename = filename[:-7]  # Remove the '.locked' extension to get the original filename
-    with open(original_filename, 'wb') as outfile:
-        outfile.write(decrypted_content)  # Write the decrypted content to the file
-
-    os.remove(filename)  # Delete the encrypted file
