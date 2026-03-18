@@ -1,7 +1,7 @@
 """
 WARNING: DO NOT ABUSE !!!
 
-Cache is stored on disk at the location specified by `cache_dir`,
+Cache is stored on disk at the location specified by `CACHE_DIR`,
 and is by default deleted after 2 days of inactivity.
 
 Since the cache is saved on disk, it will persist across kernel or
@@ -28,11 +28,12 @@ from functools import wraps
 from hashlib import md5
 
 
-cache_dir = os.path.join(os.path.dirname(__file__), '__myutils_cache__/')
-expiration_time = 2 * 24 * 60 * 60
+# CACHE_DIR = os.path.join(os.path.dirname(__file__), '__cache.py_cache_dir__/')
+CACHE_DIR = os.path.expanduser('~/.hcn_cache')
+EXPIRATION_TIME = 2 * 24 * 60 * 60
 
-if not os.path.exists(cache_dir):
-    os.mkdir(cache_dir)
+if not os.path.exists(CACHE_DIR):
+    os.mkdir(CACHE_DIR)
 
 
 __all__ = [
@@ -51,11 +52,11 @@ def extract_timestamp(file_path):
 
 def find_cache(hash_key):
     time_stamp = int(time.time())
-    prefix_name = os.path.join(cache_dir, f'{hash_key}_*')
+    prefix_name = os.path.join(CACHE_DIR, f'{hash_key}_*')
     cache_file = glob(prefix_name)
 
     if len(cache_file) == 0:
-        cache_file = os.path.join(cache_dir, f'{hash_key}_{time_stamp}.pkl')
+        cache_file = os.path.join(CACHE_DIR, f'{hash_key}_{time_stamp}.pkl')
         return cache_file, False
     
     elif len(cache_file) == 1:
@@ -71,33 +72,33 @@ def update_timestamp(cache_file):
     base_name = os.path.basename(cache_file)
     hash_key = base_name.split('_')[0]
     new_name = f'{hash_key}_{time_stamp}.pkl'
-    os.rename(cache_file, os.path.join(cache_dir, new_name))
+    os.rename(cache_file, os.path.join(CACHE_DIR, new_name))
     
 
 
 def open_cache_dir():
     import platform
     if platform.system() == 'Windows':
-        os.system('start ' + cache_dir)
+        os.system('start ' + CACHE_DIR)
     else:
-        os.system('open ' + cache_dir)
+        os.system('open ' + CACHE_DIR)
 
 
 def clean_all_cache():
-    shutil.rmtree(cache_dir)
-    os.mkdir(cache_dir)
+    shutil.rmtree(CACHE_DIR)
+    os.mkdir(CACHE_DIR)
     print('done')
 
 
 def clean_expired_cache():
     now = int(time.time())
-    for file_name in os.listdir(cache_dir):
-        file_path = os.path.join(cache_dir, file_name)
+    for file_name in os.listdir(CACHE_DIR):
+        file_path = os.path.join(CACHE_DIR, file_name)
         
         if file_name.endswith('.pkl'):
             try:
                 timestamp = extract_timestamp(file_path)
-                if now - timestamp > expiration_time:
+                if now - timestamp > EXPIRATION_TIME:
                     os.remove(file_path)
             except Exception as e:
                 print(f"Error processing file {file_path}: {e}")

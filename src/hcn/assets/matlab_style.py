@@ -5,12 +5,12 @@ backend_inline.set_matplotlib_formats('retina')
 del backend_inline
 
 import os
-# from matplotlib.font_manager import fontManager
-# assets_dir = os.path.abspath(
-#     os.path.join(os.path.dirname(__file__), '..')
-# )
-# fontManager.addfont(os.path.join(assets_dir, 'fonts/SourceHanSans.otf'))
-# del fontManager
+from matplotlib.font_manager import fontManager
+assets_dir = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), '../assets/')
+)
+fontManager.addfont(os.path.join(assets_dir, 'fonts/SourceHanSans.otf'))
+del fontManager
 
 
 plt.rcParams['font.size'] = 7
