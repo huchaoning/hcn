@@ -1,4 +1,5 @@
 site_name: huchaoning/hcn Documentation
+repo_url: https://github.com/huchaoning/hcn
 
 theme:
   name: material
@@ -20,8 +21,11 @@ theme:
 
 plugins:
   - search
+  - mkdocs-jupyter
   - mkdocstrings
 
 nav:
   - Home: index.md
-  # - API: api.md
+  - hcn.preamble: preamble.ipynb
+  - hcn.io: io.md
+  - hcn.utils: utils.md
