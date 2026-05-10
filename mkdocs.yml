@@ -1,4 +1,4 @@
-site_name: huchaoning/hcn
+site_name: huchaoning/hcn Documentation
 repo_url: https://github.com/huchaoning/hcn
 
 theme:
@@ -25,6 +25,6 @@ plugins:
   - mkdocs-jupyter
 
 nav:
-  - Home: home
+  - Home: ""
   - Preamble setup: preamble
   - File IO utils: io
