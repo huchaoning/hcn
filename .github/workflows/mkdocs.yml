@@ -1,4 +1,4 @@
-name: Deploy Docs
+name: Deploy docs
 
 on:
   push:
@@ -22,7 +22,8 @@ jobs:
           python-version: "3.x"
       - run: pip install -e ".[dev]"
       - run: mkdocs build
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
       - uses: actions/deploy-pages@v4
         id: deploy
-        with:
-          folder: site
