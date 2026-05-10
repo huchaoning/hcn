@@ -1,12 +1,13 @@
 [build-system]
-requires = ["setuptools", "wheel", "setuptools-scm"] 
+requires = ["setuptools", "wheel", "setuptools-scm"]
 build-backend = "setuptools.build_meta"
 
 
 [project]
 name = "hcn"
 description = "HCN's Collections of Nonpareils (or Nonsense)"
-dynamic = ["version"] 
+dynamic = ["version"]
+
 dependencies = [
     "numpy",
     "scipy",
@@ -16,7 +17,8 @@ dependencies = [
 ]
 
 readme = "README.md"
-license = {file = "LICENSE"}
+license = { file = "LICENSE" }
+
 classifiers = [
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
@@ -24,8 +26,18 @@ classifiers = [
 ]
 
 
+[project.optional-dependencies]
+dev = [
+    "mkdocs",
+    "mkdocs-material",
+    "mkdocstrings",
+    "mkdocstrings-python"
+]
+
+
 [tool.setuptools.packages.find]
 where = ["src"]
+include = ["hcn*"]
 
 
 [tool.setuptools_scm]
