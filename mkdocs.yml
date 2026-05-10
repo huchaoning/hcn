@@ -1,4 +1,4 @@
-site_name: HCN's Collections of Nonpareils (or Nonsense)
+site_name: huchaoning/hcn Documentation
 
 theme:
   name: material
@@ -23,5 +23,5 @@ plugins:
   - mkdocstrings
 
 nav:
-  - Home: README.md
+  - Home: index.md
   # - API: api.md
