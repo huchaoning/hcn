@@ -23,5 +23,5 @@ plugins:
   - mkdocstrings
 
 nav:
-  - Home: index.md
+  - Home: README.md
   # - API: api.md
