@@ -1,4 +1,7 @@
-import os, git, threading, warnings, socket
+import os
+import threading
+import warnings
+import socket
 from importlib.metadata import version, PackageNotFoundError
 
 __all__ = []
@@ -18,34 +21,65 @@ def _has_network(host='8.8.8.8', port=53):
         return False
 
 
-def _check_update():
-    current_dir = os.path.dirname(__file__)
-    repo_path = os.path.abspath(os.path.join(current_dir, '..', '..'))
+def _is_git_repo(path):
+    return os.path.isdir(os.path.join(path, '.git'))
 
+
+def _check_git_update(repo_path):
     try:
+        import git
         repo = git.Repo(repo_path)
-        
+
         if repo.is_dirty():
             warnings.warn('Local changes detected.')
 
-        if not _has_network():
-            warnings.warn('No network connection. Remote update check skipped.')
-        
-        else:
-            try:
-                repo.remotes.origin.fetch(kill_after_timeout=5)
-                active_branch = repo.active_branch
-                remote_ref = repo.remotes.origin.refs[active_branch.name]
-                
-                behind = list(repo.iter_commits(f'{active_branch.name}..{remote_ref}'))
-                if behind:
-                    warnings.warn(f'Remote update detected. {len(behind)} commits behind.')
-            except Exception as git_err:
-                warnings.warn(f'Remote check failed: {git_err}')
+        try:
+            repo.remotes.origin.fetch(kill_after_timeout=5)
+            active_branch = repo.active_branch
+            remote_ref = repo.remotes.origin.refs[active_branch.name]
+            behind = list(repo.iter_commits(f'{active_branch.name}..{remote_ref}'))
+            if behind:
+                warnings.warn(f'Remote update detected. {len(behind)} commits behind.')
+        except Exception as git_err:
+            warnings.warn(f'Remote check failed: {git_err}')
 
     except Exception as e:
         warnings.warn(f'Git check failed: {e}')
 
 
-threading.Thread(target=_check_update, daemon=True).start()
+def _check_pypi_update():
+    try:
+        import urllib.request
+        import json
+        from packaging.version import parse as parse_version
 
+        current = __version__
+        if current == 'unknown':
+            return
+
+        url = 'https://pypi.org/pypi/hcn/json'
+        with urllib.request.urlopen(url, timeout=5) as resp:
+            data = json.loads(resp.read().decode())
+            latest = data['info']['version']
+
+        if parse_version(latest) > parse_version(current):
+            warnings.warn(f'PyPI update available: {current} -> {latest}. Run `pip install --upgrade hcn` to upgrade.')
+    except Exception as e:
+        warnings.warn(f'PyPI version check failed: {e}')
+
+
+def _check_update():
+    if not _has_network():
+        warnings.warn('No network connection. Remote update check skipped.')
+        return
+
+    current_dir = os.path.dirname(__file__)
+    repo_path = os.path.abspath(os.path.join(current_dir, '..', '..'))
+
+    if _is_git_repo(repo_path):
+        _check_git_update(repo_path)
+    else:
+        _check_pypi_update()
+
+
+threading.Thread(target=_check_update, daemon=True).start()

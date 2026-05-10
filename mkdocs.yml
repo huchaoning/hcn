@@ -21,11 +21,9 @@ theme:
 
 plugins:
   - search
-  - mkdocs-jupyter
   - mkdocstrings
+  - mkdocs-jupyter
 
 nav:
-  - Home: index.md
-  - hcn.preamble: preamble.ipynb
-  - hcn.io: io.md
-  - hcn.utils: utils.md
+  - Home: index
+  - hcn.preamble: preamble
