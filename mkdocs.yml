@@ -1,6 +1,7 @@
 site_name: huchaoning/hcn Documentation
 repo_url: https://github.com/huchaoning/hcn
 
+
 theme:
   name: material
   language: en
@@ -19,12 +20,31 @@ theme:
     - navigation.expand
     - content.code.copy
 
+
+markdown_extensions:
+  - admonition
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+  - pymdownx.snippets:
+      check_paths: true
+  - pymdownx.tabbed
+  - toc:
+      permalink: true
+
+
 plugins:
   - search
   - mkdocstrings
-  - mkdocs-jupyter
+  - mkdocs-jupyter:
+      execute: true 
+      include_requirejs: true
+      kernel_name: python3
+      custom_mathjax_url: "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS_CHTML-full,Safe"
+      ignore_h1_titles: true
+
 
 nav:
-  - Home: ""
-  - Preamble setup: preamble
-  - File IO utils: io
+  - Home: index.ipynb
+  - Preamble setup: preamble.ipynb
+  - File IO utils: io.ipynb
