@@ -47,4 +47,7 @@ plugins:
 nav:
   - Home: index.ipynb
   - Preamble setup: preamble.ipynb
-  - File IO utils: io.ipynb
+  - Data I/O: io.ipynb
+  - General Utilities: 
+      cache: cache.ipynb
+      parallelize: parallelize.ipynb
