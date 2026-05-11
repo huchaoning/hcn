@@ -12,7 +12,7 @@ import subprocess
 
 __all__ = [
     "code",
-    "open",
+    "finder",
     "load",
     "save"
 ]
@@ -60,7 +60,7 @@ def code(input_):
 
 
 
-def open(input_):
+def finder(input_):
     if inspect.isfunction(input_) or inspect.ismodule(input_) or inspect.isclass(input_):
         file_dir = os.path.dirname(inspect.getfile(input_))
     else:
@@ -173,13 +173,15 @@ class _FileWriter:
     def _npy(self):
         np.save(self.path, np.array(self.data))
 
+
     def _npz(self):
         if isinstance(self.data, dict):
             np.savez_compressed(self.path, **{k: np.array(v) for k, v in self.data.items()})
             return self.path
         else:
             raise TypeError("'.npz' format requires a dict of arrays")
-        
+
+
     def _iio(self):
         if self.ext in ["jpg", "jpeg"] and self.compress is False:
             raise ValueError(f"'.{self.ext}' format does not support lossless storage (compress=False).")
@@ -231,7 +233,9 @@ def load(path, dtype=None):
 
 
 def save(path, data, dtype=None, compress=False):
-    data = np.asarray(data) if dtype is None else np.asarray(data).astype(dtype)
+    if not isinstance(data, dict):
+        data = np.asarray(data) if dtype is None else np.asarray(data).astype(dtype)
+    
     target = _FileWriter(path, data, compress)
     target.save()
     return target.path
