@@ -12,9 +12,14 @@ permissions:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
+    env:
+      HCN_NO_UPDATE_CHECK: "1"
+
     environment:
       name: github-pages
       url: ${{ steps.deploy.outputs.page_url }}
+
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

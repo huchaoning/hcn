@@ -69,6 +69,14 @@ def _check_pypi_update():
 
 
 def _check_update():
+    if os.environ.get('HCN_NO_UPDATE_CHECK') == '1':
+        return
+
+    if 'dev' in __version__.lower():
+        warnings.warn(f'Running in development version: {__version__}')
+    elif __version__ == 'unknown':
+        warnings.warn('Version unknown.')
+
     if not _has_network():
         warnings.warn('No network connection. Remote update check skipped.')
         return
