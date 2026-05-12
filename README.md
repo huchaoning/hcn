@@ -7,7 +7,7 @@
 
 ## Introduction
 
-`hcn` stands for ***H**CN's **C**ollection of **N**onpareils (or **N**onsense)*. 
+`hcn` stands for _**H**CN's **C**ollection of **N**onpareils (or **N**onsense)_. 
 It is a personal toolkit designed to streamline daily Python tasks. 
 By wrapping sophisticated libraries into simple, memorable one-liners, `hcn` prioritizes convenience over complexity.
 
