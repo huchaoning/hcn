@@ -8,6 +8,18 @@ name = "hcn"
 description = "HCN's Collections of Nonpareils (or Nonsense)"
 dynamic = ["version"]
 
+readme = "README.md"
+license = { file = "LICENSE" }
+authors = [
+    { name = "Chao-Ning Hu" }
+]
+
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+
 dependencies = [
     "numpy",
     "scipy",
@@ -18,15 +30,6 @@ dependencies = [
     "tqdm",
     "imageio[tifffile,ffmpeg]",
     "packaging"
-]
-
-readme = "README.md"
-license = { file = "LICENSE" }
-
-classifiers = [
-    "License :: OSI Approved :: MIT License",
-    "Programming Language :: Python :: 3",
-    "Operating System :: OS Independent",
 ]
 
 
