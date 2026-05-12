@@ -48,6 +48,6 @@ nav:
   - Home: index.ipynb
   - Preamble setup: preamble.ipynb
   - Data I/O: io.ipynb
-  - General Utilities: 
+  - General utilities: 
       cache: cache.ipynb
       parallelize: parallelize.ipynb

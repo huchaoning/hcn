@@ -1,4 +1,4 @@
-# HCN's Collections of Nonpareils (or Nonsense)
+# HCN's Collection of Nonpareils (or Nonsense)
 
 [![PyPI version](https://img.shields.io/pypi/v/hcn.svg)](https://pypi.org/project/hcn/)
 [![Python Version](https://img.shields.io/badge/python-3%2B-blue)](https://www.python.org/downloads/)
@@ -7,8 +7,11 @@
 
 ## Introduction
 
-`hcn` means *HCN's Collections of Nonpareils (or Nonsense)*, which is a personal toolkit of Python utilities. It wraps mature libraries into one-liners that are easy to remember and quick to use. It's **NOT powerful**, just convenient.
+`hcn` stands for ***H**CN's **C**ollection of **N**onpareils (or **N**onsense)*. 
+It is a personal toolkit designed to streamline daily Python tasks. 
+By wrapping sophisticated libraries into simple, memorable one-liners, `hcn` prioritizes convenience over complexity.
 
+It's **NOT** meant to be a powerful framework, just a collection of handy shortcuts for quick usage.
 
 ## Installation
 
@@ -24,5 +27,6 @@ Full documentation is available at [https://huchaoning.github.io/hcn](https://hu
 
 ## License
 
-Distributed under the MIT License. See [LICENSE](https://github.com/huchaoning/hcn/blob/main/LICENSE) for more information.
+This project is licensed under the MIT License. 
+For more details, please refer to the [LICENSE](https://github.com/huchaoning/hcn/blob/main/LICENSE) file in the repository.
 
