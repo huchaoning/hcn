@@ -10,33 +10,20 @@ import platform
 import subprocess
 
 
-__all__ = [
-    "code",
-    "finder",
-    "load",
-    "save"
-]
+__all__ = ["code", "finder", "load", "save"]
 
 
-ZLIB_MAP = { "xs": 1, "sm": 3, "md": 6, "lg": 8, "xl": 9 }
-JPG_MAP = { "xs": 98, "sm": 95, "md": 90, "lg": 80, "xl": 70 }
+ZLIB_MAP = {"xs": 1, "sm": 3, "md": 6, "lg": 8, "xl": 9}
+JPG_MAP = {"xs": 98, "sm": 95, "md": 90, "lg": 80, "xl": 70}
 
 COMPRESS_CONFIG = {
-    "png": {
-        "key": "compression",
-        "map": ZLIB_MAP
-    },
-
+    "png": {"key": "compression", "map": ZLIB_MAP},
     "tif": {
         "key": "compressionargs",
         "map": ZLIB_MAP,
-        "flags": { "plugin": "tifffile", "compression": "zlib" }
+        "flags": {"plugin": "tifffile", "compression": "zlib"},
     },
-
-    "jpg": {
-        "key": "quality",
-        "map": JPG_MAP
-    },
+    "jpg": {"key": "quality", "map": JPG_MAP},
 }
 
 COMPRESS_CONFIG["tiff"] = COMPRESS_CONFIG["tif"]
@@ -44,7 +31,11 @@ COMPRESS_CONFIG["jpeg"] = COMPRESS_CONFIG["jpg"]
 
 
 def code(input_):
-    if inspect.isfunction(input_) or inspect.ismodule(input_) or inspect.isclass(input_):
+    if (
+        inspect.isfunction(input_)
+        or inspect.ismodule(input_)
+        or inspect.isclass(input_)
+    ):
         file_path = inspect.getfile(input_)
     else:
         file_path = os.path.expanduser(input_)
@@ -52,16 +43,23 @@ def code(input_):
     if platform.system() == "Darwin":
         subprocess.run(["code", file_path], check=True)
     elif platform.system() == "Windows":
-        subprocess.run(["powershell.exe", "-Command", rf"code '{file_path}'"], check=True)
+        subprocess.run(
+            ["powershell.exe", "-Command", rf"code '{file_path}'"], check=True
+        )
     else:
-        raise NotImplementedError("This function is supported on Windows and macOS only.")
-    
+        raise NotImplementedError(
+            "This function is supported on Windows and macOS only."
+        )
+
     return os.path.abspath(file_path)
 
 
-
 def finder(input_):
-    if inspect.isfunction(input_) or inspect.ismodule(input_) or inspect.isclass(input_):
+    if (
+        inspect.isfunction(input_)
+        or inspect.ismodule(input_)
+        or inspect.isclass(input_)
+    ):
         file_dir = os.path.dirname(inspect.getfile(input_))
     else:
         file_dir = os.path.expanduser(input_)
@@ -71,10 +69,11 @@ def finder(input_):
     elif platform.system() == "Windows":
         subprocess.run(["start", "", file_dir], shell=True, check=True)
     else:
-        raise NotImplementedError("This function is supported on Windows and macOS only.")
-    
-    return os.path.abspath(file_dir)
+        raise NotImplementedError(
+            "This function is supported on Windows and macOS only."
+        )
 
+    return os.path.abspath(file_dir)
 
 
 class _FileReader:
@@ -83,30 +82,25 @@ class _FileReader:
 
         if not os.path.exists(self.path):
             raise FileNotFoundError(f"{path} does not exists")
-        
+
         self.path = path
         self.ext = os.path.splitext(path)[-1].lower()[1:]
         self.name = os.path.basename(path)
         self.stem = os.path.splitext(self.name)[0]
 
-    
     def _iio(self):
         return np.squeeze(iio.imread(self.path, extension=f".{self.ext}"))
-
 
     def _json(self):
         with open(self.path, "r") as f:
             dic = json.load(f)
         return dic
 
-
     def _csv(self):
         return np.array(pd.read_csv(self.path, header=None))
 
-
     def _npy(self):
         return np.load(self.path)
-
 
     def _npz(self):
         dic = dict(np.load(self.path))
@@ -114,14 +108,12 @@ class _FileReader:
             dic[key] = dic[key]
         return dic
 
-
     def _other(self):
         msg = f"No implemented method for '.{self.ext}', nothing to return."
         if os.path.exists(self.path):
             msg += f"The file '{self.name}' exists, you may use finder() to open it."
         print(msg)
         return None
-
 
     def load(self):
         if self.ext == "npz":
@@ -145,7 +137,6 @@ class _FileReader:
         return data
 
 
-
 class _FileWriter:
     def __init__(self, path, data, compress):
         self.path = os.path.abspath(os.path.expanduser(path))
@@ -156,7 +147,6 @@ class _FileWriter:
         self.name = os.path.basename(self.path)
         self.stem = os.path.splitext(self.name)[0]
 
-
     def _json(self):
         if isinstance(self.data, dict):
             with open(self.path, "w") as f:
@@ -164,66 +154,71 @@ class _FileWriter:
         else:
             raise TypeError("'.json' format requires a dict of arrays")
 
-
     def _csv(self):
         arr = np.array(self.data)
         pd.DataFrame(arr).to_csv(self.path, index=False, header=False)
 
-
     def _npy(self):
         np.save(self.path, np.array(self.data))
 
-
     def _npz(self):
         if isinstance(self.data, dict):
-            np.savez_compressed(self.path, **{k: np.array(v) for k, v in self.data.items()})
+            np.savez_compressed(
+                self.path, **{k: np.array(v) for k, v in self.data.items()}
+            )
             return self.path
         else:
             raise TypeError("'.npz' format requires a dict of arrays")
 
-
     def _iio(self):
         if self.ext in ["jpg", "jpeg"] and self.compress is False:
-            raise ValueError(f"'.{self.ext}' format does not support lossless storage (compress=False).")
-        
+            raise ValueError(
+                f"'.{self.ext}' format does not support lossless storage (compress=False)."
+            )
+
         if self.ext == "bmp" and self.compress is not False:
-            print(f"warning: '.bmp' format does not support compression, ignoring 'compress={self.compress}'")
-        
+            print(
+                f"warning: '.bmp' format does not support compression, ignoring 'compress={self.compress}'"
+            )
+
         lvl = "md" if self.compress is True else self.compress
         cfg = COMPRESS_CONFIG.get(self.ext)
         if cfg is not None and self.compress:
-            params = {cfg.get("key"): {"level": cfg["map"].get(lvl, lvl)} if self.ext in ["tiff", "tif"] else cfg["map"].get(lvl, lvl)} 
+            params = {
+                cfg.get("key"): {"level": cfg["map"].get(lvl, lvl)}
+                if self.ext in ["tiff", "tif"]
+                else cfg["map"].get(lvl, lvl)
+            }
             flags = cfg.get("flags", {})
         else:
             params, flags = {}, {}
 
-        return iio.imwrite(self.path, self.data, extension=f".{self.ext}", **params, **flags)
-
+        return iio.imwrite(
+            self.path, self.data, extension=f".{self.ext}", **params, **flags
+        )
 
     def _other(self):
         msg = f"No implemented method for '.{self.ext}', nothing saved."
         print(msg)
 
-
     def save(self):
         if self.ext == "npz":
             self._npz()
-        
+
         elif self.ext == "npy":
             self._npy()
 
         elif self.ext in ["jpg", "jpeg", "png", "bmp", "tif", "tiff"]:
             self._iio()
-        
+
         elif self.ext == "csv":
             self._csv()
-        
+
         elif self.ext == "json":
             self._json()
-        
+
         else:
             self._other()
-
 
 
 def load(path, dtype=None):
@@ -231,12 +226,10 @@ def load(path, dtype=None):
     return target.load() if dtype is None else target.load().astype(dtype)
 
 
-
 def save(path, data, dtype=None, compress=False):
     if not isinstance(data, dict):
         data = np.asarray(data) if dtype is None else np.asarray(data).astype(dtype)
-    
+
     target = _FileWriter(path, data, compress)
     target.save()
     return target.path
-

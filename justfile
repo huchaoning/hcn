@@ -21,3 +21,12 @@ clean-up: clean
 
 
 reinstall: uninstall clean install
+
+
+push:
+    git add . && git commit -m "work in progress... | $(date '+%Y-%m-%d %H:%M:%S')" && git push
+
+
+serve:
+    mkdocs serve --livereload
+
